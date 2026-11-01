@@ -322,10 +322,18 @@ defmodule Agendum.CLI do
 
   defp open_existing(path) do
     case Store.load_with_stamp(path) do
-      {:ok, db, stamp} -> {:ok, db, path, stamp}
+      {:ok, db, stamp} ->
+        {:ok, db, path, stamp}
+
       # a file with a password (ADR 0046): asked for once the program runs
-      {:error, :password_required} -> {:password, path}
-      {:error, reason} -> {:error, "Could not open #{path}: #{inspect(reason)}"}
+      {:error, :password_required} ->
+        {:password, path}
+
+      {:error, {:damaged, problem}} ->
+        {:error, "#{path} is damaged and cannot be opened: #{problem}"}
+
+      {:error, reason} ->
+        {:error, "Could not open #{path}: #{inspect(reason)}"}
     end
   end
 

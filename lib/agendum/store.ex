@@ -269,7 +269,7 @@ defmodule Agendum.Store do
         # `in` with a range is allowed in a guard. Domain: a file from a newer
         # Agendum (a version above ours) is refused, not misread.
         {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
-          {:ok, db |> upgrade() |> repair_text()}
+          db |> upgrade() |> repair_text() |> checked()
 
         {:agenda, version, _} ->
           {:error, {:unsupported_version, version}}
@@ -279,6 +279,16 @@ defmodule Agendum.Store do
       end
     rescue
       ArgumentError -> {:error, :not_an_agenda_file}
+    end
+  end
+
+  # Domain: a file whose values are of the wrong kind, or whose parts do not
+  # agree, is refused as damaged (`Agendum.Core.FileCheck`; SECURITY.md,
+  # door 2), with the first thing wrong in words
+  defp checked(db) do
+    case Agendum.Core.FileCheck.problem(db) do
+      nil -> {:ok, db}
+      problem -> {:error, {:damaged, problem}}
     end
   end
 

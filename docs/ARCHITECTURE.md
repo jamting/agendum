@@ -52,6 +52,7 @@ A function of the first two is removed or changed only after it has been marked 
 | `Agendum.Core.Command.Changes`                                  | What a command changed, found by comparing the database before and after.                                                                               |
 | `Agendum.Core.Facade.Changes`                                   | What every change to an item goes through: user assignments, dates from rules, settling (conditions, actions).                                          |
 | `Agendum.Core.Database`                                         | The file as one immutable struct: items, categories, views, links, id counter. Primitive operations and queries (`member?/3`, `items_in/2`, hierarchy). |
+| `Agendum.Core.FileCheck`                                        | The check a file passes when opened: types through the JSON reading, then the invariants; a damaged file is refused (R82d, ADR 0052). |
 | `Agendum.Core.Invariants`                                       | The data model's invariants as one check (`violations/1`), run after every key by the fuzz walks (DATA_MODEL.md, "Invariants").                    |
 | `Agendum.Core.Links`                                            | Bidirectional many-to-many relation (the patent's link structures).                                                                                     |
 | `Agendum.Core.Assign`                                           | Assignment rules: exclusion, category links, text matching, ambiguity resolution.                                                                       |
@@ -308,3 +309,4 @@ See [`DATA_MODEL.md`](DATA_MODEL.md) for the data structures and [`DATA_ACCESS.m
 | [0049](adr/0049-extras-use-the-clones-patterns.md) | The extras use the clone's patterns: written down as UI guidelines; no new extras until they meet them; new patterns wait for Beyond Agenda |
 | [0050](adr/0050-where-public-stops.md)       | Where public stops: the core, formats, protocol, terminal programs, extras and local agent public; a service adds, never takes away |
 | [0051](adr/0051-the-licence.md)              | The licence: AGPL-3.0-only for the code, CC BY 4.0 for the documents, a CLA for contributions (a lawyer's check before publishing) |
+| [0052](adr/0052-files-checked-on-opening.md) | A file is checked when it is opened, and a damaged one refused |

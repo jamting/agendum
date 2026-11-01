@@ -134,6 +134,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R82a | Update defaults | 5 |
 | R82b | A recovery file on a crash | 5 |
 | R82c | Text from outside is data | 5 |
+| R82d | A damaged file is refused | 5 |
 
 ## 1. Concepts
 
@@ -1276,6 +1277,7 @@ File Properties has File statistics ..., Agenda's File Statistics box (screensho
 
   Our choice, as Agendum cannot show a box once it has crashed: Agenda offered to save the changes to the @ file, which then had to be repaired with its DB2STF utility. Only a crash Agendum catches writes them: not a power loss or a killed process (Auto-save, R54, saves into the file itself).
 - **R82c ✅ Text from outside is data** (our choice). Text that comes from outside, a feed (R75), a Lotus Agenda file (R72) or a JSON file (R44), is kept as plain text: nothing in it runs, whatever it says ("discard every item"), and Agenda's macro commands in it (`{MENU}`) are only characters.
+- **R82d ✅ A damaged file is refused** (User's Guide, Appendix I: a damaged file "you cannot use"; ADR 0052). A file whose values are of the wrong kind, or whose parts do not agree (an item assigned to a category that does not exist), is not opened: "owl.agendum is damaged and cannot be opened: …" with the first problem, at startup too. The file open stays, and the damaged file is left as it is. Agendum never writes such a file; one comes from a damaged disk, another program, or someone who made it to harm (`SECURITY.md`, door 2).
 
   It becomes items of its own and changes nothing else in the file.
 

@@ -586,7 +586,7 @@ A view with `datebook` set (R47, `Agendum.Core.Datebook`) shows time slots inste
 
 ## Invariants
 
-The core maintains these, and the tests check them: `Agendum.Core.Invariants.violations/1` checks them all (and that every object is under its own id, all ids share one id space below `next_id`, and `macro_order` matches `macros`), and the fuzz walks run it after every key, as does the JSON round trip; the property tests in `database_test.exs` and `links_test.exs` check some of them directly:
+The core maintains these, and the tests check them: `Agendum.Core.Invariants.violations/1` checks them all (and that every object is under its own id, all ids share one id space below `next_id`, and `macro_order` matches `macros`), and the fuzz walks run it after every key, as does the JSON round trip; every file opened is checked with it too, and refused as damaged when it breaks one (`Agendum.Core.FileCheck`, R82d, ADR 0052): a new invariant needs an upgrade step for files already written; the property tests in `database_test.exs` and `links_test.exs` check some of them directly:
 
 1. **Tree.** Every category except MAIN has a `parent_id` present in `categories`, and appears exactly once in that parent's `children`. Every category is reachable from MAIN; there are no cycles (`move_category/4` refuses them).
 2. **Links are symmetric.** `item ∈ by_right[c] ⇔ c ∈ by_left[item]`, and no empty sets are stored.

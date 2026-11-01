@@ -419,6 +419,7 @@ The order of the earlier steps was Marie's (the licence meeting and the tidy pas
 
 ### The clone's safety
 
+- [x] (2026-11-01, v0.73.15) A file checked when it is opened (`SECURITY.md`, door 2; ADR 0052): values' kinds through the JSON reading, then the invariants (`Agendum.Core.FileCheck`); a damaged file is refused with its first problem, as Agenda refused one (R82d; the owner chose refusing and the JSON check, 2026-11-01). The owner's own files all pass; about 140 ms on a 2,000-item file
 - [x] (2026-11-01, v0.73.14) Redirects of a feed or calendar followed by Agendum itself (`SECURITY.md`, door 3): up to five, never from `https` to plain `http` nor to an address not on the web (`CalendarFetch.redirect_target/2`); an `http://` address the person types stays readable as typed (the owner, 2026-11-01) (R45, R75)
 - [x] (2026-11-01, v0.73.13) A feed's or calendar's answer stops at 20 MB as it comes in (`SECURITY.md`, door 3): `:httpc` streams it to the reading process, which counts the parts and cancels at the limit, refuses an announced larger `Content-Length` at once, and keeps a 20-second deadline for the whole answer; before, the answer was read whole and an endless one filled memory until the timeout (R45, R75)
 - [x] (2026-11-01, v0.73.12) rsync never takes the blog's folder or **Upload to** as an option (`SECURITY.md`, door 4): both come after `--`, and a target that starts with `-`, or whose host or user does, is refused, as rsync hands the host to ssh (`-oProxyCommand=` would run a command); a shared file carries its blog settings (R74)

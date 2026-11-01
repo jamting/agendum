@@ -8,7 +8,8 @@ defmodule Agendum.Core.Invariants do
   The core keeps these through its own operations; the check is how tests
   make sure of it. The fuzz walks (`Agendum.TUI.Fuzz`) run it after every
   key, so any key sequence that leaves the file inconsistent fails there,
-  not later in someone's file. It could also check a file on load.
+  not later in someone's file. Every file opened is checked with it too
+  (`Agendum.Core.FileCheck`, ADR 0052).
 
   The numbers in the sentences are those of the list in DATA_MODEL.md.
   """

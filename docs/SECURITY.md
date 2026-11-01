@@ -27,8 +27,8 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 ### 2. A file from someone else (`.agendum`, `.AG`, JSON)
 
 - **Risk:** a crafted file runs code, hangs Agendum, or crashes it and loses unsaved work. **Medium.**
-- **Guarded:** an `.agendum` file is read with Erlang's safe decoding (no new atoms), must be a `Database` of a known version, and its text is made valid UTF-8. JSON import checks types and references (R44). The `.AG` reader is tested with a collection of hostile files (R72). Text from a file is data: nothing in it runs (R82c), terminal escape codes are shown, not obeyed, and a macro runs only when the person plays it. A crash writes the unsaved changes to a recovery file (R82b).
-- **Open:** an `.agendum` file is not checked beyond its outer shape, so a crafted one can crash Agendum later (no known way to run code). A shared file's blog settings are used as written, within door 4's guards.
+- **Guarded:** an `.agendum` file is read with Erlang's safe decoding (no new atoms), must be a `Database` of a known version, and its text is made valid UTF-8; then every value's kind (through the JSON reading) and the parts' agreement (the invariants) are checked, and a damaged file is refused (R82d, ADR 0052; v0.73.15). JSON import checks types and references (R44). The `.AG` reader is tested with a collection of hostile files (R72). Text from a file is data: nothing in it runs (R82c), terminal escape codes are shown, not obeyed, and a macro runs only when the person plays it. A crash writes the unsaved changes to a recovery file (R82b).
+- **Known and accepted:** a shared file's blog settings are used as written, within door 4's guards. A damaged file of the person's own cannot be opened either; getting its contents out is a tool for later.
 
 ### 3. Feeds and calendars from the network
 

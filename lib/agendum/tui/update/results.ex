@@ -156,6 +156,11 @@ defmodule Agendum.TUI.Update.Results do
         {:file_password, path}
       )
 
+  # a damaged file (SECURITY.md, door 2): refused, and why, as Agenda
+  # refused one; the file open stays
+  def loaded(state, path, {:error, {:damaged, problem}}),
+    do: State.error(state, "#{Path.basename(path)} is damaged and cannot be opened: #{problem}")
+
   def loaded(state, _path, {:error, _reason}),
     do: State.error(state, Agendum.TUI.Messages.text(:cannot_open))
 

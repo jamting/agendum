@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.15 — 2026-11-01
+
+- **A damaged file is refused, as Agenda refused one.** A file whose values are of the wrong kind, or whose parts do not agree, is no longer opened to crash Agendum later: "owl.agendum is damaged and cannot be opened: …" says the first thing wrong, and the file you had open stays. Agendum never writes such a file; it guards against a damaged disk and files made to harm. Opening a large file takes a little longer (about a tenth of a second for 2,000 items).
+
 ## 0.73.14 — 2026-11-01
 
 - **A feed or calendar can no longer be moved to an unencrypted address.** A redirect from `https://` to plain `http://` is refused ("the feed moved to an unencrypted address"), and so is one off the web; redirects stop after five. An `http://` address you type yourself still works, as typed.
