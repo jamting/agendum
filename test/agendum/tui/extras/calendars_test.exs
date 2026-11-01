@@ -47,6 +47,28 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     {state, id}
   end
 
+  # the same race as the SFTP password's (nightly fuzz, 2026-11-01): the
+  # read answers while another address is being typed
+  test "a read answered while another address is typed: the typing is kept", %{state: state} do
+    {state, _} = keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+    {state, _} = keys(state, [:insert, "h", "t"])
+    typing = state.edit
+
+    state =
+      Agendum.TUI.Extras.Calendars.Results.calendar_probed(
+        state,
+        @url,
+        {:ok, %{title: "Work", events: []}}
+      )
+
+    assert state.edit == typing
+    assert [%{type: :prompt}, %{type: :calendars} | _] = state.modes
+    assert {:error, text} = state.message
+    assert text =~ "Not subscribed"
+    {state, _} = keys(state, [:esc, :esc])
+    Agendum.TUI.Render.render(state)
+  end
+
   defp events,
     do: [
       %Event{uid: "a", summary: "Organising Meeting", start: {:local, ~N[2026-10-16 14:00:00]}},

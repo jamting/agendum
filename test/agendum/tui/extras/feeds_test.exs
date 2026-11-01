@@ -83,6 +83,25 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     assert after_.modes == state.modes
   end
 
+  # the same race as the SFTP password's (nightly fuzz, 2026-11-01): the
+  # read answers while another address is being typed, and the name it asks
+  # for must not take that typing over
+  test "a read answered while another address is typed: the typing is kept", %{state: state} do
+    state = state |> open() |> press(:insert) |> type("https://owl.example/rss")
+    state = state |> press(:insert) |> press(["h", "t"])
+    typing = state.edit
+
+    read = {:ok, %{title: "Owl's Gazette", entries: []}}
+    state = Agendum.TUI.Extras.Feeds.Results.feed_probed(state, "https://owl.example/rss", read)
+
+    assert state.edit == typing
+    assert [%{type: :prompt}, %{type: :feeds} | _] = state.modes
+    assert {:error, text} = state.message
+    assert text =~ "Not subscribed"
+    assert state.db.feeds == %{}
+    state |> press(:esc) |> press(:esc) |> screen()
+  end
+
   test "the entries read come in as items, in the News view", %{state: state} do
     state = subscribed(state, @entries)
     state = state |> press(:esc) |> press(:esc)

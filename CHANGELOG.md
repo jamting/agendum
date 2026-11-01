@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.11 — 2026-11-01
+
+- **Typing is never taken over from the background.** When an upload's server asked for its password, or a new feed or calendar had been read, while you were typing in another prompt, the new question took your typing over, and closing it could crash Agendum. Now your typing stays: the upload says "Publish again", the feed or calendar "INS adds it". Found by the nightly fuzz run.
+
 ## 0.73.10 — 2026-11-01
 
 - **A file with a password stays private in the debug log** (`AGENDUM_LOG`): while it is open, the log counts what you type instead of writing it, and leaves out messages' text, the view's name and a crash's details. Before, items and notes typed into an encrypted file lay in the log as plain text.

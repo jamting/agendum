@@ -12,6 +12,10 @@ defmodule Agendum.TUI.Extras.Feeds.Messages do
   @doc "A text without anything to fill in."
   @spec text(atom) :: String.t()
   def text(:address), do: "Feed's web address (https:// or feed://):"
+
+  def text(:read_while_typing),
+    do: "Not subscribed: the feed was read while you typed. INS adds it"
+
   def text(:name), do: "Name of the feed (its category under Feeds):"
   def text(:rename), do: "New name of the feed:"
   def text(:import_opml), do: "OPML file to import:"
@@ -29,6 +33,7 @@ defmodule Agendum.TUI.Extras.Feeds.Messages do
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"
   def text(:probing, url), do: "Reading #{url} …"
   def text(:unreadable, reason), do: "Not subscribed: #{reason}"
+
   def text(:nothing_new, name), do: "#{name}: nothing new"
   def text(:no_new_feeds, file), do: "#{file}: no feeds the file does not have already"
   def text(:not_opml, file), do: "#{file} is not an OPML feed list"

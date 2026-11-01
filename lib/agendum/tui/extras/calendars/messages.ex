@@ -11,6 +11,10 @@ defmodule Agendum.TUI.Extras.Calendars.Messages do
   @doc "A text without anything to fill in."
   @spec text(atom) :: String.t()
   def text(:address), do: "Calendar's web address (https:// or webcal://):"
+
+  def text(:read_while_typing),
+    do: "Not subscribed: the calendar was read while you typed. INS adds it"
+
   def text(:name), do: "Name of its category (its events go there):"
   def text(:rename), do: "New name of the calendar:"
   def text(:bad_url), do: "A calendar needs an https:// or webcal:// address"
@@ -26,6 +30,7 @@ defmodule Agendum.TUI.Extras.Calendars.Messages do
   def text(:unsubscribed, name), do: "Unsubscribed from #{name}"
   def text(:probing, url), do: "Reading #{url} …"
   def text(:unreadable, reason), do: "Not subscribed: #{reason}"
+
   def text(:no_changes, name), do: "#{name}: no changes"
 
   @doc """

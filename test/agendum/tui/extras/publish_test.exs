@@ -173,6 +173,30 @@ defmodule Agendum.TUI.Extras.PublishTest do
       refute Enum.any?(effects(), &(elem(&1, 0) == :publish))
     end
 
+    # Found by the nightly fuzz walk (2026-11-01): the server's question
+    # came while a prompt was being typed in (the Macro Manager's, over the
+    # preview), opened a second prompt over it, and the one line both typed
+    # into was gone when the top one closed: drawing the first crashed.
+    test "the password asked while another prompt is typed in waits, and says so", %{
+      state: state
+    } do
+      changes = State.mode(state).changes
+      state = state |> press(:enter) |> press([{:alt_f, 3}, "h"])
+      assert %{type: :prompt} = State.mode(state)
+      typing = state.edit
+
+      state = Agendum.TUI.Extras.Publish.Results.published(state, changes, {:error, :password})
+
+      # the prompt typed in is left as it was, with its text
+      assert %{type: :prompt} = State.mode(state)
+      assert state.edit == typing
+      refute Enum.any?(state.modes, &match?(%{type: :publish_preview}, &1))
+      assert state.message == {:error, Agendum.TUI.Extras.Publish.Messages.text(:password_later)}
+
+      # ENTER and ESC close what is open without a crash
+      state |> press(:enter) |> press(:esc) |> screen()
+    end
+
     test "a password asked and not given leaves nothing published", %{state: state} do
       changes = State.mode(state).changes
       state = press(state, :enter)

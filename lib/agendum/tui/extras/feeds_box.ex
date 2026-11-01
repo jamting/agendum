@@ -200,6 +200,12 @@ defmodule Agendum.TUI.Extras.FeedsBox do
     end
   end
 
+  # Domain: the read runs in the background, so it can answer while
+  # another prompt is typed in (INS again): there is one line to type in,
+  # and asking for the name would take it over (nightly fuzz, 2026-11-01)
+  defp asked(%State{edit: edit} = state, _url, {:ok, _read}) when edit != nil,
+    do: State.error(state, Messages.text(:read_while_typing))
+
   defp asked(state, url, {:ok, read}) do
     name = Agendum.Core.subscription_name(read.title, url)
     Prompts.prompt(state, Messages.text(:name), {:feed_name, url, read.entries}, name)

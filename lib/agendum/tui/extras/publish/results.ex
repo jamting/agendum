@@ -54,16 +54,26 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   # may come while another box covers the preview (the help), or after it
   # was closed (found by the fuzz walk, 2026-10-27). The prompt keeps the
   # preview it asks for, to publish its site again; with none open, there
-  # is nothing to try again with.
+  # is nothing to try again with, nor while something is being typed.
   def published(state, _changes, {:error, :password}) do
     user = state.db.blog.user
     state = PublishPreviewBox.done(state)
 
-    case Enum.find(state.modes, &match?(%{type: :publish_preview}, &1)) do
-      nil ->
+    preview = Enum.find(state.modes, &match?(%{type: :publish_preview}, &1))
+
+    # a prompt or a text being typed (`state.edit`) has the one line to
+    # type in: the password prompt would take it over, and the text typed
+    # be lost (nightly fuzz, 2026-11-01); publishing again asks
+    cond do
+      preview == nil ->
         State.error(state, Messages.text(:password_later))
 
-      preview ->
+      state.edit != nil ->
+        state
+        |> pop_publish_preview()
+        |> State.error(Messages.text(:password_later))
+
+      true ->
         Agendum.TUI.Update.Prompts.password(
           state,
           Messages.text(:password, user, state.db.blog.target),

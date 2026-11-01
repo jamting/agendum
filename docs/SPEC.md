@@ -1565,7 +1565,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   The reading follows `docs/AGENDA_FILE_FORMAT.md` (`Agendum.Core.AgFile`, pure, through `Core.import_ag/2`). Not yet: macros, note files, the global date format, Agenda's own print settings.
 - **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸ Calendars lists the file's subscriptions to calendars on the web (iCalendar `.ics`, `https://` or `webcal://`).
 
-  INS asks for the address. The calendar is read once ("Reading …"), then its name is asked, its own name filled in (`X-WR-CALNAME`, on one line, control characters left out, at most 60 characters; without one, the address's host), and a calendar that cannot be read is not subscribed ("Not subscribed: …"). An answer that comes once the box is closed, or for an address no longer waited for, is dropped.
+  INS asks for the address. The calendar is read once ("Reading …"), then its name is asked, its own name filled in (`X-WR-CALNAME`, on one line, control characters left out, at most 60 characters; without one, the address's host), and a calendar that cannot be read is not subscribed ("Not subscribed: …"). An answer that comes once the box is closed, or for an address no longer waited for, is dropped; one that comes while another prompt is typed in (INS again) does not take that typing over: the calendar is not subscribed ("Not subscribed: the calendar was read while you typed. INS adds it").
 
   The name is the category the events go in, its own (without name matching, never a category of the person's with that name), in the family the other calendars share, else in **Calendars** under MAIN, made when first needed (R75a), and what was read is filed as it is subscribed, one undo step, without a second read.
 
@@ -1677,7 +1677,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   The Show View starts afresh each time it is used, by a schedule, a search (R37) or a dependency list (R43): its section and filter are those of the last use.
 - **R75 ✅ Feeds: a plain RSS reader** (ours; `plans/RSS_READER.md`). File ▸ Transfer ▸ Feeds lists the file's feed subscriptions, as the Calendars box does calendars (R45): a manager, as the Macros manager is (UI guidelines):
 
-  - INS subscribes (the feed's address, `https://` or `feed://`; the feed read once, then its name asked with the feed's own title filled in, as R45's calendars: an unreadable feed is not subscribed, and what was read is filed as it is subscribed).
+  - INS subscribes (the feed's address, `https://` or `feed://`; the feed read once, then its name asked with the feed's own title filled in, as R45's calendars: an unreadable feed is not subscribed, and what was read is filed as it is subscribed; a read that answers while another prompt is typed in leaves the typing alone and does not subscribe, "INS adds it").
   - ENTER reads the highlighted one now, ALT-ENTER every feed (quietly, as a scheduled read).
   - F6 opens its **Feed Properties** (as Calendar Properties, R45): **Read every** (every hour by default, 6 hours, a day, or only on request; also when Agendum starts) and **Keep** (how long its entries stay: 30 days by default, 7, 90, 365, or for ever).
   - F2 renames it.
@@ -1935,7 +1935,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   Only Agendum's own files are written, removed or uploaded (it keeps their list in `.agendum-site` in the folder); nothing else in the folder or on the server is touched. rsync sends only those paths (`--delete` limited to them by filters, `-c` comparing contents).
 
-  SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too.
+  SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too. The upload runs in the background: when the server asks while the preview is closed, or while something else is being typed, nothing is published and Agendum says "Not published: the server asks for a password. Publish again", rather than take the typing over.
 
   Afterwards the message line says "Published and uploaded: 2 added, 1 changed, 0 removed", or why not ("Not published: …"). Not yet: comments, tag pages, images uploaded from the file, publishing on a schedule.
 
