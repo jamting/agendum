@@ -61,7 +61,8 @@ defmodule Agendum.TUI.State do
             view: Database.id() | nil,
             removed: Database.id() | nil,
             copied: String.t() | nil,
-            commands: [{atom, String.t()}]
+            commands: [{atom, String.t()}],
+            marks: [Database.id()]
           },
           searches: %{
             view: Agendum.Core.Search.t() | nil,
@@ -109,8 +110,11 @@ defmodule Agendum.TUI.State do
             # (ALT-F8), the item DEL last took out of a section (ALT-Y, R42),
             # the text last cut or copied in a note (F2 PASTE, R63), and the
             # commands last run by name (CTRL-X, F1 c; R65d), the most
-            # recent first, each as `{place, name}`
-            last: %{view: nil, removed: nil, copied: nil, commands: []},
+            # recent first, each as `{place, name}`; and the items marked
+            # this session, in the order they were marked (`follow_marks/2`:
+            # Agenda moved marked items in that order and kept no marks in
+            # the file, so the order is the session's)
+            last: %{view: nil, removed: nil, copied: nil, commands: [], marks: []},
             searches: %{view: nil, note: nil},
             # macros (R50): what Learn mode is recording, the last macro
             # run (ALT-Z), and how many runs are playing, one inside another
@@ -566,6 +570,37 @@ defmodule Agendum.TUI.State do
 
   def info(state, text), do: %{state | message: {:message, text}}
   def error(state, text), do: %{state | message: {:error, text}}
+
+  @doc """
+  After a key that changed the file (`before`, then `state`): the items
+  marked by it join the end of `last.marks`, in the file's order when one
+  key marked several; the items unmarked leave it. Every way of marking
+  counts: F7, a search's mark, a macro, undo.
+  """
+  @spec follow_marks(t, t) :: t
+  def follow_marks(before, state) do
+    # sets, so that thousands of marked items stay quick
+    was = MapSet.new(Agendum.Core.marked_items(before.db))
+    now = Agendum.Core.marked_items(state.db)
+    now_set = MapSet.new(now)
+    kept = Enum.filter(state.last.marks, &MapSet.member?(now_set, &1))
+    kept_set = MapSet.new(kept)
+    new = Enum.reject(now, &(MapSet.member?(was, &1) or MapSet.member?(kept_set, &1)))
+    put_in(state.last.marks, kept ++ new)
+  end
+
+  @doc """
+  The marked items `ids` in the order they were marked: those marked
+  before this session (the file keeps marks, Agenda did not) first, in the
+  file's order, then this session's, oldest first (R35).
+  """
+  @spec in_mark_order(t, [Database.id()]) :: [Database.id()]
+  def in_mark_order(state, ids) do
+    order = MapSet.new(state.last.marks)
+    {earlier, now} = Enum.split_with(ids, &(not MapSet.member?(order, &1)))
+    now = MapSet.new(now)
+    earlier ++ Enum.filter(state.last.marks, &MapSet.member?(now, &1))
+  end
 
   @doc "Number of screen lines available for the view body."
   def body_height(%__MODULE__{height: h, key_map: false}), do: max(h - 2, 1)

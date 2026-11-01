@@ -87,6 +87,27 @@ defmodule Agendum.TUI.MoveBoxTest do
     assert String.trim(String.replace(labels, "│", " ")) == "Help"
   end
 
+  # Agenda's F1: "Agenda arranges marked items in the same order in which
+  # you mark them" (checked in Agenda 2.0, 2026-11-01); the order lives in
+  # the session, as Agenda kept no marks in the file
+  test "marked items go in the order they were marked", %{state: state} do
+    [first, second | _] = texts(state, 0)
+    there = texts(state, 1)
+    # the second item marked first, then the first
+    state = press(state, [:down, {:f, 7}, :up, {:f, 7}, {:alt_f, 10}, "m", :down, :enter])
+    assert texts(state, 1) == (there -- [first, second]) ++ [second, first]
+  end
+
+  test "items marked when the file was opened come first, in the view's order", c do
+    [first, second, third | _] = texts(c.state, 0)
+    ids = for row <- Layout.rows(c.state), row.kind == :item, row.sidx == 0, do: row.item.id
+    state = c.state.db |> Core.set_marked(Enum.take(ids, 2), true) |> start() |> press(:down)
+    there = texts(state, 1)
+    # the third marked now, after the two the file had
+    state = press(state, [:down, :down, {:f, 7}, {:alt_f, 10}, "m", :down, :enter])
+    assert texts(state, 1) == (there -- [first, second, third]) ++ [first, second, third]
+  end
+
   test "a view with one section refuses, in Agenda's words" do
     state = Agendum.Sample.build(~D[2026-10-08]) |> start() |> press([:down, {:alt_f, 10}])
     assert State.mode(state) == nil

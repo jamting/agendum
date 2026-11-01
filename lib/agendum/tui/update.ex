@@ -89,6 +89,7 @@ defmodule Agendum.TUI.Update do
     # a settings box that just closed is one undo step, or none (ADR 0030)
     state = BoxCancel.settle(before, state)
     changed? = state.db != before.db
+    state = if changed?, do: State.follow_marks(before, state), else: state
     state = %{state | dirty: state.db != state.saved.db}
     # Agenda's o, worked out only when the key changed the file (R37)
     state = if changed?, do: State.refresh_circular(before, state), else: state

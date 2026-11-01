@@ -522,10 +522,9 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 - **R25 ✅ Editing the structure from a view.** Rename a category by editing a section head or column entry (F2). Add sections (ALT-D/ALT-U) and columns (ALT-R/ALT-L) with existing or new categories.
 - **R26 ✅ Move (ALT-F10)** (User's Guide 13-5; checked in Agenda 2.0, 2026-11-01). ALT-F10 on an item, or on marked items (the Scope question first, R35), opens Agenda's small **Move** box listing the view's sections, the current one highlighted; the control panel says "Highlight the section where you want to move the item and press ENTER.", the key bar F1 Help alone.
 
-  - ↑ ↓ choose a section; ENTER moves the item(s) there: each leaves the section it came from, is assigned to the chosen one's head category and goes last in it, marked items in their order; one undo step. The highlight stays in the section they left.
+  - ↑ ↓ choose a section; ENTER moves the item(s) there: each leaves the section it came from, is assigned to the chosen one's head category and goes last in it, marked items in the order they were marked (R35); one undo step. The highlight stays in the section they left.
   - An item moved into the section it is in stays where it is (Item ▸ Reposition orders a section, R26a). ESC moves nothing.
   - Refused in a view with one section ("You can copy or move items only to another section, and this view contains only one section."), and in a datebook view (R47).
-  - Known difference: Agenda moved marked items in the order they were marked; Agendum keeps no mark order, so they keep the view's.
 - **R26a ✅ Item Reposition** (User's Guide 13-4; checked in Agenda 2.0, 2026-11-01). Item ▸ Reposition changes the item's place within its section: the control panel says Agenda's "Use up & down arrow keys to reposition the item. / Press ENTER when done.", the key bar shows F1 Help alone, and ↑ ↓ carry the highlighted item itself, one place at a time; at the top or the bottom of its section it stays, never going into the next section.
 
   - ENTER puts it down, and ESC does too (Agenda's ESC kept the new place): one undo step, none when it came back to where it was.
@@ -1538,6 +1537,8 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - F3, which shows a group assignment profile: a number beside each category says how many marked items are in it, and SPACE assigns or unassigns them all.
 
   Our deviation: marks belong to the item, not to one section, so a marked item shows marked everywhere; a moved item leaves the first section of the current view that holds it. ALT-F9 copies the marked items, or the current one, to another section (R42).
+
+  A command on the marked items takes them in the order they were marked, as Agenda's ALT-F10 arranged them ("in the same order in which you mark them", F1 help; checked in Agenda 2.0, 2026-11-01). The order belongs to the session, as Agenda kept no marks in the file (`docs/AGENDA_FILE_FORMAT.md`): items the file had marked when it was opened come first, in the file's order (our choice; Agendum keeps marks in the file).
 
 ## 5a. Data interchange
 

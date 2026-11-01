@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.74.3 — 2026-11-02
+
+- **Marked items move in the order you marked them**, as in Agenda: mark three items, press ALT-F10, and they arrive in the other section in that order. The order lasts for the session; items already marked when the file was opened come first.
+
 ## 0.74.2 — 2026-11-02
 
 - **ALT-F9 Copy in a view with only one section says so**, as Agenda did, instead of opening a Copy box with nowhere else to copy to.

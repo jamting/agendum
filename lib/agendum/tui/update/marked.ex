@@ -50,7 +50,8 @@ defmodule Agendum.TUI.Update.Marked do
   the highlight is not on an item, there is nothing to ask.
   """
   def scoped(state, action, row) do
-    marked = Core.marked_items(state.db)
+    # in the order they were marked, as Agenda moved them (R35)
+    marked = State.in_mark_order(state, Core.marked_items(state.db))
     on_item = row != nil and row.kind == :item
 
     cond do
