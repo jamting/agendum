@@ -289,6 +289,8 @@ defmodule Agendum.TUI.Fuzz do
     [:down, @f10, {:char, "v"}, {:char, "c"}, {:char, "a"}],
     [:down, :right, @f10, {:char, "v"}, {:char, "c"}, {:char, "p"}],
     [:down, @f10, {:char, "i"}, {:char, "a"}],
+    # Item ▸ Reposition (R26a): the item carried with ↑ ↓
+    [:down, @f10, {:char, "i"}, {:char, "r"}],
     [:down, {:f, 6}],
     [:down, {:f, 3}],
     [:down, {:alt_f, 9}],

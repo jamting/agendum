@@ -88,6 +88,12 @@ defmodule Agendum.TUI.Messages do
        {:adapted,
         "You assigned the current item to a category with a special action that discarded the item when you made the assignment.  You can recover the item from the trash (unless you have set Empty trash to When item is discarded)."}},
     datebook_change: {"You can't make this change in a datebook view.", :agenda},
+    reposition_children:
+      {"The section head has children, so you can't reposition individual items.", :agenda},
+    reposition_sorted:
+      {"Items in this section are sorted automatically, so you can't reposition items.",
+       {:adapted,
+        "Items in this section are sorted automatically, so you can't reposition items.  You can remove item sorting in the Section Properties box."}},
     discard_main: {"You can't discard the MAIN category from the file.", :agenda},
     discard_date_category:
       {"You can't discard the Done, Entry, or When date categories.", :agenda},

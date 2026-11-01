@@ -55,7 +55,8 @@ defmodule Agendum.TUI.Help.Topics do
     browse: "Browsing Dates",
     column_width: "A Column's Width",
     column_move: "Moving a Column",
-    section_move: "Moving a Section"
+    section_move: "Moving a Section",
+    item_reposition: "Repositioning an Item"
   }
 
   @trees [main: "", catmgr: "Category Manager ", note: "Note "]

@@ -103,6 +103,7 @@ defmodule Agendum.TUI.Modes do
     input_format: [:cursor, :opened],
     item_column: [:cursor, :opened, :sidx, :typing],
     item_props: [:cursor, :item_id, :opened],
+    item_reposition: [:item_id, :opened, :sidx],
     macro_props: [:cursor, :macro_id, :opened],
     macros: [:cursor],
     menu: [:extras, :path, :resume, :selected, :tree],

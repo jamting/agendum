@@ -239,6 +239,14 @@ defmodule Agendum.TUI.Commands do
     {:close, "Cancel", "Put it back", :none}
   ]
 
+  @item_reposition [
+    {:up, "Up", "Move the item up its section", :none},
+    {:down, "Down", "Move the item down its section", :none},
+    {:keep, "Done", "Put the item down here", :none},
+    {:help, "Help", "Help about where you are", :none},
+    {:close, "Done", "Put the item down here, as ENTER does", :none}
+  ]
+
   @section_move [
     {:up, "Up", "Move the section up", :none},
     {:down, "Down", "Move the section down", :none},
@@ -353,7 +361,8 @@ defmodule Agendum.TUI.Commands do
     browse: @browse,
     column_width: @column_width,
     column_move: @column_move,
-    section_move: @section_move
+    section_move: @section_move,
+    item_reposition: @item_reposition
   }
 
   @commands Map.merge(

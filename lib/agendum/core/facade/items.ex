@@ -139,7 +139,8 @@ defmodule Agendum.Core.Facade.Items do
   @doc """
   Moves an item from one section's category to another (ALT-F10). The item
   leaves `from` and joins `to` (MAIN is never left or joined explicitly).
-  With `after: item_id`, it is also placed after that item in item order.
+  With `after: item_id`, it is also placed after that item in item order;
+  with `before: item_id`, before it (Item Reposition's ↑, R26a).
   """
   @spec move_item(db, id, id, id, keyword) :: db
   def move_item(db, item_id, from, to, opts \\ []) do
@@ -156,13 +157,34 @@ defmodule Agendum.Core.Facade.Items do
     # `^item_id` (the pin) compares with the existing `item_id` instead of
     # binding a new variable: "placed after itself" changes nothing.
     db =
-      case opts[:after] do
-        nil -> db
-        ^item_id -> db
-        after_id -> Database.reorder_item(db, item_id, after_id)
+      case {opts[:after], opts[:before]} do
+        {nil, nil} -> db
+        {^item_id, _} -> db
+        {nil, ^item_id} -> db
+        {nil, before_id} -> Database.reorder_item_before(db, item_id, before_id)
+        {after_id, _} -> Database.reorder_item(db, item_id, after_id)
       end
 
     Changes.settle(db, before, item_id, opts[:clock])
+  end
+
+  @doc """
+  Why the items of section `sidx` in `view` cannot be put in an order of
+  one's own (Item Reposition, R26a; User's Guide 13-4), or nil when they
+  can: `:sorted` when the section or the view sorts them, `:head_has_children`
+  when its head category has children, whose items it shows too.
+  """
+  @spec reposition_refused(db, Agendum.Core.View.t(), non_neg_integer) ::
+          :sorted | :head_has_children | nil
+  def reposition_refused(db, view, sidx) do
+    section = Enum.at(view.sections, sidx)
+
+    cond do
+      # `||`: the section's own sort keys, or the view's when it has none
+      (section.sort || view.sort) not in [nil, []] -> :sorted
+      db.categories[section.category_id].children != [] -> :head_has_children
+      true -> nil
+    end
   end
 
   @doc """

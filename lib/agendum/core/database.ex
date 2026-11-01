@@ -206,6 +206,21 @@ defmodule Agendum.Core.Database do
     %{db | item_order: order}
   end
 
+  @doc """
+  Moves an item to directly before `before_id`: after the item that comes
+  before that one, or first when none does (Item Reposition's ↑, R26a).
+  """
+  @spec reorder_item_before(t, id, id) :: t
+  def reorder_item_before(%__MODULE__{} = db, id, before_id) do
+    rest = List.delete(db.item_order, id)
+
+    case Enum.find_index(rest, &(&1 == before_id)) do
+      nil -> db
+      0 -> reorder_item(db, id, :first)
+      index -> reorder_item(db, id, Enum.at(rest, index - 1))
+    end
+  end
+
   # ---------------------------------------------------------------------------
   # Categories and the hierarchy
   # ---------------------------------------------------------------------------

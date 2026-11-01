@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.17 — 2026-11-01
+
+- **Item ▸ Reposition works as Agenda's, and an item can go to the top of its section.** ↑ and ↓ carry the highlighted item up and down its own section; ENTER (or ESC, as in Agenda) puts it down, one undo step. Agenda's refusals come with it: not in a sorted section, nor under a section head with children. Before, Reposition opened ALT-F10's move, which could only put an item below another.
+
 ## 0.73.16 — 2026-11-01
 
 - **Setting a password also cleans this session's debug log.** With `AGENDUM_LOG` on, what the log held from before you gave the file a password is taken out ("12 earlier lines taken out: the file got a password"), and Erlang's own crash reports from background work show only their level while the file has a password. Logs of earlier sessions are left alone.

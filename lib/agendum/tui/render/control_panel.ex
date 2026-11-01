@@ -73,6 +73,11 @@ defmodule Agendum.TUI.Render.ControlPanel do
       %{type: :column_move} = m ->
         text_lines(state, base, :panel_hint, Agendum.TUI.Moves.ColumnMove.panel(state, m))
 
+      # Agenda's two lines, as it shows them
+      %{type: :item_reposition} ->
+        {line1, line2} = Agendum.TUI.Moves.ItemReposition.panel()
+        {[{:panel_hint, " " <> line1}], [{:panel_hint, " " <> line2}]}
+
       %{type: :section_move} = m ->
         text_lines(state, base, :panel_hint, Agendum.TUI.Moves.SectionMove.panel(state, m))
 

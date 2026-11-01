@@ -437,6 +437,15 @@ defmodule Agendum.TUI.CommandDocs do
         "so a column can stand after it."
   }
 
+  @item_reposition %{
+    up:
+      "Moves the item above the one before it in this section; at the top it stays. Its " <>
+        "categories stay as they are.",
+    down:
+      "Moves the item below the one after it in this section; at the bottom it stays, " <>
+        "never going into the next section."
+  }
+
   @section_move %{
     up:
       "Moves the section above the one before it, in this view only; the categories stay " <>
@@ -515,6 +524,7 @@ defmodule Agendum.TUI.CommandDocs do
       column_width: @column_width,
       column_move: @column_move,
       section_move: @section_move,
+      item_reposition: @item_reposition,
       line: @line,
       text: @text
     }

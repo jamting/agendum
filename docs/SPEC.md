@@ -54,6 +54,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R24a | The trash | 4 |
 | R25 | Editing the structure from a view | 4 |
 | R26 | Move (ALT-F10) | 4 |
+| R26a | Item Reposition | 4 |
 | R27 | View options | 4 |
 | R28 | Filters | 4 |
 | R28a | Date and numeric filters | 4 |
@@ -520,6 +521,11 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   ALT-Y stays DEL's yank (R42): after a discard it did nothing in Agenda 2.0, though its help says it recovers the latest one.
 - **R25 ✅ Editing the structure from a view.** Rename a category by editing a section head or column entry (F2). Add sections (ALT-D/ALT-U) and columns (ALT-R/ALT-L) with existing or new categories.
 - **R26 ✅ Move (ALT-F10).** Moving an item to another section reassigns it from the old section's category to the new one and reorders it.
+- **R26a ✅ Item Reposition** (User's Guide 13-4; checked in Agenda 2.0, 2026-11-01). Item ▸ Reposition changes the item's place within its section: the control panel says Agenda's "Use up & down arrow keys to reposition the item. / Press ENTER when done.", the key bar shows F1 Help alone, and ↑ ↓ carry the highlighted item itself, one place at a time; at the top or the bottom of its section it stays, never going into the next section.
+
+  - ENTER puts it down, and ESC does too (Agenda's ESC kept the new place): one undo step, none when it came back to where it was.
+  - Refused, in Agenda's words, in a sorted section ("Items in this section are sorted automatically, so you can't reposition items.") and when the section's head has children ("The section head has children, so you can't reposition individual items."); on a section head, "The highlight isn't on an item."
+  - Our choice: Agenda's ESC also stepped back into the Item menu; ours closes, as our other moves do.
 - **R27 ✅ View options.** Hide done items, empty sections, inherited items: set in View Properties (R78), as Agenda's; the menus have no shortcut entries for them (nor for the view's filter and sort, a section's filter, sort, collapse and lines, or the view and category managers, which are F8 and F9), as Agenda's had none.
 - **R58 ✅ Section separators** (User's Guide 5-12, 15-21; screenshots 48, 54, 143). A view setting, No by default: with Yes, each section head is a line across the screen, the section's name and its column heads on it, in place of the blank line before the section, so more fits on the screen.
 

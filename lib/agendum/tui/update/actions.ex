@@ -260,6 +260,10 @@ defmodule Agendum.TUI.Update.Actions do
   defp do_perform(state, :copy_item, _row),
     do: State.error(state, Agendum.TUI.Messages.text(:not_on_item))
 
+  # Item ▸ Reposition (R26a): the item travels its own section
+  defp do_perform(state, :reposition_item, row),
+    do: Agendum.TUI.Moves.ItemReposition.open(state, row)
+
   defp do_perform(state, :move_item, %{kind: :item, item: item, category: cat}) do
     Marked.start_move(state, [{item.id, cat.id}])
   end

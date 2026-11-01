@@ -588,6 +588,9 @@ defmodule Agendum.TUI.Update do
   defp dispatch(state, %{type: :column_move} = m, key),
     do: Agendum.TUI.Moves.ColumnMove.handle(state, m, key)
 
+  defp dispatch(state, %{type: :item_reposition} = m, key),
+    do: Agendum.TUI.Moves.ItemReposition.handle(state, m, key)
+
   defp dispatch(state, %{type: :section_move} = m, key),
     do: Agendum.TUI.Moves.SectionMove.handle(state, m, key)
 

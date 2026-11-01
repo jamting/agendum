@@ -25,6 +25,7 @@ defmodule Agendum.TUI.Render.Help do
     {"In a box of settings", [:settings]},
     {"Moving items (ALT-F10)", [:move_item]},
     {"Moving a section or a column (ALT-F10 on its head)", [:section_move, :column_move]},
+    {"Repositioning an item (Item ▸ Reposition)", [:item_reposition]},
     {"A column's width (View ▸ Column ▸ Width)", [:column_width]},
     {"Browsing dates (ALT-B)", [:browse]},
     {"Searching the view (ALT-F6)", [:searching]}

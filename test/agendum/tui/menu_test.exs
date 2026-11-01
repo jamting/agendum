@@ -34,8 +34,9 @@ defmodule Agendum.TUI.MenuTest do
       %{state: start(Agendum.Sample.build(~D[2026-10-08])) |> press(:down)}
     end
 
-    test "Item > Reposition starts moving the item", %{state: state} do
-      assert %{type: :move_item} = Agendum.TUI.State.mode(press(state, [{:f, 10}, "i", "r"]))
+    test "Item > Reposition starts repositioning the item (R26a)", %{state: state} do
+      assert %{type: :item_reposition} =
+               Agendum.TUI.State.mode(press(state, [{:f, 10}, "i", "r"]))
     end
 
     test "Item > Discard asks to confirm", %{state: state} do

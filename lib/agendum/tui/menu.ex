@@ -92,7 +92,7 @@ defmodule Agendum.TUI.Menu do
          {"Discard", "Discard the item from the file, into the trash (ALT-F4)", :discard},
          {"Undisc", "Recover item(s) from the trash", :undiscard},
          {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
-         {"Reposition", "Move the item to another section or position (ALT-F10)", :move_item},
+         {"Reposition", "Reposition the current item within this section", :reposition_item},
          {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
          {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
          {"Zettel", "Zettel ids: give the item one, follow its links",

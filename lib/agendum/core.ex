@@ -108,6 +108,7 @@ defmodule Agendum.Core do
   defdelegate edit_item(db, id, text, today, adjacent \\ []), to: Items
   defdelegate set_note(db, id, note, clock), to: Items
   defdelegate move_item(db, item_id, from, to, opts \\ []), to: Items
+  defdelegate reposition_refused(db, view, sidx), to: Items
   defdelegate toggle_done(db, id, today), to: Items
   defdelegate toggle_mark(db, id), to: Items
   defdelegate mark_done(db, id, today), to: Items

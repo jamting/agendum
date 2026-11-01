@@ -50,7 +50,8 @@ defmodule Agendum.TUI.HelpScreen do
     browse: {Agendum.TUI.Moves.Browse, :run, :about, nil},
     column_width: {Agendum.TUI.Moves.ColumnWidth, :run, :about, nil},
     column_move: {Agendum.TUI.Moves.ColumnMove, :run, :about, nil},
-    section_move: {Agendum.TUI.Moves.SectionMove, :run, :about, nil}
+    section_move: {Agendum.TUI.Moves.SectionMove, :run, :about, nil},
+    item_reposition: {Agendum.TUI.Moves.ItemReposition, :run, :about, nil}
   }
 
   @doc "The places with a keymap and an F1 text of their own, by mode type."
@@ -749,6 +750,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp place_name(:column_width), do: "while changing a width"
   defp place_name(:column_move), do: "while moving a column"
   defp place_name(:section_move), do: "while moving a section"
+  defp place_name(:item_reposition), do: "while repositioning an item"
   defp place_name(:box), do: "in every box"
   defp place_name(_elsewhere), do: "here"
 
@@ -1034,6 +1036,7 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:column_width), do: "WHILE CHANGING A WIDTH"
   defp where(:column_move), do: "WHILE MOVING A COLUMN"
   defp where(:section_move), do: "WHILE MOVING A SECTION"
+  defp where(:item_reposition), do: "WHILE REPOSITIONING AN ITEM"
   defp where(:box), do: "IN THIS BOX"
   defp where(_elsewhere), do: "ON EVERY SCREEN"
 end

@@ -75,7 +75,9 @@ defmodule Agendum.TUI.Render.KeyBar do
   # meeting 2026-10-26-1108, § 6): empty while an item or a section moves, F1
   # Help alone while a column moves or its width changes
   defp place(_state, %{type: type}) when type in [:move_item, :section_move], do: :empty_bar
-  defp place(_state, %{type: type}) when type in [:column_move, :column_width], do: :help_only
+
+  defp place(_state, %{type: type}) when type in [:column_move, :column_width, :item_reposition],
+    do: :help_only
 
   # browsing: Agenda's F1 Help, F8 Default and F10 Menu (checked in Agenda
   # 2.0, 2026-10-26), from Browse's keymap
@@ -393,6 +395,13 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"←→", "Move", "← → or < >", "Move the column"},
       {"ENTER", "Here", "Keep it here"},
       {"ESC", "Cancel", "Put it back"}
+    ]
+
+  defp mode_keys(%{type: :item_reposition}),
+    do: [
+      {"↑↓", "Move", "Move the item in its section"},
+      {"ENTER", "Done", "Put it down here"},
+      {"ESC", "Done", "Put it down here too"}
     ]
 
   defp mode_keys(%{type: :section_move}),

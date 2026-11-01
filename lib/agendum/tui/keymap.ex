@@ -273,6 +273,16 @@ defmodule Agendum.TUI.Keymap do
     {:f, 1} => :help
   }
 
+  # Item ▸ Reposition: the item travels its section; ENTER and ESC both
+  # put it down (Agenda's)
+  @item_reposition %{
+    :up => :up,
+    :down => :down,
+    :enter => :keep,
+    :esc => :close,
+    {:f, 1} => :help
+  }
+
   # moving a section (ALT-F10 on a section head)
   @section_move %{
     :up => :up,
@@ -394,6 +404,7 @@ defmodule Agendum.TUI.Keymap do
     column_width: @column_width,
     column_move: @column_move,
     section_move: @section_move,
+    item_reposition: @item_reposition,
     box: @box,
     global: @global
   }
