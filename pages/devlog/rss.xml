@@ -8,14 +8,17 @@
 <generator>Wol's Agendum</generator>
 <atom:link href="https://jamting.github.io/agendum/devlog/rss.xml" rel="self" type="application/rss+xml"/>
 <item>
-<title>Hello World</title>
+<title>The start of something</title>
 <link>https://jamting.github.io/agendum/devlog/posts/fugilifi.html</link>
 <guid isPermaLink="true">https://jamting.github.io/agendum/devlog/posts/fugilifi.html</guid>
-<pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-<description>&lt;p&gt;So, back in the days i got hooked on a application for DOS called Lotus Agenda.&lt;/p&gt;
-&lt;p&gt;I was playing around with it because i couldnt really understand what it did. It was ... wierd.&lt;/p&gt;
-&lt;p&gt;But suddenly something clicked and i suddenly found it really useful.&lt;/p&gt;
-&lt;p&gt;(to be continued)&lt;/p&gt;</description>
+<pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+<description>&lt;p&gt;So, back in the 00&apos;s i got hooked on a application for DOS called Lotus Agenda.&lt;/p&gt;
+&lt;p&gt;I was playing around with it because i couldnt really understand what it did. It was ... wierd. My memories of it are like solving a mystery.&lt;/p&gt;
+&lt;p&gt;But suddenly something clicked and i suddenly found it really useful. I used for a while, but the disadvantages of it being an old DOS application made it hard to stick to it.&lt;/p&gt;
+&lt;p&gt;Since then the memory of it never fully disappeared and i kept it on a DosBox instance on my mac.&lt;/p&gt;
+&lt;p&gt;A few weeks ago while playing with Claude i thought it could be a fun ond useful exercise to try recreating it, using Elixir which is a language i&apos;m currently studying and finding it to be &lt;em&gt;real good&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;So in this blog i´ll document the journey. It has been a fun and interesting experience.&lt;/p&gt;
+&lt;p&gt;/Mattias&lt;/p&gt;</description>
 </item>
 </channel>
 </rss>
