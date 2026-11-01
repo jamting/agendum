@@ -107,7 +107,7 @@ defmodule Agendum.TUI.Modes do
     macro_props: [:cursor, :macro_id, :opened],
     macros: [:cursor],
     menu: [:extras, :path, :resume, :selected, :tree],
-    move_item: [:moves],
+    move_items: [:cursor, :moves],
     note: [:edit, :match, :original, :target, :title, :top],
     note_search: [:cursor, :line, :replacement, :settings],
     numeric_functions: [:cursor, :opened, :sidx],

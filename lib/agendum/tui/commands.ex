@@ -187,13 +187,6 @@ defmodule Agendum.TUI.Commands do
     {:next_section, "Next section", "Highlight the section head below", :none}
   ]
 
-  @move_item [{:drop, "Drop", "Move the item(s) here", :none}] ++
-               @view_moves ++
-               [
-                 {:help, "Help", "Help about where you are", :none},
-                 {:close, "Cancel", "Leave the item(s) where they were", :none}
-               ]
-
   @searching [
                {:next_match, "Next match", "Highlight the next match", :none},
                {:previous_match, "Previous match", "Highlight the previous match", :none},
@@ -356,7 +349,6 @@ defmodule Agendum.TUI.Commands do
   @more %{
     line: @line,
     text: @text,
-    move_item: @move_item,
     searching: @searching,
     browse: @browse,
     column_width: @column_width,

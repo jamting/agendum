@@ -10,7 +10,7 @@ defmodule Agendum.TUI.Update.Marked do
   use Agendum.TUI.Boxes.Box, finish: :accept
 
   alias Agendum.Core
-  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Keymap, Terminal.Draw, Layout, State}
+  alias Agendum.TUI.{Boxes.Box, CategoryScreens, Terminal.Draw, Layout, State}
   alias Agendum.TUI.Update.{Actions, Prompts, ViewKeys}
 
   # --- marked items (User's Guide 13-1 to 13-4) ----------------------------------
@@ -271,71 +271,6 @@ defmodule Agendum.TUI.Update.Marked do
     "#{length(words)} Zettel ids given: #{Enum.join(shown, ", ")}#{more}"
   end
 
-  @doc "Starts moving items (`{id, from_category}`) to a position the person highlights."
-  def start_move(state, moves) do
-    what =
-      if length(moves) == 1,
-        do: "Move to where?",
-        else: "Move #{Draw.count(length(moves), "marked item")} to where?"
-
-    state
-    |> State.push(%Agendum.TUI.Modes.MoveItem{moves: moves})
-    |> State.info(what <> " Highlight the new position and press ENTER (ESC cancels)")
-  end
-
-  # --- moving an item between sections (ALT-F10) --------------------------------
-
-  @doc "A key while moving items: the highlight moves, ENTER drops them, ESC cancels."
-  def move_key(state, mode, key) do
-    case Keymap.lookup(:move_item, key) do
-      nil -> state
-      id -> move_command(state, mode, id)
-    end
-  end
-
-  @doc "F1's text while moving items (R65)."
-  @spec about_move() :: String.t()
-  def about_move do
-    """
-    You are moving the item, or the marked items. Move the highlight to
-    where they should go (↑ ↓, PGUP PGDN, CTRL-PGUP CTRL-PGDN for the
-    sections) and press ENTER: they are assigned to that section's
-    category and leave the one they came from.
-
-    ESC leaves them where they were.
-    """
-  end
-
-  @doc "Runs a command of moving items (`Agendum.TUI.Commands`): the view's moves, drop, cancel."
-  @spec run_move(State.t(), atom) :: State.t()
-  def run_move(state, id), do: move_command(state, State.mode(state), id)
-
-  defp move_command(state, _mode, :close), do: State.pop(state)
-
-  defp move_command(state, mode, :drop),
-    do: state |> State.pop() |> drop_item(mode, Layout.current_row(state))
-
-  defp move_command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
-  # the highlight moves as in the view
-  defp move_command(state, _mode, id), do: ViewKeys.run(state, id)
-
-  # Moves the item(s) to the highlighted position, one after another so
-  # marked items keep their order.
-  defp drop_item(state, _move, %{slot: %{}}),
-    do: State.error(state, Agendum.TUI.Messages.text(:datebook_change))
-
-  defp drop_item(state, %{moves: moves}, row) do
-    to = Enum.at(State.view(state).sections, row.sidx).category_id
-    first_after = if row.kind == :item, do: row.item.id
-
-    # each item goes after the one moved before it
-    afters = [first_after | Enum.map(moves, &elem(&1, 0))]
-
-    commands =
-      for {{id, from}, after_id} <- Enum.zip(moves, afters),
-          do: {:move_item, id, from || state.db.main_id, to, after: after_id}
-
-    {last_id, _} = List.last(moves)
-    %{State.run(state, {:batch, commands}) | cursor_key: {:item, row.sidx, last_id}}
-  end
+  @doc "Starts moving items (`{id, from_category}`): Agenda's Move box (ALT-F10, R26)."
+  def start_move(state, moves), do: Agendum.TUI.Boxes.MoveBox.open(state, moves)
 end

@@ -17,5 +17,6 @@ NOTE          Moving a section or a column changes only this view.
               ALT-F9 (COPY) puts an item in another section as well,
               instead of moving it.
 
-SEE ALSO      **Moving Items**  **Moving a Section**  **Moving a Column**
+SEE ALSO      **Repositioning an Item**  **Moving a Section**
+              **Moving a Column**
 INDEX         Move > Items; Move > Sections; Move > Columns; Items > Move; Sections > Move; Columns > Move

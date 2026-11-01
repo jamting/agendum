@@ -391,12 +391,6 @@ defmodule Agendum.TUI.CommandDocs do
   }
 
   # the modes that move something, browsing and searching (R65b)
-  @move_item %{
-    drop:
-      "Puts the item(s) in the highlighted section, below the highlighted item: each " <>
-        "leaves the section it came from and joins this one. Marked items keep their order."
-  }
-
   @searching %{
     next_match:
       "Goes on to the next item that holds what you searched for, in the view's order; " <>
@@ -518,7 +512,6 @@ defmodule Agendum.TUI.CommandDocs do
       viewmgr: @viewmgr,
       note: @note,
       box: @box,
-      move_item: @move_item,
       searching: @searching,
       browse: @browse,
       column_width: @column_width,

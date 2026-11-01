@@ -30,7 +30,7 @@ flowchart LR
     View -- "F3 in a column" --> Picker["Category picker"]
     View -- ALT-F5 --> GoTo["Go to section"]
     View -- ALT-F6 --> SearchBox["Search box"]
-    View -- "ALT-F10" --> MoveItem["Moving items"]
+    View -- "ALT-F10" --> MoveItem["Move box"]
     View -- "a key with items marked" --> Scope["Scope box"]
     Menu -- "File ▸ Properties" --> FileProps["File Properties"]
     Menu -- "Utilities ▸ Customize" --> Customize["Utilities Customize"]
@@ -106,7 +106,7 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
   - **Calendar** `:calendar` (F3 in a date column; ALT-C anywhere in a view): the pop-up calendar, to pick a date (and time) for the entry or to look one up (R46). `Agendum.TUI.Boxes.CalendarBox`.
     - **Prompt** `:prompt` for a time (F6) or a date to go to (typing).
   - **Scope** `:scope`: with items marked, whether a command (F3, F4, ALT-F2, ALT-F4, ALT-F9, ALT-F10, ALT-M, DEL) acts on the highlighted item or all marked ones (R35). `Agendum.TUI.Update.Marked`.
-  - **Moving items** `:move_item` (ALT-F10): the item follows the cursor until ENTER (R26). `Agendum.TUI.Update.Marked`.
+  - **Move** `:move_items` (ALT-F10 on an item): Agenda's small box of the view's sections; ENTER moves the item(s) there, last (R26). `Agendum.TUI.Boxes.MoveBox`.
   - **Repositioning an item** `:item_reposition` (Item ▸ Reposition): ↑ ↓ carry the item within its section, ENTER or ESC put it down (R26a). `Agendum.TUI.Moves.ItemReposition`.
   - **Copy** `:copy_items` (ALT-F9): the view's sections; ENTER puts the item(s) in the chosen one as well (R42). `Agendum.TUI.Boxes.CopyBox`.
   - **Note editor** `:note` (F5): a full screen for an item's note; also a category's note from Category Properties or the category manager. `Agendum.TUI.Typing.TextEdit`, `Agendum.TUI.Update.Notes`.
@@ -200,7 +200,7 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:confirm`           | box           | `Agendum.TUI.Update.Prompts`             | commands that ask Y/N                             | §5             |
 | `:scope`             | box           | `Agendum.TUI.Update.Marked`              | a command with items marked                       | R35            |
 | `:copy_items`        | box           | `Agendum.TUI.Boxes.CopyBox`              | ALT-F9 on an item                                 | R42            |
-| `:move_item`         | control panel | `Agendum.TUI.Update.Marked`              | ALT-F10                                           | R26            |
+| `:move_items`        | box           | `Agendum.TUI.Boxes.MoveBox`              | ALT-F10 on an item                                | R26            |
 | `:item_reposition`   | control panel | `Agendum.TUI.Moves.ItemReposition`       | Item ▸ Reposition                                 | R26a           |
 | `:searching`         | control panel | `Agendum.TUI.Boxes.SearchBox`            | the Search box                                    | R37            |
 | `:help`              | full screen   | `Agendum.TUI.HelpScreen`                 | F1 (F6 Keys: the commands, describe key)          | §5, R65, R65e  |

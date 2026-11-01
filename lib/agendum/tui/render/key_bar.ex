@@ -72,12 +72,14 @@ defmodule Agendum.TUI.Render.KeyBar do
   defp place(_state, %{type: :help, page: :topic}), do: :help_topic
 
   # the moves keep Agenda's ten slots (checked in Agenda 2.0, 2026-10-26;
-  # meeting 2026-10-26-1108, § 6): empty while an item or a section moves, F1
-  # Help alone while a column moves or its width changes
-  defp place(_state, %{type: type}) when type in [:move_item, :section_move], do: :empty_bar
+  # meeting 2026-10-26-1108, § 6): empty while a section moves, F1 Help
+  # alone while a column moves or its width changes, an item is
+  # repositioned or the Move box is open (2026-11-01)
+  defp place(_state, %{type: :section_move}), do: :empty_bar
 
-  defp place(_state, %{type: type}) when type in [:column_move, :column_width, :item_reposition],
-    do: :help_only
+  defp place(_state, %{type: type})
+       when type in [:column_move, :column_width, :item_reposition, :move_items],
+       do: :help_only
 
   # browsing: Agenda's F1 Help, F8 Default and F10 Menu (checked in Agenda
   # 2.0, 2026-10-26), from Browse's keymap
@@ -409,13 +411,6 @@ defmodule Agendum.TUI.Render.KeyBar do
       {"↑↓", "Move", "↑ ↓ or < >", "Move the section"},
       {"ENTER", "Here", "Keep it here"},
       {"ESC", "Cancel", "Put it back"}
-    ]
-
-  defp mode_keys(%{type: :move_item}),
-    do: [
-      {"↑↓", "Choose position", "Choose where it goes"},
-      {"ENTER", "Move here"},
-      {"ESC", "Cancel"}
     ]
 
   defp mode_keys(%{type: :prompt}), do: [{"ENTER", "Accept"}, {"ESC", "Cancel"}]

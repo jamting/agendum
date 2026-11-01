@@ -22,7 +22,7 @@ defmodule Agendum.TUI.HelpScreen do
 
   The mode remembers where F1 was pressed (`from`): `:view`, `:catmgr`,
   `:viewmgr`, `:note`, `:menu` (its entries first, each by its letter),
-  the moves (`:move_item`, `:browse`, `:column_width` …), `:searching`,
+  the moves (`:item_reposition`, `:browse`, `:column_width` …), `:searching`,
   `:box` (any other box: its own commands from its
   keymap, then the keys every box shares), or
   `:elsewhere` for a screen whose keys are not in a keymap yet. Pure.
@@ -45,7 +45,6 @@ defmodule Agendum.TUI.HelpScreen do
     viewmgr: {ViewManager, :run, :about, :unavailable},
     note: {Notes, :run, :about, :unavailable},
     menu: {Menu, :run, :about, nil},
-    move_item: {Agendum.TUI.Update.Marked, :run_move, :about_move, nil},
     searching: {Agendum.TUI.Boxes.SearchBox, :run_searching, :about_searching, nil},
     browse: {Agendum.TUI.Moves.Browse, :run, :about, nil},
     column_width: {Agendum.TUI.Moves.ColumnWidth, :run, :about, nil},
@@ -744,7 +743,6 @@ defmodule Agendum.TUI.HelpScreen do
   defp place_name(:viewmgr), do: "in the view manager"
   defp place_name(:note), do: "in a note"
   defp place_name(:menu), do: "in the menu"
-  defp place_name(:move_item), do: "while moving items"
   defp place_name(:searching), do: "while searching"
   defp place_name(:browse), do: "while browsing"
   defp place_name(:column_width), do: "while changing a width"
@@ -1030,7 +1028,6 @@ defmodule Agendum.TUI.HelpScreen do
   defp where(:viewmgr), do: "IN THE VIEW MANAGER"
   defp where(:note), do: "IN A NOTE"
   defp where(:menu), do: "IN THE MENU"
-  defp where(:move_item), do: "WHILE MOVING ITEMS"
   defp where(:searching), do: "WHILE SEARCHING"
   defp where(:browse), do: "WHILE BROWSING"
   defp where(:column_width), do: "WHILE CHANGING A WIDTH"

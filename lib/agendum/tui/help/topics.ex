@@ -50,7 +50,6 @@ defmodule Agendum.TUI.Help.Topics do
     catmgr: "Category Manager",
     viewmgr: "View Manager",
     note: "Note Editor",
-    move_item: "Moving Items",
     searching: "Searching a View",
     browse: "Browsing Dates",
     column_width: "A Column's Width",

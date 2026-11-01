@@ -203,7 +203,7 @@ defmodule Agendum.TUI.Keymap do
     {:f, 1} => :help
   }
 
-  # the highlight's moves in the view, while items move or a search runs
+  # the highlight's moves in the view, while a search runs
   @view_moves %{
     :up => :up,
     :down => :down,
@@ -214,9 +214,6 @@ defmodule Agendum.TUI.Keymap do
     :ctrl_pgup => :previous_section,
     :ctrl_pgdn => :next_section
   }
-
-  # moving items (ALT-F10): the highlight shows where they go
-  @move_item Map.merge(@view_moves, %{:enter => :drop, :esc => :close, {:f, 1} => :help})
 
   # searching the view (ALT-F6, then the matches)
   @searching Map.merge(@view_moves, %{
@@ -398,7 +395,6 @@ defmodule Agendum.TUI.Keymap do
     menu: @menu,
     line: @line,
     text: @text,
-    move_item: @move_item,
     searching: @searching,
     browse: @browse,
     column_width: @column_width,

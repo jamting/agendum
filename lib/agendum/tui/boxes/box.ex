@@ -170,6 +170,7 @@ defmodule Agendum.TUI.Boxes.Box do
     column_props: Agendum.TUI.Boxes.ColumnBox,
     confirm: Agendum.TUI.Update.Prompts,
     copy_items: Agendum.TUI.Boxes.CopyBox,
+    move_items: Agendum.TUI.Boxes.MoveBox,
     customize: Agendum.TUI.Boxes.CustomizeBox,
     date_rule: Agendum.TUI.Boxes.DateRuleBox,
     date_settings: Agendum.TUI.Boxes.DateSettingsBox,

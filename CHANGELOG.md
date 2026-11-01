@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.74.0 — 2026-11-01
+
+- **ALT-F10 on an item works as Agenda's: a small Move box of the view's sections.** Choose a section with ↑ ↓ and press ENTER: the item, or the marked items, move there and go last in it, and the highlight stays where it was. Moving an item into its own section leaves it in place (Item ▸ Reposition orders a section), and a view with only one section says so, as Agenda did. Before, ALT-F10 let you highlight a place and dropped the item below it.
+
 ## 0.73.17 — 2026-11-01
 
 - **Item ▸ Reposition works as Agenda's, and an item can go to the top of its section.** ↑ and ↓ carry the highlighted item up and down its own section; ENTER (or ESC, as in Agenda) puts it down, one undo step. Agenda's refusals come with it: not in a sorted section, nor under a section head with children. Before, Reposition opened ALT-F10's move, which could only put an item below another.

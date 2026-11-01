@@ -82,7 +82,7 @@ defmodule Agendum.TUI.MarkedItemsTest do
 
   test "ALT-F10 moves all marked items to another section", %{state: state} do
     meetings = cat(state, "Meetings")
-    state = state |> mark_two() |> press([{:alt_f, 10}, "m", :end, :enter])
+    state = state |> mark_two() |> press([{:alt_f, 10}, "m", :down, :enter])
     assert length(Database.items_in(state.db, meetings)) == 2
     assert length(Database.items_in(state.db, cat(state, "Calls"))) == 3
   end

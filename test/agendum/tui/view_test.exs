@@ -269,8 +269,8 @@ defmodule Agendum.TUI.ViewTest do
     db = Core.add_section(db, view.id, meetings, 1)
     state = start(db)
 
-    state = press(state, [:down, {:alt_f, 10}, :end, :enter])
-    item = Agendum.TUI.Layout.current_row(state).item
+    item = Agendum.TUI.Layout.current_row(press(state, :down)).item
+    state = press(state, [:down, {:alt_f, 10}, :down, :enter])
     assert Database.member?(state.db, item.id, meetings)
     refute Database.member?(state.db, item.id, hd(Database.find_categories(db, "Calls")))
   end

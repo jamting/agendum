@@ -33,7 +33,7 @@ defmodule Agendum.TUI.Update do
   }
 
   alias Agendum.TUI.{Boxes.BoxCancel, Boxes.BoxChoices, Boxes.BoxDefaults}
-  alias Agendum.TUI.Update.{Actions, Marked, Notes, Prompts, ViewKeys}
+  alias Agendum.TUI.Update.{Actions, Notes, Prompts, ViewKeys}
 
   # `%State{} = state` in the head both checks that the argument is a
   # `State` struct (anything else fails to match and crashes here, at the
@@ -95,7 +95,7 @@ defmodule Agendum.TUI.Update do
 
     state =
       if state.modes == [] or
-           match?(%{type: t} when t in [:move_item, :searching, :browse], State.mode(state)),
+           match?(%{type: t} when t in [:item_reposition, :searching, :browse], State.mode(state)),
          do: Layout.settle(state),
          else: state
 
@@ -576,8 +576,6 @@ defmodule Agendum.TUI.Update do
 
   defp dispatch(state, %{type: :devtools} = m, key),
     do: Agendum.TUI.DevTools.handle(state, m, key)
-
-  defp dispatch(state, %{type: :move_item} = m, key), do: Marked.move_key(state, m, key)
 
   defp dispatch(state, %{type: :browse} = m, key),
     do: Agendum.TUI.Moves.Browse.handle(state, m, key)

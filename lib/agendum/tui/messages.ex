@@ -88,6 +88,10 @@ defmodule Agendum.TUI.Messages do
        {:adapted,
         "You assigned the current item to a category with a special action that discarded the item when you made the assignment.  You can recover the item from the trash (unless you have set Empty trash to When item is discarded)."}},
     datebook_change: {"You can't make this change in a datebook view.", :agenda},
+    move_one_section:
+      {"You can copy or move items only to another section, and this view contains only one section.",
+       {:adapted,
+        "You can copy or move items only to another section, and this view contains only one section.  If you want to reposition the item within the section, use the Item Reposition command."}},
     reposition_children:
       {"The section head has children, so you can't reposition individual items.", :agenda},
     reposition_sorted:

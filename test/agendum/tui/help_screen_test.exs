@@ -387,14 +387,14 @@ defmodule Agendum.TUI.HelpScreenTest do
   end
 
   describe "while moving or browsing" do
-    test "moving items: F1 opens the help, c lists drop and the view's moves", %{state: state} do
-      moving = press(state, [:down, {:alt_f, 10}])
-      assert State.mode(moving).type == :move_item
+    test "repositioning an item: F1 opens the help, c lists its moves", %{state: state} do
+      moving = press(state, [:down, {:f, 10}, "i", "r"])
+      assert State.mode(moving).type == :item_reposition
       text = screen(press(moving, [{:f, 1}, {:f, 6}, :enter]))
-      assert text =~ "COMMANDS WHILE MOVING ITEMS"
-      assert text =~ ~r/Drop +ENTER +Move the item\(s\) here/
-      assert described(moving, :down) =~ "↓ runs Down while moving items."
-      assert State.mode(press(moving, [{:f, 1}, :esc])).type == :move_item
+      assert text =~ "COMMANDS WHILE REPOSITIONING AN ITEM"
+      assert text =~ ~r/Up +↑ +Move the item up its section/
+      assert described(moving, :down) =~ "↓ runs Down while repositioning an item."
+      assert State.mode(press(moving, [{:f, 1}, :esc])).type == :item_reposition
     end
 
     test "browsing a datebook: c lists its moves, ENTER on one runs it", %{state: state} do
