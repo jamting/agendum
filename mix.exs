@@ -5,7 +5,7 @@ defmodule Agendum.MixProject do
   def project do
     [
       app: :agendum,
-      version: "0.73.9",
+      version: "0.73.10",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),

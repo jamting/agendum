@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. Security: the threat model, and an encrypted file's text kept out of the session log (Security, below)
+1. Security: the threat model (Security, below)
 2. The extras: the screen test with the extras off, then the F10 E Extras menu (The extras, below)
 3. The GTD starter (Towards parity with Agenda, below)
 
@@ -44,7 +44,6 @@ Security for the person in both senses: protection from others, and the program 
 - **Kept very short:** open items only; expert and code reviews add to it; an item here is fixed as soon as possible, and a done one moves to `ROADMAP_DONE.md`.
 
 - [ ] A threat model, about a page (`docs/SECURITY.md` or a section of `ARCHITECTURE.md`): what could go wrong, for whom and how badly, one line per door, so that this list is chosen rather than collected. The doors: the file at rest (ADR 0046), hostile feeds, calendars and `.AG` files, the SFTP uploads, what the session log holds, the capture from outside when it comes, and later what an agent may do (item text is data, never instructions)
-- [ ] An encrypted file's text never in the session log (found 2026-10-31, preparing the threat model): with `AGENDUM_LOG` on, `Agendum.TUI.DebugLog` writes every typed key, so the items and notes typed into a file with a password (ADR 0046) land as plain text in `~/.local/state/agendum/logs`. Passwords are already hidden (`DebugLog`, the password prompt); the typed text of an encrypted file should be counted the same way, not written
 - [ ] The CI's actions pinned by commit hash, not only by tag (`.github/workflows/`), so a moved tag cannot change what runs
 - [ ] Standing, about once a quarter (next by 2027-01-31): look over the CI pipeline (workflows, permissions, secrets) and the dependencies (four, all dev/test only, ADR 0021)
 

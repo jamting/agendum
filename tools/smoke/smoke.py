@@ -8,7 +8,8 @@ built-in screen emulator turns the program's output back into text, so no
 packages beyond Python's own are needed.
 
 Sandboxed on purpose (CLAUDE.md, "Testing the real terminal"): the child
-gets a scratch XDG_CONFIG_HOME and XDG_STATE_HOME, no AGENDUM_LOG, and
+gets a scratch XDG_CONFIG_HOME and XDG_STATE_HOME, no AGENDUM_LOG (with
+--log, a debug log in the scratch folder, printed at the end), and
 SSH_CONNECTION set so sounds ring the bell instead of playing aloud. A FILE
 given with --file is copied into the scratch folder first, so a save in the
 smoke test never touches the original.
@@ -37,6 +38,7 @@ Examples:
     tools/smoke/smoke.py --file my.agendum text:Call Bob ENTER snap ALT-Z
     tools/smoke/smoke.py --args "--rabbit --theme mono" F1
     tools/smoke/smoke.py --extras --file feeds.agendum F10 text:f text:t text:f
+    tools/smoke/smoke.py --log --file owl.agendum text:Hoot ENTER   # and its log
 
 Without --file or --args the demo file opens (--demo); with --args alone,
 only those flags are passed (no flags at all: a new, untitled file).
@@ -339,6 +341,7 @@ def main():
     parser.add_argument("--highlight", action="store_true", help="list highlighted text")
     parser.add_argument("--each", action="store_true", help="print the screen after every key")
     parser.add_argument("--extras", action="store_true", help="turn the Extras on (feeds, calendars, blog) in the scratch preferences")
+    parser.add_argument("--log", action="store_true", help="write a debug log (AGENDUM_LOG) in the scratch folder and print it at the end")
     opts = parser.parse_args()
 
     cols, rows = (int(x) for x in opts.size.lower().split("x"))
@@ -366,6 +369,9 @@ def main():
 
     env = dict(os.environ)
     env.pop("AGENDUM_LOG", None)
+    logs = os.path.join(scratch, "logs")
+    if opts.log:
+        env["AGENDUM_LOG"] = logs
     env.pop("COLORTERM", None)
     env.update(
         XDG_CONFIG_HOME=os.path.join(scratch, "config"),
@@ -427,6 +433,10 @@ def main():
             os.waitpid(pid, 0)
         except ChildProcessError:
             pass
+        if opts.log:
+            for name in sorted(os.listdir(logs)) if os.path.isdir(logs) else []:
+                with open(os.path.join(logs, name)) as f:
+                    print(f"┌─ log {name}\n{f.read()}└─")
         shutil.rmtree(scratch, ignore_errors=True)
 
     sys.exit(0 if alive else 1)

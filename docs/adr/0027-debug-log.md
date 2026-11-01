@@ -16,7 +16,7 @@ A crash in the terminal UI leaves only Elixir's report behind. It says where the
 
 ## Consequences
 
-- What is typed (item text, notes) is in the log. It stays on this computer, it is off by default, and only five sessions are kept.
+- What is typed (item text, notes) is in the log. It stays on this computer, it is off by default, and only ten sessions are kept. A file with a password is the exception (added 2026-11-01, ADR 0046): while it is open its text stays out of the log (typed characters counted, messages by kind, the view's name, a crash's message and its stack trace's arguments hidden), as an encrypted file's text should not lie in plain text beside it.
 - `DebugLog` is a new module of the imperative shell, with `App` and `CLI` its only callers.
 - Not a preference: it is for debugging on one computer, not a setting of the program, so it lives in the environment, not in File ▸ Customize.
 - A lag is found by replaying the log's keys on the same file: the commit says which code ran and the fingerprint whether the copy is the file the session began with (added 2026-10-15, after the first lag found this way took a replay to learn which view was open).

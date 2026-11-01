@@ -18,4 +18,5 @@ Lotus Agenda let a file have a password (File Properties ▸ Set file password; 
 
 - Opening an encrypted file asks for the password (wrong: Agenda's "The password you typed is incorrect."); the core stays pure: encryption, randomness and the key derivation happen in `Store`, a shell module.
 - A save takes about 60 ms longer while the file has a password.
+- The debug log (ADR 0027) keeps an encrypted file's text out while it is open: typed characters counted, messages by kind, names and a crash's details hidden (added 2026-11-01). A crash's recovery file is encrypted with the same password (R82b).
 - The planned web version stores files on a server; whether it keeps them encrypted with the person's password is for that plan to decide.

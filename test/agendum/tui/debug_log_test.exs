@@ -101,6 +101,72 @@ defmodule Agendum.TUI.DebugLogTest do
     assert dir |> File.ls!() |> length() == 10
   end
 
+  # ADR 0046, R82: a file with a password is encrypted on disk, so its text
+  # must not lie in plain text in the log either (found 2026-10-31)
+  @tag :tmp_dir
+  test "a file with a password: its text never in the log, the keys only counted",
+       %{tmp_dir: dir} do
+    {:ok, db} = Core.set_password(Core.new_file(), "Hoot")
+    view_id = hd(db.view_order)
+    db = put_in(db.views[view_id].name, "Heffalump view")
+    state = start(db)
+
+    task =
+      Task.async(fn ->
+        path = DebugLog.start(%{"AGENDUM_LOG" => dir}, [])
+        DebugLog.input("H", [{:char, "H"}], state)
+        DebugLog.input("ef", [{:char, "e"}, {:char, "f"}, :enter], state)
+        DebugLog.input("\e[A", [:up], state)
+        DebugLog.macro([{:char, "f"}, {:char, "a"}, :enter], state)
+        DebugLog.message(nil, Agendum.TUI.State.error(state, "No Heffalump here"))
+
+        DebugLog.slow(%{keys: [{:char, "l"}], total: 300, update: 0, draw: 0}, state, %{
+          collections: 0,
+          memory: 1,
+          loop: 1
+        })
+
+        try do
+          raise ArgumentError, "Heffalump trap"
+        rescue
+          e -> DebugLog.crash(:error, e, __STACKTRACE__, state)
+        end
+
+        # a missing key names the key in its message; a function clause
+        # error writes its arguments into the stack trace
+        for fun <- [&Map.fetch!(Process.get(:never_set, %{}), &1), &only_ok/1] do
+          try do
+            fun.(Process.get(:never_set, "Heffalump key"))
+          rescue
+            e -> DebugLog.crash(:error, e, __STACKTRACE__, state)
+          end
+        end
+
+        DebugLog.stop()
+        path
+      end)
+
+    text = File.read!(Task.await(task))
+
+    for secret <- ["Heffalump", ~s("H"), ~s("e"), ~s("f"), ~s("a"), ~s("l")],
+        do: refute(text =~ secret, "#{secret} in the log:\n#{text}")
+
+    # what is left still helps: keys by name, counts, the crash's kind
+    assert text =~ "input 1 key: 1 character (not shown) and []"
+    assert text =~ "input 3 keys: 2 characters (not shown) and [:enter]"
+    assert text =~ ~s(input "\\e[A" → [:up])
+    assert text =~ "macro plays 3 keys: 2 characters (not shown) and [:enter]"
+    assert text =~ "error (text hidden: a file with a password)"
+    assert text =~ "slow answer 300 ms to 1 key: 1 character (not shown) and []"
+    assert text =~ "** (ArgumentError) (message hidden: a file with a password)"
+    assert text =~ "** (KeyError) (message hidden: a file with a password)"
+    assert text =~ "** (FunctionClauseError) (message hidden: a file with a password)"
+    assert text =~ "only_ok/1"
+    assert text =~ "Modes"
+  end
+
+  defp only_ok(:ok), do: :ok
+
   test "without a log every call does nothing" do
     assert DebugLog.start(%{"HOME" => "/h"}, []) == nil
     assert DebugLog.write("nothing") == :ok

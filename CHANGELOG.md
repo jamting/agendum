@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.73.10 — 2026-11-01
+
+- **A file with a password stays private in the debug log** (`AGENDUM_LOG`): while it is open, the log counts what you type instead of writing it, and leaves out messages' text, the view's name and a crash's details. Before, items and notes typed into an encrypted file lay in the log as plain text.
+
 ## 0.73.9 — 2026-10-31
 
 - **A file named when starting opens at once**, without the splash screen, as in Agenda (`agendum my.agendum`). The splash still greets you when Agendum starts without a file, and with `--demo`.

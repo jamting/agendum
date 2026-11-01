@@ -304,7 +304,7 @@ defmodule Agendum.TUI.App do
     # a macro run (R50): its keys come next, one by one, before the rest
     {plays, effects} = Enum.split_with(effects, &match?({:play, _}, &1))
     played = Enum.flat_map(plays, fn {:play, played} -> played ++ [:macro_done] end)
-    if played != [], do: DebugLog.macro(played)
+    if played != [], do: DebugLog.macro(played, state)
     keys = played ++ keys
 
     case run_effects(state, effects) do

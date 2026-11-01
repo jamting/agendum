@@ -20,7 +20,11 @@ defmodule Agendum.TUI.DebugLog do
   2026-10-26-1524, § 7). A web address is written by its host only
   (`redact/1`): a calendar's or feed's address can hold a private token.
 
-  What is typed is in the log, so it stays on this computer. Logging
+  What is typed is in the log, so it stays on this computer; but while the
+  file has a password (ADR 0046), and so is encrypted on disk, its text is
+  kept out of the log too: typed characters are counted, not written, and
+  messages, the view's name, a crash's message and the arguments in its
+  stack trace are left out (`encrypted?/1`). Logging
   never stops the program: a log that cannot be written is left off.
   `dir/1`, `file_name/1`, `old_sessions/1`, `build_text/0`, `file_text/2`,
   `view_text/1`, `slow_text/1`, `effect_text/2` and `redact/1` are pure; the rest writes
@@ -236,7 +240,8 @@ defmodule Agendum.TUI.DebugLog do
   while Agendum was busy) never shows its characters, only how many, its
   other keys by name: the key that opens a password prompt can come in the
   same batch as the password typed after it (code review 2026-10-26), and
-  the state the batch arrived in cannot tell. Pure.
+  the state the batch arrived in cannot tell. In a file with a password a
+  single character is counted too (`encrypted?/1`). Pure.
   """
   @spec input_text(binary, [term], State.t()) :: String.t()
   def input_text(bytes, keys, state) do
@@ -244,20 +249,47 @@ defmodule Agendum.TUI.DebugLog do
       Agendum.TUI.Update.Prompts.password_prompt?(state) ->
         "input (#{length(keys)} keys hidden: a password)#{modes(state)}"
 
-      match?([_], keys) ->
+      match?([_], keys) and not hide_keys?(keys, state) ->
         "input #{inspect(bytes)} → #{inspect(keys)}#{modes(state)}"
 
       true ->
-        {chars, others} = Enum.split_with(keys, &match?({:char, _}, &1))
-
-        "input #{length(keys)} keys: #{length(chars)} characters (not shown) and " <>
-          "#{inspect(others)}#{modes(state)}"
+        "input #{keys_counted(keys)}#{modes(state)}"
     end
   end
 
-  @doc "Keys a macro plays."
-  @spec macro([term]) :: :ok
-  def macro(keys), do: write("macro plays #{inspect(keys)}")
+  @doc """
+  Whether the file in use has a password (ADR 0046): it is encrypted on
+  disk, so its text (items, notes, names, what is typed into it) stays out
+  of the log as well.
+  """
+  @spec encrypted?(State.t()) :: boolean
+  def encrypted?(%State{db: db}), do: db.password != nil
+
+  # keys whose characters must not be written: any typed text, while the
+  # file has a password
+  defp hide_keys?(keys, state),
+    do: encrypted?(state) and Enum.any?(keys, &match?({:char, _}, &1))
+
+  # keys with their characters counted, not shown, and the rest by name
+  # ("3 keys: 2 characters (not shown) and [:enter]")
+  defp keys_counted(keys) do
+    {chars, others} = Enum.split_with(keys, &match?({:char, _}, &1))
+
+    "#{count(length(keys), "key")}: #{count(length(chars), "character")} (not shown) and " <>
+      inspect(others, limit: 8)
+  end
+
+  # keys as the log shows them: by name, or counted where text is hidden
+  defp keys_text(keys, state) do
+    if hide_keys?(keys, state), do: keys_counted(keys), else: inspect(keys, limit: 8)
+  end
+
+  @doc """
+  Keys a macro plays; a macro is part of the file, so its typed text is
+  counted, not written, while the file has a password.
+  """
+  @spec macro([term], State.t()) :: :ok
+  def macro(keys, state), do: write("macro plays #{keys_text(keys, state)}")
 
   @doc """
   An effect `App` has run, and how long it took in milliseconds
@@ -382,20 +414,25 @@ defmodule Agendum.TUI.DebugLog do
   """
   @spec slow(answer, State.t(), runtime) :: :ok
   def slow(answer, state, before) do
-    case slow_text(answer) do
+    case slow_text(answer, state) do
       nil -> :ok
       text -> write(text <> " · " <> view_text(state) <> " · " <> runtime_text(before, runtime()))
     end
   end
 
-  @doc "The log line for a slow answer, nil for a quick one."
-  @spec slow_text(answer) :: String.t() | nil
-  def slow_text(%{total: total}) when total < @slow_ms, do: nil
+  @doc """
+  The log line for a slow answer, nil for a quick one; with the state, its
+  typed text is counted in a file with a password.
+  """
+  @spec slow_text(answer, State.t() | nil) :: String.t() | nil
+  def slow_text(answer, state \\ nil)
+  def slow_text(%{total: total}, _state) when total < @slow_ms, do: nil
 
-  def slow_text(%{keys: keys, total: total, update: update, draw: draw}) do
+  def slow_text(%{keys: keys, total: total, update: update, draw: draw}, state) do
     waiting = max(total - update - draw, 0)
+    keys = if state, do: keys_text(keys, state), else: inspect(keys, limit: 8)
 
-    "slow answer #{total} ms to #{inspect(keys, limit: 8)} " <>
+    "slow answer #{total} ms to #{keys} " <>
       "(waiting #{waiting} ms, update #{update} ms, draw #{draw} ms)"
   end
 
@@ -409,8 +446,9 @@ defmodule Agendum.TUI.DebugLog do
     view = State.view(state)
     filters = length(view.filter) + Enum.sum_by(view.sections, &length(&1.filter))
     kind = if view.datebook, do: "datebook, ", else: ""
+    name = if encrypted?(state), do: "(name hidden)", else: inspect(view.name)
 
-    "view #{inspect(view.name)} (#{kind}#{count(length(view.sections), "section")}, " <>
+    "view #{name} (#{kind}#{count(length(view.sections), "section")}, " <>
       "#{count(filters, "filter")})"
   end
 
@@ -430,32 +468,74 @@ defmodule Agendum.TUI.DebugLog do
   @spec build_text() :: String.t()
   def build_text, do: "Wol's Agendum #{@version} (commit #{@commit}, #{@build_env} build)"
 
-  @doc "A message or error new on the screen since `before`."
+  @doc """
+  A message or error new on the screen since `before`; only its kind in a
+  file with a password, as a message can quote an item or a category.
+  """
   @spec message(State.t() | nil, State.t()) :: :ok
   def message(%State{message: same}, %State{message: same}), do: :ok
-  def message(_before, %State{message: {kind, text}}), do: write("#{kind} #{text}")
+
+  def message(_before, %State{message: {kind, text}} = state) do
+    if encrypted?(state),
+      do: write("#{kind} (text hidden: a file with a password)"),
+      else: write("#{kind} #{text}")
+  end
+
   def message(_before, _state), do: :ok
 
-  @doc "A crash: what was raised, where, and the state it happened in."
+  @doc """
+  A crash: what was raised, where, and the state it happened in. In a file
+  with a password only the kind of exception and where it happened: its
+  message and the arguments in the stack trace can quote the file's text.
+  """
   @spec crash(atom, term, Exception.stacktrace(), State.t()) :: :ok
   def crash(kind, reason, stacktrace, state) do
+    hidden = encrypted?(state)
+
     context =
       state
       |> DevTools.lines(%{key: nil})
       # from Screen on: the key tester's part means nothing here
       |> Enum.drop_while(&(&1 != "Screen"))
       |> Enum.map_join("\n", fn
+        # the view's name is the file's text
+        {"View", _value} when hidden -> "  View: (name hidden)"
         {label, value} -> "  #{label}: #{value}"
         heading -> heading
       end)
 
     write("""
     CRASH
-    #{Exception.format(kind, reason, stacktrace)}
+    #{crash_header(kind, reason, stacktrace, state)}
     State before it:
     #{context}
     Mode stack: #{modes_text(state)}\
     """)
+  end
+
+  defp crash_header(kind, reason, stacktrace, state) do
+    if encrypted?(state) do
+      # `Exception.normalize/3` turns an Erlang error (`:badarg`) into an
+      # Elixir exception struct, whose module names the kind of error
+      name =
+        case Exception.normalize(kind, reason, stacktrace) do
+          %{__exception__: true, __struct__: module} -> inspect(module)
+          _ -> to_string(kind)
+        end
+
+      # a stack frame is {module, function, arguments or arity, place}:
+      # the arguments become their count
+      frames =
+        Enum.map(stacktrace, fn
+          {module, fun, args, place} when is_list(args) -> {module, fun, length(args), place}
+          frame -> frame
+        end)
+
+      "** (#{name}) (message hidden: a file with a password)\n" <>
+        Exception.format_stacktrace(frames)
+    else
+      Exception.format(kind, reason, stacktrace)
+    end
   end
 
   # the fields of a box that can hold a password (ADR 0046): the New File
@@ -468,6 +548,11 @@ defmodule Agendum.TUI.DebugLog do
   wrote it in plain text). Pure.
   """
   @spec modes_text(State.t()) :: String.t()
+  # in a file with a password, the boxes' kinds alone: what they hold is
+  # the file's text
+  def modes_text(%State{db: %{password: password}} = state) when password != nil,
+    do: Enum.map_join(state.modes, " > ", &Atom.to_string(&1.type))
+
   def modes_text(state) do
     state.modes
     |> Enum.map(fn
