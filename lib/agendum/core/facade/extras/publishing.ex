@@ -23,7 +23,9 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   """
   @type changes :: %{optional(atom) => term}
 
-  @text_fields ~w(title description author language base_url me folder target user remote_dir)a
+  # the folder and the upload are the person's since format 47 (in their
+  # preferences, `Agendum.Core.Extras.Upload`): given here, they are ignored
+  @text_fields ~w(title description author language base_url me)a
 
   @doc "Changes the blog's settings (see `t:changes/0`)."
   @spec set_blog(db, changes) ::
@@ -83,13 +85,8 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   end
 
   defp settings(changes) do
-    fields = Map.take(changes, [:upload | @text_fields])
-
-    valid =
-      Enum.all?(fields, fn
-        {:upload, upload} -> upload in Blog.uploads()
-        {_text, value} -> is_binary(value)
-      end)
+    fields = Map.take(changes, @text_fields)
+    valid = Enum.all?(fields, fn {_text, value} -> is_binary(value) end)
 
     if valid,
       do:
@@ -112,6 +109,19 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
       Zettels.attach_zettels(db, ids)
     end
   end
+
+  @doc """
+  An older file's blog upload settings (format 46 and before kept them in
+  the file; `Blog.moved_upload`), for the person's preferences (R74);
+  nil when it had none. Never written: the file's next save leaves them
+  out.
+  """
+  @spec moved_upload(db) :: Agendum.Core.Extras.Upload.t() | nil
+  def moved_upload(db), do: db.blog.moved_upload
+
+  @doc "The ways of uploading the blog, in the order they are offered (R74)."
+  @spec upload_methods() :: [Agendum.Core.Extras.Upload.method()]
+  def upload_methods, do: Agendum.Core.Extras.Upload.methods()
 
   @doc "The posts, newest first (`Agendum.Core.Extras.Blog.posts/1`)."
   @spec blog_posts(db) :: [Agendum.Core.Item.t()]

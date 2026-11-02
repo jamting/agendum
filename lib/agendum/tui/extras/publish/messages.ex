@@ -26,12 +26,22 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
 
   def text(:up_to_date), do: "The folder already holds this site: nothing to publish"
   def text(:password_later), do: "Not published: the server asks for a password. Publish again"
+  def text(:site_kept), do: "Kept the site settings"
+  def text(:save_first), do: "Save the file first: its upload settings are kept by its name"
+
+  def text(:upload_session_only),
+    do: "The blog's upload settings last this session only: no preferences file"
+
+  def text(:upload_moved),
+    do: "The blog's folder and upload moved to your preferences (Extras ▸ Publish ▸ Upload)"
 
   @doc "A text with one thing to fill in: a folder, or why it failed."
   @spec text(atom, String.t()) :: String.t()
   def text(:reading, folder), do: "Reading #{folder} …"
   def text(:cannot_read_folder, reason), do: "Could not read the site's folder: #{reason}"
   def text(:not_published, reason), do: "Not published: #{reason}"
+  def text(:upload_kept, file), do: "Kept the upload settings for #{file}"
+  def text(:upload_whose, file), do: "Yours, for #{file} on this computer; not kept in the file."
 
   @doc """
   The site published, uploaded or not, with what changed ("2 added, 1

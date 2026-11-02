@@ -263,9 +263,11 @@ defmodule Agendum.TUI.Fuzz do
     %{walk | state: state, pending: walk.pending ++ asked(effects, walk.file)}
   end
 
-  # Extras ▸ Feeds, Calendars or Publish; `:preview` is Publish's
-  # ENTER too, which shows what publishing would change, and `:upload` the
-  # preview's ENTER after it, so the upload is under way from the start
+  # Extras ▸ Feeds, Calendars, or Publish ▸ Site (`:publish`) or Upload
+  # (`:upload_box`); `:preview` is Publish ▸ Publish and ENTER (the first
+  # time it opens Site, whose ENTER goes on), which shows what publishing
+  # would change, and `:upload` the preview's ENTER after it, so the upload
+  # is under way from the start
   # The boxes a walk may start in (expert review 2026-10-30, § 18.1): the
   # keys that open each, shared with the screen test of the extras off
   # (`Agendum.BoxPaths`)
@@ -313,8 +315,16 @@ defmodule Agendum.TUI.Fuzz do
   defp open_extra(walk, nil), do: walk
 
   defp open_extra(walk, box) do
-    letter = %{feeds: "f", calendars: "c"}[box] || "p"
-    walk = press_shell(walk, [{:f, 10}, {:char, "f"}, {:char, "t"}, {:char, letter}])
+    keys =
+      case box do
+        :feeds -> ["f"]
+        :calendars -> ["c"]
+        :publish -> ["p", "s"]
+        :upload_box -> ["p", "u"]
+        _preview_or_upload -> ["p", "p"]
+      end
+
+    walk = press_shell(walk, [{:f, 10}, {:char, "e"} | Enum.map(keys, &{:char, &1})])
     walk = if box in [:preview, :upload], do: press_shell(walk, [:enter]), else: walk
     if box == :upload, do: press_shell(walk, [:enter]), else: walk
   end
@@ -553,7 +563,8 @@ defmodule Agendum.TUI.Fuzz do
             from_golden <- member_of([false, false, false, true]),
             # and then perhaps with one of the extras' boxes open, which a
             # random walk would hardly reach through the menu
-            opening <- member_of([nil, :feeds, :calendars, :publish, :preview, :upload]),
+            opening <-
+              member_of([nil, :feeds, :calendars, :publish, :upload_box, :preview, :upload]),
             # about half the other walks start inside one of the boxes
             box <- member_of(List.duplicate(nil, length(@boxes)) ++ @boxes),
             max_runs: div(@runs + @parts - 1, @parts),

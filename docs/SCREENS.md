@@ -184,7 +184,9 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
 
 - **Imported from Agenda** `:ag_import` (by itself, after File ▸ Transfer ▸ Import or `agendum OLD.AG` imported a Lotus Agenda file): what came over, what was left out, and the items filed differently from Agenda; CTRL-P writes it to a text file (R72). `Agendum.TUI.Boxes.ImportReportBox`. Before it, for a file with a password, a **Prompt** `:prompt` whose text shows as stars.
 
-- **Publish the blog** `:publish` (Extras ▸ Publish): the micro-blog's settings, its posts and drafts categories, title, address, folder and upload (R74). `Agendum.TUI.Extras.PublishBox`. ENTER reads the folder, then:
+- **Publish: the site** `:publish` (Extras ▸ Publish ▸ Site; the first Publish too): the micro-blog's settings kept in the file, its posts and drafts categories, title and address (R74). `Agendum.TUI.Extras.PublishBox`. ENTER keeps them; opened by the first Publish, it goes on as Publish does.
+- **Publish: upload** `:publish_upload` (Extras ▸ Publish ▸ Upload): where the site is written and how it is uploaded, the person's, kept in their preferences for this file (R74). `Agendum.TUI.Extras.UploadBox`.
+- Extras ▸ Publish ▸ Publish makes the site and reads the folder, then:
   - **Publish: what will change** `:publish_preview`: the files publishing adds, changes and removes, before anything is written; ENTER writes and uploads (R74). `Agendum.TUI.Extras.PublishPreviewBox`. An SFTP server that wants a password asks in a **Prompt** `:prompt` whose text shows as stars.
 
 - **Developer tools** `:devtools` (ESC ?, hidden, from anywhere but while typing): a full screen of debugging facts and a key tester; see `docs/KEYBOARD.md`. `Agendum.TUI.DevTools`.
@@ -251,8 +253,9 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:questions`         | box           | `Agendum.TUI.Boxes.QuestionsBox`         | Utilities ▸ Questions                              | R16            |
 | `:away`              | box           | `Agendum.TUI.Boxes.AwayBox`              | Opening a file with alarms due while it was closed | R70           |
 | `:ag_import`         | box           | `Agendum.TUI.Boxes.ImportReportBox`      | Importing a Lotus Agenda file                     | R72            |
-| `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | Extras ▸ Publish                         | R74            |
-| `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | ENTER in the Publish box                          | R74            |
+| `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | Extras ▸ Publish ▸ Site                  | R74            |
+| `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | Extras ▸ Publish ▸ Publish                        | R74            |
+| `:publish_upload`    | box           | `Agendum.TUI.Extras.UploadBox`            | Extras ▸ Publish ▸ Upload                | R74            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:view_props`        | box           | `Agendum.TUI.Boxes.ViewProps`            | View ▸ Properties, F6 in the view manager         | R78            |
 | `:view_stats`        | box           | `Agendum.TUI.Boxes.ViewStatsBox`         | View Properties ▸ View statistics                 | R78            |

@@ -1297,7 +1297,7 @@ File Properties has File statistics ..., Agenda's File Statistics box (screensho
   - Select Numeric Functions (Total, as a new numeric column).
   - Macro Properties (no key attached, run from a view, a note and the category manager).
   - The input format (a fresh start's).
-  - The Publish box (R74: Posts, no Drafts, the file's name as the title, the folder `site`, no upload).
+  - The publisher's Site box (R74: Posts, no Drafts, the file's name as the title) and Upload box (the folder `site`, no upload).
 
   Item Properties has none. Our choice: Agenda's CTRL-ENTER (clear a typed setting) is left out, as terminals send CTRL-ENTER as ENTER (machine); F8 clears a setting whose default is empty, F2 then CTRL-U otherwise.
 - **R82 ✅ Agenda's File commands** (User's Guide 22-8 to 22-12, 23-26; checked in Agenda).
@@ -1967,25 +1967,38 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - CTRL-G follows.
   - CTRL-R shows Linked from.
   - CTRL-L inserts a link in a note.
-- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). Extras ▸ Publish writes a blog from the file as a static website.
+- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). Extras ▸ Publish writes a blog from the file as a static website. Its submenu (meeting 2026-11-02-1255, § 10):
 
-  The **Publish the blog** box holds its settings, kept in the file:
+  - **Publish** makes the site and shows what it would change (below). Before the blog has settings (no posts category), it opens Site first, whose ENTER then goes on to publish (the owner's choice, 2026-11-02).
+  - **Site**: the blog's settings, kept in the file.
+  - **Upload**: where the site is written and how it is uploaded, the person's, kept in their preferences for this file.
+
+  The **Publish: the site** box holds:
 
   - The **Posts category** (Posts by default) whose items are the posts.
   - The **Drafts** category whose posts are left out until ready (none by default).
   - Both complete a category's name as it is typed, as the clone's category fields (R32: ENTER takes the match shown, F5 or INS exactly what was typed, made under MAIN when the box is done, F2 edits the name as it is), SPACE or F3 lists the categories, DEL leaves Drafts empty (UI guidelines).
   - Both are the person's own categories, never a feed's or a calendar's (R75a: refused, "The posts and drafts are your own categories …", and neither completed nor listed there; a typed name is looked up among the person's categories only).
   - The site's title, description, author, language, **base address** (for the feeds' whole links), `rel="me"` links to the person's other profiles.
-  - The **folder** it is written to (`site` beside the file by default; any path, a mounted one too; typed, or F3 lists the folders from the one it names, `./  (this folder)` first, whose ENTER picks the folder shown, kept relative to the file's folder when inside it).
+
+  ENTER keeps them (one undo step), "Kept the site settings"; ESC closes the box and changes nothing.
+
+  The **Publish: upload** box holds the person's settings for this file, kept in their preferences by the file's path, never in the file (our choice: the folder and the server belong to this computer, and a file shared or opened elsewhere does not carry them):
+
+  - The **folder** the site is written to (`site` beside the file by default; any path, a mounted one too; typed, or F3 lists the folders from the one it names, `./  (this folder)` first, whose ENTER picks the folder shown, kept relative to the file's folder when inside it).
   - **Upload**: None, rsync over ssh (to a target such as `me@host:www/blog`) or SFTP (to a host, `host:port`, as a user, into a folder there).
 
-  A letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts); ESC closes the box and changes nothing.
+  ENTER keeps them in the preferences, ESC changes nothing. A file not saved yet has no path to keep them by: "Save the file first: its upload settings are kept by its name" (Publish then writes to `site` where Agendum was started, without uploading). Saved under another name (Save As), the file takes its settings with it; a file renamed or moved outside Agendum starts without them (the folder `site`, no upload). An empty folder is `site`. Each session keeps the upload settings another Agendum running at the same time wrote for other files.
+
+  A file saved before format 47 kept the folder and the upload in the file. Opening it moves them to the person's preferences and says so once ("The blog's folder and upload moved to your preferences"), unless the person already has settings for that file, which stay; the file is not marked changed, and its next save leaves them out. Without a preferences file (no home folder) they last for the session, and it says so.
+
+  In both boxes a letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts).
 
   A post is the item's text as its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first.
 
   Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length).
 
-  **ENTER** keeps the settings and gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site:
+  **Publishing** gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site:
 
   - `index.html` with every post in full.
   - A page per post at `posts/<zettel id>.html` (an address that never changes).

@@ -155,7 +155,7 @@ defmodule Agendum.ArchitectureTest do
     related_items relocation_conflicts reposition_refused section_calcs section_item_count shift_filters show_view subscription_name template view_statistics waiting?
     when_at when_text
     zettel zettels item_by_zettel zettel_links link_targets linked_from
-    blog_posts blog_needs_base_url? site site_changes feeds_due parse_feed export_opml
+    blog_posts blog_needs_base_url? moved_upload upload_methods site site_changes feeds_due parse_feed export_opml
   )a
 
   # Agendum.Core functions a command does: the ones a command calls by its
@@ -294,7 +294,11 @@ defmodule Agendum.ArchitectureTest do
     # the extras' prompts and questions (subscribing, renaming, OPML, the
     # SFTP password, unsubscribing), handed to `Extras.Prompts`
     {Agendum.TUI.Update.Prompts, :prompt_action, 3},
-    {Agendum.TUI.Update.Prompts, :confirmed, 3}
+    {Agendum.TUI.Update.Prompts, :confirmed, 3},
+    # a file opened: an older file's blog upload settings move to the
+    # person's preferences (R74, format 47), extras on or off, so that the
+    # file's next save does not lose them
+    {Agendum.TUI.Update, :arrive, 1}
   ]
 
   test "faithful code reaches the extras' boxes only through their doors (R77)", %{

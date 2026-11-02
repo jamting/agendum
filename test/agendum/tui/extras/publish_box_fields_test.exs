@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
   @moduledoc """
-  The Publish box's fields as the clone's settings boxes have them (UI
-  guidelines, gaps 1, 5 and 8; the owner's answers, 2026-10-27): Posts and
-  Drafts complete a category's name and F3 lists them; Folder is chosen
-  from the file list; F8 and ALT-F8 put settings back to their defaults.
+  The publisher's boxes' fields as the clone's settings boxes have them (UI
+  guidelines, gaps 1, 5 and 8; the owner's answers, 2026-10-27): in Site,
+  Posts and Drafts complete a category's name and F3 lists them; in
+  Upload, Folder is chosen from the file list; F8 and ALT-F8 put settings
+  back to their defaults.
   """
   use ExUnit.Case, async: true
 
@@ -18,7 +19,7 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
     {:ok, db, drafts} = Core.add_category(db, db.main_id, "Drafts")
     {:ok, db, _} = Core.add_category(db, db.main_id, "Postcards")
     state = start(db, extras: true)
-    %{state: press(state, [{:f, 10}, "e", "p"]), posts: posts, drafts: drafts}
+    %{state: press(state, [{:f, 10}, "e", "p", "s"]), posts: posts, drafts: drafts}
   end
 
   defp settings(state), do: State.mode(state).settings
@@ -99,7 +100,8 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
 
     setup ctx do
       Process.delete(:effects_seen)
-      state = ctx.state |> to_setting("Folder") |> press({:f, 3})
+      state = %{ctx.state | modes: []} |> saved() |> upload_box()
+      state = state |> to_setting("Folder") |> press({:f, 3})
 
       %{
         state:
@@ -125,9 +127,9 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
       assert Path.basename(dir) == "drafts"
 
       state = state |> listed([]) |> press(:enter)
-      assert %{type: :publish} = State.mode(state)
+      assert %{type: :publish_upload} = State.mode(state)
       # the list opened in the folder the setting names (site); the one
-      # picked is kept beside the file (here: where Agendum was started)
+      # picked is kept beside the file
       assert settings(state).folder == "site/drafts"
     end
 
@@ -141,19 +143,20 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
 
     test "ESC goes back to the box with the folder as it was", %{state: state} do
       state = press(state, :esc)
-      assert %{type: :publish} = State.mode(state)
+      assert %{type: :publish_upload} = State.mode(state)
       assert settings(state).folder == "site"
     end
   end
 
   describe "F8 and ALT-F8" do
     test "F8 puts the highlighted setting back to its default", %{state: state} do
+      state = %{state | modes: []} |> saved() |> upload_box()
       state = state |> to_setting("Folder") |> press(["w", "w", "w", :enter])
       assert settings(state).folder == "www"
       assert settings(press(state, {:f, 8})).folder == "site"
 
       state = state |> to_setting("Upload") |> press(" ")
-      assert settings(press(state, {:f, 8})).upload == :none
+      assert settings(press(state, {:f, 8})).method == :none
     end
 
     test "ALT-F8 puts every setting with a default back; the others stay", %{state: state} do
@@ -170,10 +173,14 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
 
       s = settings(state)
 
-      assert {s.posts, s.drafts, s.title, s.folder, s.upload} ==
-               {"Posts", "", "My blog", "site", :none}
+      assert {s.posts, s.drafts, s.title} == {"Posts", "", "My blog"}
 
       assert s.author == "Owl"
     end
   end
+
+  # a file saved where Agendum was started, so the Upload box opens (its
+  # settings are kept by the file's path)
+  defp saved(state), do: %{state | path: Path.expand("owl.agendum")}
+  defp upload_box(state), do: press(state, [{:f, 10}, "e", "p", "u"])
 end

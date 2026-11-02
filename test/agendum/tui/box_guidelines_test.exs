@@ -174,6 +174,8 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
       range_filter: &Agendum.TUI.Boxes.RangeFilterBox.open(&1, :view, cat(&1, "When")),
       what_to_copy: &Agendum.TUI.Boxes.WhatToCopyBox.open(&1, :copy, :line),
       publish: &Agendum.TUI.Extras.PublishBox.open/1,
+      # kept by the file's path, so the file needs one
+      publish_upload: &Agendum.TUI.Extras.UploadBox.open(%{&1 | path: "/owl/blog.agendum"}),
       subscription_props: &subscription_props/1
     }
   end

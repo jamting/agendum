@@ -19,21 +19,22 @@ defmodule Agendum.TUI.Extras.PublishTest do
     %{state: start(db, extras: true), hello: hello}
   end
 
-  defp open(state), do: press(state, [{:f, 10}, "e", "p"])
+  # Extras ▸ Publish ▸ Publish: before the blog has settings, the Site box
+  defp open(state), do: press(state, [{:f, 10}, "e", "p", "p"])
   defp type(state, text), do: press(state, String.graphemes(text) ++ [:enter])
 
   defp scan_effect do
     Enum.find(effects(), &match?({:publish_scan, _, _}, &1))
   end
 
-  test "the box shows the file's settings, Posts and the folder by default", %{state: state} do
+  test "the first Publish opens the Site box: Posts by default, no upload rows", %{state: state} do
     state = open(state)
-    assert screen(state) =~ "Publish the blog"
+    assert screen(state) =~ "Publish: the site"
     assert screen(state) =~ ~r/Posts category : Posts/
-    assert screen(state) =~ ~r/Folder\s*: site/
-    assert screen(state) =~ ~r/Upload\s*: None/
-    # the server's rows only for a way of uploading that needs them
-    refute screen(state) =~ "Upload to"
+    assert screen(state) =~ "ENTER shows what will change"
+    # where it is written and uploaded is Publish ▸ Upload, the person's
+    refute screen(state) =~ "Folder"
+    refute screen(state) =~ "Upload"
   end
 
   test "ESC closes it and changes nothing", %{state: state} do
@@ -42,7 +43,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     refute match?(%{type: :publish}, State.mode(after_))
   end
 
-  test "ENTER keeps the settings, gives the posts ids and reads the folder", %{state: state} do
+  test "its ENTER keeps the settings, gives the posts ids and reads the folder", %{state: state} do
     state = state |> open() |> to_setting("Site title") |> type("Owl's Notes") |> press(:enter)
 
     assert state.db.blog.title == "Owl's Notes"
@@ -54,15 +55,23 @@ defmodule Agendum.TUI.Extras.PublishTest do
     assert Agendum.TUI.History.undo(state).db.blog.title == ""
   end
 
-  test "SPACE on Upload chooses rsync, then SFTP, and shows their rows", %{state: state} do
-    state = state |> open() |> to_setting("Upload") |> press(" ")
-    assert screen(state) =~ "rsync over ssh"
-    assert screen(state) =~ "Upload to"
-    refute screen(state) =~ "Folder on server"
+  test "once the blog has settings, Publish goes straight to reading the folder", %{
+    state: state
+  } do
+    state = state |> open() |> press(:enter) |> Agendum.TUI.Extras.PublishPreviewBox.done()
+    Process.delete(:effects_seen)
+    state = open(%{state | modes: []})
+    refute match?(%{type: :publish}, State.mode(state))
+    assert {:publish_scan, "site", _files} = scan_effect()
+  end
 
-    state = press(state, " ")
-    assert screen(state) =~ "SFTP"
-    assert screen(state) =~ "Folder on server"
+  test "Site from the menu: ENTER keeps the settings and publishes nothing", %{state: state} do
+    state = press(state, [{:f, 10}, "e", "p", "s"])
+    assert screen(state) =~ "ENTER keeps the settings"
+    state = state |> to_setting("Author") |> type("Owl") |> press(:enter)
+    assert state.db.blog.author == "Owl"
+    assert screen(state) =~ "Kept the site settings"
+    refute scan_effect()
   end
 
   describe "the preview" do

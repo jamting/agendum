@@ -139,12 +139,7 @@ defmodule Agendum.Core.JSONFile do
       author: :string,
       language: :string,
       base_url: :string,
-      me: :string,
-      folder: :string,
-      upload: {:enum, Blog.uploads()},
-      target: :string,
-      user: :string,
-      remote_dir: :string
+      me: :string
     ]
   end
 

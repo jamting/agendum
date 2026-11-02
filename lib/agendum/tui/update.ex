@@ -451,6 +451,9 @@ defmodule Agendum.TUI.Update do
   """
   @spec arrive(State.t()) :: State.t()
   def arrive(%State{} = state) do
+    # an older file's blog upload settings to the person's preferences (R74)
+    state = Agendum.TUI.Extras.UploadBox.move_from_file(state)
+
     # File Properties ▸ Make backup on open (R82): the file as it is on disk
     # only a file read from disk (a stamp): a new one has nothing to copy
     state =

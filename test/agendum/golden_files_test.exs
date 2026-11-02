@@ -55,7 +55,9 @@ defmodule Agendum.GoldenFilesTest do
         {:ok, db} = Store.load(@file_path)
         path = Path.join(dir, "again.agendum")
         :ok = Store.save(db, path)
-        assert Store.load(path) == {:ok, db}
+        # an older file's blog upload settings are never written back: they
+        # move to the person's preferences (format 47, R74)
+        assert Store.load(path) == {:ok, %{db | blog: %{db.blog | moved_upload: nil}}}
       end
     end
   end
@@ -63,8 +65,9 @@ defmodule Agendum.GoldenFilesTest do
   @moduletag :tmp_dir
 
   # fields a database has while open but that are never written: the
-  # password, with which the file is encrypted instead (ADR 0046)
-  @never_written [{Agendum.Core.Database, :password}]
+  # password, with which the file is encrypted instead (ADR 0046), and an
+  # older file's upload settings on their way to the preferences (R74)
+  @never_written [{Agendum.Core.Database, :password}, {Agendum.Core.Extras.Blog, :moved_upload}]
 
   test "the golden file uses every field of every stored struct" do
     unused =

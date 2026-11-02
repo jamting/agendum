@@ -190,6 +190,7 @@ defmodule Agendum.TUI.Boxes.Box do
     profile: Agendum.TUI.CategoryScreens.Profile,
     publish: Agendum.TUI.Extras.PublishBox,
     publish_preview: Agendum.TUI.Extras.PublishPreviewBox,
+    publish_upload: Agendum.TUI.Extras.UploadBox,
     props: Agendum.TUI.CategoryScreens.Properties,
     questions: Agendum.TUI.Boxes.QuestionsBox,
     range_filter: Agendum.TUI.Boxes.RangeFilterBox,

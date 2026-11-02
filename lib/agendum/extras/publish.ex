@@ -13,7 +13,7 @@ defmodule Agendum.Extras.Publish do
   the person's ssh keys, else a password from `~/.netrc` or asked for.
   """
 
-  alias Agendum.Core.Extras.{Blog, Site}
+  alias Agendum.Core.Extras.{Site, Upload}
 
   @manifest ".agendum-site"
   # what a failed SFTP upload left to remove on the server
@@ -95,23 +95,23 @@ defmodule Agendum.Extras.Publish do
   # --- uploading ------------------------------------------------------------------
 
   @doc """
-  Uploads what the folder holds of the site, as the blog says (`:rsync`
-  or `:sftp`); the files taken away are removed on the server too.
+  Uploads what the folder holds of the site, as the person's upload
+  settings say (`:rsync` or `:sftp`); the files taken away are removed on the server too.
   `password` is the SFTP password, nil to use the person's ssh keys (and
   `~/.netrc`). `{:error, :password}` asks for one: the server refused the
   keys. `opts` are more ssh options (the tests give their own keys).
   """
-  @spec upload(Blog.t(), String.t(), [Site.file()], Site.changes(), String.t() | nil, keyword) ::
+  @spec upload(Upload.t(), String.t(), [Site.file()], Site.changes(), String.t() | nil, keyword) ::
           :ok | {:error, String.t() | :password}
-  def upload(blog, folder, files, changes, password, opts \\ [])
+  def upload(upload, folder, files, changes, password, opts \\ [])
 
-  def upload(%Blog{upload: :none}, _folder, _files, _changes, _password, _opts), do: :ok
+  def upload(%Upload{method: :none}, _folder, _files, _changes, _password, _opts), do: :ok
 
-  def upload(%Blog{upload: :rsync} = blog, folder, files, changes, _password, _opts),
-    do: rsync(blog.target, folder, Enum.map(files, &elem(&1, 0)) ++ changes.removed)
+  def upload(%Upload{method: :rsync} = upload, folder, files, changes, _password, _opts),
+    do: rsync(upload.target, folder, Enum.map(files, &elem(&1, 0)) ++ changes.removed)
 
-  def upload(%Blog{upload: :sftp} = blog, folder, files, changes, password, opts),
-    do: sftp(blog, folder, files, changes, password, opts)
+  def upload(%Upload{method: :sftp} = upload, folder, files, changes, password, opts),
+    do: sftp(upload, folder, files, changes, password, opts)
 
   @doc """
   The arguments for rsync: only Agendum's own paths are sent, and of
@@ -139,7 +139,7 @@ defmodule Agendum.Extras.Publish do
   defp rsync("", _folder, _paths), do: {:error, "say where to upload to (Upload to)"}
 
   defp rsync(target, folder, paths) do
-    if Blog.rsync_target_safe?(target),
+    if Upload.rsync_target_safe?(target),
       do: run_rsync(target, folder, paths),
       else: {:error, "Upload to must not start with - (nor its host or user)"}
   end
@@ -164,16 +164,16 @@ defmodule Agendum.Extras.Publish do
   # SFTP (OTP's ssh): the files added and changed are sent, the
   # stylesheet as the folder has it, and the removed ones deleted. The
   # server's key must be in ~/.ssh/known_hosts, as for ssh itself.
-  defp sftp(%Blog{target: ""}, _folder, _files, _changes, _password, _opts),
+  defp sftp(%Upload{target: ""}, _folder, _files, _changes, _password, _opts),
     do: {:error, "say which server to upload to (Upload to)"}
 
-  defp sftp(blog, folder, files, changes, password, opts) do
+  defp sftp(upload, folder, files, changes, password, opts) do
     {:ok, _} = Application.ensure_all_started(:ssh)
-    {host, port} = host_port(blog.target)
-    password = password || netrc_password(host, blog.user)
+    {host, port} = host_port(upload.target)
+    password = password || netrc_password(host, upload.user)
 
     base = [
-      user: String.to_charlist(blog.user),
+      user: String.to_charlist(upload.user),
       user_interaction: false,
       silently_accept_hosts: false,
       quiet_mode: true,
@@ -192,7 +192,7 @@ defmodule Agendum.Extras.Publish do
     # the tests' options replace the person's (`Keyword.merge/2`)
     ssh_opts = base |> Keyword.merge(with_password) |> Keyword.merge(opts)
 
-    quietly(fn -> connect(host, port, ssh_opts, blog, folder, files, changes, password) end)
+    quietly(fn -> connect(host, port, ssh_opts, upload, folder, files, changes, password) end)
   rescue
     error -> {:error, "SFTP failed (#{Exception.message(error)})"}
   end
@@ -211,11 +211,11 @@ defmodule Agendum.Extras.Publish do
     end
   end
 
-  defp connect(host, port, ssh_opts, blog, folder, files, changes, password) do
+  defp connect(host, port, ssh_opts, upload, folder, files, changes, password) do
     case :ssh_sftp.start_channel(String.to_charlist(host), port, ssh_opts) do
       {:ok, channel, connection} ->
         try do
-          send_all(channel, blog.remote_dir, folder, files, changes)
+          send_all(channel, upload.remote_dir, folder, files, changes)
         after
           :ssh.close(connection)
         end

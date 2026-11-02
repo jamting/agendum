@@ -167,11 +167,7 @@ erDiagram
         string language
         string base_url
         string me "rel=me links"
-        string folder "where the site is written"
-        atom upload "none, rsync or sftp"
-        string target
-        string user
-        string remote_dir
+        map moved_upload "an older file's upload settings, on their way to the preferences; never written"
     }
     MACRO {
         int id PK
@@ -396,9 +392,7 @@ classDiagram
         +drafts : id or nil
         +title, description, author, language : String
         +base_url, me : String
-        +folder : String
-        +upload : none, rsync or sftp
-        +target, user, remote_dir : String
+        +moved_upload : Upload or nil, never written
     }
     class Macro {
         +id : id
@@ -449,7 +443,8 @@ classDiagram
 | `NumberFormat`                        | `lib/agendum/core/number_format.ex` | How a numeric column shows numbers and which calculations it shows; also reads typed numbers (R29).  |
 | `Calendar`                            | `lib/agendum/core/extras/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
 | `Feed`                                | `lib/agendum/core/extras/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
-| `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address, where it is written and uploaded (R74). |
+| `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address (R74). |
+| `Upload`                              | `lib/agendum/core/extras/upload.ex`        | Where the blog is written and how it is uploaded: the person's, kept in their preferences by the file's path, never in the file (R74, format 47). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
 | `Search`                              | `lib/agendum/core/search.ex`        | A text search, kept in the Show View's `match` (R37).                                                |
 | `TextMatch`                           | `lib/agendum/core/text_match.ex`    | How the file matches item text to category names; a category may override settings (R16a, R16b).     |
@@ -462,7 +457,7 @@ Items, categories and views draw ids from **one counter**, `next_id`, just as th
 
 **Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Extras.Feed`), each with the item every entry made, its publish date and fingerprints of the title and note it filed (`Feed.snapshot/2`, `Agendum.Core.Extras.Fingerprint`, format 46, ADR 0048), so a refresh changes only what the feed changed and keeps the person's edits, without a copy of the text; an entry that faded or was discarded keeps only its publish date (`Feed.forget/1`, format 45), enough never to bring it back. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
 
-**The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links, the folder the site is written to and how it is uploaded (none, rsync, SFTP, ADR 0041). No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
+**The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links. Where the site is written and how it is uploaded (none, rsync, SFTP, ADR 0041) are the person's, not the file's (`Agendum.Core.Extras.Upload`, kept in their preferences by the file's path; format 47, meeting 2026-11-02-1255, § 10): an older file's are lifted into `db.blog.moved_upload` on load, never written, and the program moves them to the preferences. No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
 
 **Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.Extras.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
 
@@ -685,6 +680,7 @@ Format versions:
 | 43 | Added `Database.password`, never written: a file with one is saved encrypted, `AGENDUM-ENC1`, the description, salt, nonce, tag and the encrypted file (ADR 0046) |
 | 45 | A feed entry that faded or was discarded keeps only `%{item: nil, published}`, not its title, note and link (`Feed.forget/1`); `upgrade/1` trims older files' (meeting 2026-10-26-1524, § 5) |
 | 46 | A live feed entry keeps `title_print` and `note_print`, fingerprints of what it filed, instead of `title`, `note` and `link`; a calendar event `summary_print` and `description_print` instead of `summary` and `description` (`Agendum.Core.Extras.Fingerprint`); `upgrade/1` converts older files (ADR 0048; meeting 2026-10-26-1732, § 5) |
+| 47 | `Blog` loses `folder`, `upload`, `target`, `user` and `remote_dir`: where the site is written and uploaded is the person's (`Agendum.Core.Extras.Upload`, in their preferences); `upgrade/1` lifts an older file's into `Blog.moved_upload`, never written, and opening the file moves them to the preferences (meeting 2026-11-02-1255, § 10) |
 
 ## UI state around the database
 

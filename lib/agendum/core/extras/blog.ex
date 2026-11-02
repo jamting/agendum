@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.Blog do
   @moduledoc """
-  The file's micro-blog (R74): which items are its posts and how the site
-  is published. Kept in the file (`Database.blog`), so the blog goes with
-  its posts. A password is never kept: Agendum reads it from `~/.netrc`
-  or asks for it.
+  The file's micro-blog (R74): which items are its posts and what the site
+  says about itself (Extras ▸ Publish ▸ Site). Kept in the file
+  (`Database.blog`), so the blog goes with its posts. Where the site is
+  written and how it is uploaded are the person's, kept in their
+  preferences (`Agendum.Core.Extras.Upload`; format 47).
 
     * `posts`: the category whose items are the posts; `drafts`: the
       category that keeps a post out until it is ready (nil: none)
@@ -14,17 +15,12 @@ defmodule Agendum.Core.Extras.Blog do
       for the feeds' links, which must be whole addresses
     * `me`: addresses of the person's other profiles, for `rel="me"`
       links (a fediverse account, micro.blog), separated by spaces
-    * `folder`: where the site is written, a mounted one (sshfs) too; a
-      relative folder is beside the file
-    * `upload`: `:none`, `:rsync` (over ssh, to `target`, such as
-      `me@host:www/blog`) or `:sftp` (to the host `target`, `host` or
-      `host:port`, as `user`, into `remote_dir`). Not FTP: OTP deprecates
-      its `ftp` application and removes it in OTP 30.
+    * `moved_upload`: the upload settings an older file kept here (format
+      46 and before), on their way to the person's preferences; never
+      written (`Agendum.Store` leaves it out)
   """
 
   alias Agendum.Core.Database
-
-  @type upload :: :none | :rsync | :sftp
 
   @type t :: %__MODULE__{
           posts: Database.id() | nil,
@@ -35,11 +31,7 @@ defmodule Agendum.Core.Extras.Blog do
           language: String.t(),
           base_url: String.t(),
           me: String.t(),
-          folder: String.t(),
-          upload: upload,
-          target: String.t(),
-          user: String.t(),
-          remote_dir: String.t()
+          moved_upload: Agendum.Core.Extras.Upload.t() | nil
         }
 
   defstruct posts: nil,
@@ -50,29 +42,7 @@ defmodule Agendum.Core.Extras.Blog do
             language: "en",
             base_url: "",
             me: "",
-            folder: "",
-            upload: :none,
-            target: "",
-            user: "",
-            remote_dir: ""
-
-  @doc """
-  Whether an rsync target (`me@host:www/blog`, or a folder) is safe to hand
-  to rsync: neither it nor its user or host starts with `-`. rsync passes
-  the host on to ssh, where `-oProxyCommand=…` would run a command, and a
-  shared file carries its blog settings (docs/SECURITY.md, door 4).
-  """
-  @spec rsync_target_safe?(String.t()) :: boolean
-  def rsync_target_safe?(target) do
-    # `user@host:path`: what comes before the first ":" is the user and the
-    # host (a local folder has no ":", and is checked whole)
-    [remote | _] = String.split(target, ":", parts: 2)
-    not Enum.any?([target | String.split(remote, "@")], &String.starts_with?(&1, "-"))
-  end
-
-  @doc "The ways of uploading, in the order the Publish box offers them."
-  @spec uploads() :: [upload]
-  def uploads, do: [:none, :rsync, :sftp]
+            moved_upload: nil
 
   @doc """
   The posts, newest first: the items in the posts category (or under it),

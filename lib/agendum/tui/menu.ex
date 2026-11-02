@@ -171,8 +171,13 @@ defmodule Agendum.TUI.Menu do
        [
          {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
          {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds},
-         {"Publish", "Write the blog from the posts category as a website, and upload it",
-          :publish},
+         {"Publish", "The blog: publish it as a website; its site and upload settings",
+          [
+            {"Publish", "Write the blog from the posts as a website, and upload it", :publish},
+            {"Site", "The blog's posts category, title, author, base address …", :publish_site},
+            {"Upload", "Where the site is written and how it is uploaded (yours)",
+             :publish_upload}
+          ]},
          {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
          {"Zettel", "Zettel ids: give the item one, follow its links",
           [

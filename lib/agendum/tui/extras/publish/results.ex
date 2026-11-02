@@ -21,7 +21,7 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   def publish_scanned(state, folder, files, {:ok, scan}) do
     changes = Core.site_changes(files, scan.existing, scan.published)
 
-    if PublishPreviewBox.nothing?(changes) and state.db.blog.upload == :none,
+    if PublishPreviewBox.nothing?(changes) and upload(state).method == :none,
       do: State.info(state, Messages.text(:up_to_date)),
       else: PublishPreviewBox.open(state, folder, files, changes)
   end
@@ -35,7 +35,7 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   """
   @spec published(State.t(), term, :ok | {:error, term}) :: State.t()
   def published(state, changes, :ok) do
-    uploaded? = state.db.blog.upload != :none
+    uploaded? = upload(state).method != :none
     summary = PublishPreviewBox.summary(changes)
 
     # the feeds are written all the same, but a reader cannot follow their
@@ -56,7 +56,7 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   # preview it asks for, to publish its site again; with none open, there
   # is nothing to try again with, nor while something is being typed.
   def published(state, _changes, {:error, :password}) do
-    user = state.db.blog.user
+    %{user: user, target: target} = upload(state)
     state = PublishPreviewBox.done(state)
 
     preview = Enum.find(state.modes, &match?(%{type: :publish_preview}, &1))
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.Extras.Publish.Results do
       true ->
         Agendum.TUI.Update.Prompts.password(
           state,
-          Messages.text(:password, user, state.db.blog.target),
+          Messages.text(:password, user, target),
           {:sftp_password, preview}
         )
     end
@@ -100,4 +100,7 @@ defmodule Agendum.TUI.Extras.Publish.Results do
         %{state | modes: Enum.reject(state.modes, &match?(%{type: :publish_preview}, &1))}
     end
   end
+
+  # where the person writes and uploads this file's blog (R74)
+  defp upload(state), do: Agendum.Preferences.upload(state.prefs, state.path)
 end

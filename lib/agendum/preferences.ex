@@ -5,7 +5,9 @@ defmodule Agendum.Preferences do
   colour theme (`theme`, R40), the date languages (`lang` and `fallback`,
   R14c) and the Input format (`Agendum.Core.InputFormat`, R41b), and where
   they left each file (`Agendum.Preferences.Place`, R69), and the defaults
-  for new files (File Properties ▸ Update defaults, R82a). Kept in a plain
+  for new files (File Properties ▸ Update defaults, R82a), and where each
+  file's blog is written and uploaded (`Agendum.Core.Extras.Upload`, R74).
+  Kept in a plain
   text file, one `key = value` per line, in the config directory
   (`$XDG_CONFIG_HOME/agendum/preferences` or
   `~/.config/agendum/preferences`; ADR 0019). A setting left out is the date
@@ -16,6 +18,7 @@ defmodule Agendum.Preferences do
   """
 
   alias Agendum.Core.{DateLanguage, InputFormat}
+  alias Agendum.Core.Extras.Upload
   alias Agendum.Preferences.Place
   alias Agendum.TUI.Terminal.Theme
 
@@ -32,7 +35,8 @@ defmodule Agendum.Preferences do
   (R77, ADR 0043; off unless the person turns it on). `places`: where the person
   left each file, by its path, the file left last first (R69). `defaults`: the
   settings new files start with (R82a, `Agendum.Core.FileDefaults`), one
-  `default.` line each. `path` is where they are
+  `default.` line each. `uploads`: each file's blog folder and upload, by
+  its path (R74), one `upload` line each. `path` is where they are
   kept (nil: not saved) and `user` the login name (the splash's name when
   none is set); neither is written in them.
   """
@@ -51,6 +55,7 @@ defmodule Agendum.Preferences do
           extras: boolean,
           places: [{String.t(), Place.t()}],
           defaults: Agendum.Core.FileDefaults.t(),
+          uploads: [{String.t(), Upload.t()}],
           path: String.t() | nil,
           user: String.t() | nil
         }
@@ -68,6 +73,7 @@ defmodule Agendum.Preferences do
             extras: false,
             places: [],
             defaults: %{},
+            uploads: [],
             path: nil,
             user: nil
 
@@ -109,7 +115,25 @@ defmodule Agendum.Preferences do
   @doc "Writes preferences, making the directory if needed."
   @spec save(t, String.t()) :: :ok | {:error, term}
   def save(prefs, path) do
+    prefs = keep_others_uploads(prefs, path)
     with :ok <- File.mkdir_p(Path.dirname(path)), do: File.write(path, format(prefs))
+  end
+
+  # Domain: each session writes its whole preferences, so a second Agendum
+  # started before this one moved a file's upload settings would write
+  # them away; the upload lines already in the file for other files are
+  # kept (they are only ever added or changed, never removed), and this
+  # session's win for a file both have
+  defp keep_others_uploads(prefs, path) do
+    case File.read(path) do
+      {:ok, text} ->
+        on_disk = parse(text).uploads
+        mine = Enum.map(prefs.uploads, &elem(&1, 0))
+        %{prefs | uploads: prefs.uploads ++ Enum.reject(on_disk, &(elem(&1, 0) in mine))}
+
+      {:error, _} ->
+        prefs
+    end
   end
 
   @doc "Preferences from the file's text."
@@ -153,7 +177,8 @@ defmodule Agendum.Preferences do
       # off unless the file says yes, where the others are on unless it says no
       extras: pick.("extras", &yes_no/1) == :yes,
       places: places(pairs),
-      defaults: defaults(pairs)
+      defaults: defaults(pairs),
+      uploads: uploads(pairs)
     }
   end
 
@@ -186,6 +211,100 @@ defmodule Agendum.Preferences do
     |> Enum.uniq_by(&elem(&1, 0))
     |> Enum.take(@places)
   end
+
+  # every `upload` line (R74): a JSON object, the file's path under "file"
+  # (JSON, so that a path or a folder may hold spaces and `=`); a line that
+  # does not read is ignored, and a second one for the same file too
+  defp uploads(pairs) do
+    for(
+      {"upload", value} <- pairs,
+      {:ok, path, upload} <- [read_upload(value)],
+      do: {path, upload}
+    )
+    |> Enum.uniq_by(&elem(&1, 0))
+  end
+
+  defp read_upload(value) do
+    case JSON.decode(value) do
+      {:ok, %{"file" => path} = map} when is_binary(path) and path != "" ->
+        {:ok, path, upload_of(map)}
+
+      _ ->
+        :error
+    end
+  end
+
+  defp upload_of(map) do
+    text = fn key, default ->
+      case map[key] do
+        v when is_binary(v) -> v
+        _ -> default
+      end
+    end
+
+    # the method's name is matched against the known ones, never made an
+    # atom, so a hand-edited line cannot make new atoms
+    method =
+      Enum.find(Agendum.Core.upload_methods(), :none, &(Atom.to_string(&1) == map["method"]))
+
+    # an empty folder is `site`, as the Upload box keeps it: never the
+    # file's own folder
+    folder = if String.trim(text.("folder", "")) == "", do: "site", else: map["folder"]
+
+    %Upload{
+      folder: folder,
+      method: method,
+      target: text.("target", ""),
+      user: text.("user", ""),
+      remote_dir: text.("remote_dir", "")
+    }
+  end
+
+  defp upload_text(path, %Upload{} = u) do
+    JSON.encode!(%{
+      "file" => path,
+      "folder" => u.folder,
+      "method" => Atom.to_string(u.method),
+      "target" => u.target,
+      "user" => u.user,
+      "remote_dir" => u.remote_dir
+    })
+  end
+
+  @doc """
+  Where the blog of the file at `path` is written and how it is uploaded
+  (R74): the person's settings for it, or the default (the folder `site`
+  beside the file, no upload).
+  """
+  @spec upload(t, String.t() | nil) :: Upload.t()
+  def upload(_prefs, nil), do: %Upload{}
+
+  def upload(prefs, path) do
+    case List.keyfind(prefs.uploads, path, 0) do
+      {^path, upload} -> upload
+      nil -> %Upload{}
+    end
+  end
+
+  @doc "Keeps the blog's folder and upload for the file at `path` (R74)."
+  @spec put_upload(t, String.t(), Upload.t()) :: t
+  def put_upload(prefs, path, %Upload{} = upload),
+    do: %{prefs | uploads: [{path, upload} | List.keydelete(prefs.uploads, path, 0)]}
+
+  @doc """
+  The file at `from` saved under the name `to` (Save As): its upload
+  settings go with it, unless `to` has its own.
+  """
+  @spec carry_upload(t, String.t() | nil, String.t()) :: t
+  def carry_upload(prefs, from, to) do
+    if from != to and upload?(prefs, from) and not upload?(prefs, to),
+      do: put_upload(prefs, to, upload(prefs, from)),
+      else: prefs
+  end
+
+  @doc "Whether the person has upload settings for the file at `path`."
+  @spec upload?(t, String.t() | nil) :: boolean
+  def upload?(prefs, path), do: path != nil and List.keymember?(prefs.uploads, path, 0)
 
   @doc "Where the person left the file at `path` (R69), or nil."
   @spec place(t, String.t() | nil) :: Place.t() | nil
@@ -287,7 +406,8 @@ defmodule Agendum.Preferences do
          Enum.map(Enum.sort(prefs.defaults), fn {key, value} ->
            {"default." <> key, default_text(value)}
          end) ++
-         Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end))
+         Enum.map(prefs.places, fn {path, place} -> {"place", Place.format(path, place)} end) ++
+         Enum.map(prefs.uploads, fn {path, upload} -> {"upload", upload_text(path, upload)} end))
       |> Enum.reject(&(elem(&1, 1) == nil))
       |> Enum.map(fn {key, value} -> "#{key} = #{value}\n" end)
 
@@ -303,6 +423,7 @@ defmodule Agendum.Preferences do
       "# sound, beep_on_completion: yes or no.\n" <>
       "# extras: yes shows Agendum's extras (blog, feeds, Zettel ids, calendars …).\n" <>
       "# place: where you left a file (kept by Agendum), the file left last first.\n" <>
+      "# upload: where a file's blog is written and uploaded (Extras > Publish > Upload).\n" <>
       Enum.join(lines)
   end
 end

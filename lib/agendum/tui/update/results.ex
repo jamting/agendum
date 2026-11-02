@@ -15,6 +15,7 @@ defmodule Agendum.TUI.Update.Results do
   """
 
   alias Agendum.Core
+  alias Agendum.Preferences
   alias Agendum.TUI.{Layout, State, Update}
   alias Agendum.TUI.Update.{Notes, Prompts}
 
@@ -51,6 +52,9 @@ defmodule Agendum.TUI.Update.Results do
 
   def saved(state, path, {:ok, stamp}, opts) do
     state = saved_recovery(state)
+    # saved under another name: the blog's upload settings, kept by the
+    # file's path, go with it (R74); the shell saves the preferences
+    state = %{state | prefs: Preferences.carry_upload(state.prefs, state.path, path)}
 
     %{
       state

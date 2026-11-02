@@ -454,10 +454,10 @@ defmodule Agendum.TUI.App do
       Process.put(:agendum_publishing, true)
       loop = self()
       dir = Path.expand(folder)
-      blog = state.db.blog
+      upload = Preferences.upload(state.prefs, state.path)
 
       Task.start(fn ->
-        result = fetched(fn -> publish_site(blog, dir, files, changes, password) end)
+        result = fetched(fn -> publish_site(upload, dir, files, changes, password) end)
         send(loop, {:published, changes, result})
       end)
 
@@ -511,9 +511,9 @@ defmodule Agendum.TUI.App do
   end
 
   # the site written into its folder, then uploaded, in the background task
-  defp publish_site(blog, dir, files, changes, password) do
+  defp publish_site(upload, dir, files, changes, password) do
     with :ok <- Publish.write(dir, files, changes),
-         do: Publish.upload(blog, dir, files, changes, password)
+         do: Publish.upload(upload, dir, files, changes, password)
   end
 
   @doc """

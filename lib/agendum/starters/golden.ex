@@ -287,12 +287,7 @@ defmodule Agendum.Starters.Golden do
         author: "Owl",
         language: "sv",
         base_url: "https://owl.example/",
-        me: "https://mastodon.example/@owl",
-        folder: "site",
-        upload: :sftp,
-        target: "owl.example:2222",
-        user: "owl",
-        remote_dir: "public_html"
+        me: "https://mastodon.example/@owl"
       })
 
     db

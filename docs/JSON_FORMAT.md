@@ -167,12 +167,8 @@ The micro-blog's settings (R74); left out, none: no posts category.
 | `title`, `description`, `author`, `language` | What the pages and feeds say about the blog; `language` such as `"en"` or `"sv"`. |
 | `base_url` | Where the site is on the web (`"https://example.com/blog/"`), for the feeds' links. |
 | `me` | Addresses of the person's other profiles, for `rel="me"` links, separated by spaces. |
-| `folder` | Where the site is written; a relative folder is beside the file. |
-| `upload` | `"none"`, `"rsync"` or `"sftp"` (ADR 0041). |
-| `target` | For rsync where to (`"me@host:www/blog"`); for SFTP the server (`"host"` or `"host:port"`). |
-| `user`, `remote_dir` | For SFTP: the user name, and the folder on the server. |
 
-No password is ever in the file.
+Where the site is written and how it is uploaded are the person's, kept in their preferences, not in the file (format 47): an older export's `folder`, `upload`, `target`, `user` and `remote_dir` are ignored. No password is ever in the file.
 
 ## What is checked on import
 

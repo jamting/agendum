@@ -6,6 +6,17 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.79.0 — 2026-11-02
+
+- **Extras ▸ Publish is a menu now: Publish, Site, Upload.** Publish goes straight to "what will change", with no box first (the very first time, it opens Site, and ENTER there goes on to publish, as before). Site holds the blog's settings, kept in the file: its posts and drafts, title, author, base address. Upload holds where the site is written and how it is uploaded.
+- **Where your blog is uploaded is yours, not the file's.** Upload's settings are kept in your preferences, for that file, on this computer. A file you share or copy no longer carries your server's address. The first time you open a file that still holds them, they move to your preferences, and the message line says so once. A file not saved yet asks to be saved before Upload opens.
+- **File format 47:** the blog's folder and upload left the file.
+
+### Facade
+
+- `set_blog/2` and `prepare_publish/2` no longer take the folder and upload settings (`folder`, `upload`, `target`, `user`, `remote_dir`): they are ignored if given, as `Agendum.Core.Extras.Blog` no longer has them. They are the person's now, `Agendum.Core.Extras.Upload`, which a front end keeps itself (the TUI keeps them in the preferences).
+- Added `moved_upload/1` (an older file's upload settings, for the front end to keep) and `upload_methods/0`.
+
 ## 0.78.0 — 2026-11-02
 
 - **Undo while you write a note: CTRL-Z and CTRL-Y.** Typing goes back a word at a time ("Buy milk today": "today", then "milk ", then "Buy "), a run of BACKSPACEs as one step, and a paste or a date as one of its own. What a note command did to the file goes back too: CTRL-Z after ALT-F7 puts the text back into the note and removes the item it made. Once the note is closed, CTRL-Z in the view puts the whole note back as it was opened, as before.

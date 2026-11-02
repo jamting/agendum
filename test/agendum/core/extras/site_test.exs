@@ -39,7 +39,9 @@ defmodule Agendum.Core.Extras.SiteTest do
     assert db.blog.posts == cat(db, "Posts")
     assert db.blog.drafts == cat(db, "Draft")
     assert db.blog.title == "Owl's Notes"
-    assert {:error, :bad_setting} = Core.set_blog(db, %{upload: :carrier_pigeon})
+    assert {:error, :bad_setting} = Core.set_blog(db, %{title: :carrier_pigeon})
+    # the folder and the upload are the person's since format 47: ignored
+    assert {:ok, ^db} = Core.set_blog(db, %{upload: :sftp, folder: "elsewhere"})
     assert {:error, :no_posts_category} = Core.set_blog(Core.new_file(), %{title: "x"})
   end
 

@@ -14,6 +14,6 @@ The meeting of 2026-10-16-2056 (§ 8) planned the micro-blog's upload "by FTP or
 
 ## Consequences
 
-- The Publish box offers Upload: None, rsync over ssh, SFTP.
+- The Publish box offers Upload: None, rsync over ssh, SFTP. (Since v0.79.0 these are in Extras ▸ Publish ▸ Upload, kept in the person's preferences rather than the file; meeting 2026-11-02-1255, § 10.)
 - SFTP is tested for real: the test runs an SFTP server of OTP's own on a free port (`test/agendum/publish_test.exs`).
 - If the owner wants FTP itself back, it needs a package (an ADR 0021 review) or OTP's `ftp` until OTP 30.

@@ -9,7 +9,7 @@ defmodule Agendum.Extras.PublishTest do
   # which would hide the logs other tests capture
   use ExUnit.Case, async: false
 
-  alias Agendum.Core.Extras.{Blog, Site}
+  alias Agendum.Core.Extras.{Site, Upload}
   alias Agendum.Extras.Publish
 
   @moduletag :tmp_dir
@@ -59,7 +59,7 @@ defmodule Agendum.Extras.PublishTest do
 
       changes = publish(site, @files)
       changes = %{changes | removed: ["posts/old.html"]}
-      blog = %Blog{upload: :rsync, target: server}
+      blog = %Upload{method: :rsync, target: server}
       assert :ok = Publish.upload(blog, site, @files, changes, nil)
 
       assert File.read!(Path.join(server, "posts/bonalaku.html")) == "Party"
@@ -95,7 +95,7 @@ defmodule Agendum.Extras.PublishTest do
           "me@-oProxyCommand=touch #{marker}:www",
           "-oProxyCommand=touch #{marker}@host:www"
         ] do
-      blog = %Blog{upload: :rsync, target: target}
+      blog = %Upload{method: :rsync, target: target}
       changes = %{added: [], changed: [], removed: []}
       assert {:error, message} = Publish.upload(blog, dir, [], changes, nil)
       assert message =~ "must not start with -"
@@ -103,8 +103,8 @@ defmodule Agendum.Extras.PublishTest do
 
     refute File.exists?(marker)
     # an ordinary target is no problem
-    assert Agendum.Core.Extras.Blog.rsync_target_safe?("me@host:www/blog-2026")
-    assert Agendum.Core.Extras.Blog.rsync_target_safe?("/Users/owl/site")
+    assert Agendum.Core.Extras.Upload.rsync_target_safe?("me@host:www/blog-2026")
+    assert Agendum.Core.Extras.Upload.rsync_target_safe?("/Users/owl/site")
   end
 
   describe "SFTP" do
@@ -138,8 +138,8 @@ defmodule Agendum.Extras.PublishTest do
       {:ok, info} = :ssh.daemon_info(daemon)
       on_exit(fn -> :ssh.stop_daemon(daemon) end)
 
-      blog = %Blog{
-        upload: :sftp,
+      blog = %Upload{
+        method: :sftp,
         target: "localhost:#{info[:port]}",
         user: "owl",
         remote_dir: "/www"

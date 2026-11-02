@@ -49,7 +49,10 @@ defmodule Agendum.Store do
   category (R38); 42 adds `Database.description` and `backup_on_open`
   (File Properties, R82); 43 adds `Database.password`, never written: a
   file with a password is encrypted with it (ADR 0046); 44 adds
-  `Database.trash`, the trash (R24a).
+  `Database.trash`, the trash (R24a); 47 moves the blog's folder and
+  upload settings out of the file, into the person's preferences
+  (`Agendum.Core.Extras.Upload`; loading an older file keeps them in
+  `Blog.moved_upload`, never written, for the program to move).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -60,7 +63,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 46
+  @format_version 47
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -135,7 +138,7 @@ defmodule Agendum.Store do
     # 15% larger (meeting 2026-10-26-1524, § 5). Reading is the same for any
     # level, so files saved either way open in every version.
     binary =
-      {:agenda, @format_version, %{db | password: nil}}
+      {:agenda, @format_version, %{db | password: nil, blog: %{db.blog | moved_upload: nil}}}
       |> :erlang.term_to_binary(compressed: 1)
       |> encrypt(db.password, db.description)
 
@@ -355,7 +358,13 @@ defmodule Agendum.Store do
     }
 
     db = %{db | date_format: struct(Agendum.Core.DateFormat, Map.from_struct(db.date_format))}
-    db = %{db | blog: struct(Agendum.Core.Extras.Blog, Map.from_struct(db.blog))}
+    # before 47 the blog kept the folder and the upload, now the person's
+    # (meeting 2026-11-02-1255, § 10): lifted out for the preferences
+    old_blog = Map.from_struct(db.blog)
+
+    blog = struct(Agendum.Core.Extras.Blog, old_blog)
+    moved = Agendum.Core.Extras.Upload.from_old_blog(old_blog)
+    db = %{db | blog: %{blog | moved_upload: moved}}
 
     db = %{
       db

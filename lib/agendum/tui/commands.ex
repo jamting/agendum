@@ -508,7 +508,8 @@ defmodule Agendum.TUI.Commands do
   extras, and the boxes only the extras have (calendars, the blog, feeds).
   """
   @spec extra_actions() :: [atom]
-  def extra_actions, do: @extras.view ++ [:calendars, :publish, :feeds]
+  def extra_actions,
+    do: @extras.view ++ [:calendars, :publish, :publish_site, :publish_upload, :feeds]
 
   @doc "A place's command by id, or nil."
   @spec get(atom, atom) :: Command.t() | nil

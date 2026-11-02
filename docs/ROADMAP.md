@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. [ ] **The publisher's roadmap** (meeting 2026-11-02-1255, § 13; [`plans/PUBLISHER.md`](plans/PUBLISHER.md) § The steps), step 1: the settings split (Extras ▸ Publish ▸ Publish, Site, Feeds, Upload; the upload in the preferences). The seven steps in their order are in the plan, one per release.
+1. [ ] **The publisher's roadmap** (meeting 2026-11-02-1255, § 13; [`plans/PUBLISHER.md`](plans/PUBLISHER.md) § The steps), step 2: a post's metadata (the title from a note's `# Heading`, a future When waits, the modified date stamped at publishing, the slug made once and the address pattern). Step 1, the settings split, is done (v0.79.0). The seven steps in their order are in the plan, one per release.
 
 Starters are done for now (the owner, 2026-11-02): GTD and the Journal are built and in use; the two in lane 3 are parked.
 

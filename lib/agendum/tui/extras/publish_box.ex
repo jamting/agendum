@@ -1,33 +1,35 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishBox do
   @moduledoc """
-  The Publish box (Extras ▸ Publish, R74): the micro-blog's
-  settings, kept in the file (`Agendum.Core.Extras.Blog`). The posts are the
-  items of the Posts category not in the Drafts one. Posts and Drafts
-  complete a category's name as it is typed (R32; F5 takes exactly what
-  was typed, made under MAIN when the box is done), and F3 or SPACE lists
-  the categories; DEL leaves Drafts empty.
+  Publishing the micro-blog (Extras ▸ Publish, R74): `publish/1` (Publish
+  ▸ Publish) and the Site box (Publish ▸ Site), the blog's settings kept
+  in the file (`Agendum.Core.Extras.Blog`). Where the site is written and
+  how it is uploaded are the person's (`Agendum.TUI.Extras.UploadBox`).
+  The posts are the items of the Posts category not in the Drafts one.
+  Posts and Drafts complete a category's name as it is typed (R32; F5
+  takes exactly what was typed, made under MAIN when the box is done), and
+  F3 or SPACE lists the categories; DEL leaves Drafts empty.
 
-  ENTER keeps the settings, gives each post without a Zettel id one (its
-  page's address, R73), and makes the site; Agendum then reads the folder
-  and shows what publishing would change (`PublishPreviewBox`) before
-  anything is written or uploaded. ESC closes the box and changes nothing.
+  ENTER keeps the settings (one undo step); ESC closes the box and changes
+  nothing. Opened by the first Publish, before the blog has settings, its
+  ENTER goes on to publish (the owner's choice, 2026-11-02).
+
+  Publishing gives each post without a Zettel id one (its page's address,
+  R73) and makes the site; Agendum then reads the folder and shows what
+  publishing would change (`PublishPreviewBox`) before anything is written
+  or uploaded.
 
   The box is drawn from `@layout` (`Agendum.TUI.Boxes.Template`); its
   fields are the cursor's order. A letter on a text field starts typing
-  it (F2 edits what is there, SPACE too but on Posts and Drafts); SPACE on Upload shows the next
-  way. Pure.
+  it (F2 edits what is there, SPACE too but on Posts and Drafts). Pure.
   """
 
   use Agendum.TUI.Boxes.Box, finish: :done
 
-  alias Agendum.Core.Extras.Blog
   alias Agendum.TUI.Boxes.{Box, FieldTyping, Template}
   alias Agendum.TUI.Extras.Publish.Messages
   alias Agendum.TUI.{State, Typing.LineEdit}
 
-  # the rows for uploading show only for the way chosen; a row whose
-  # value is nil is left out
   @layout """
    Posts category : [posts            ]   Drafts   : [drafts          ]
    Site title     : [title                                            ]
@@ -35,10 +37,6 @@ defmodule Agendum.TUI.Extras.PublishBox do
    Author         : [author           ]   Language : [language        ]
    Base address   : [base_url                                         ]
    rel="me" links : [me                                               ]
-   Folder         : [folder                                           ]
-   Upload         : [upload           ]
-   Upload to      : [target                                           ]
-   User           : [user             ]   Folder on server: [remote_dir]
   """
 
   @help %{
@@ -52,19 +50,29 @@ defmodule Agendum.TUI.Extras.PublishBox do
       "Where the site is on the web (https://example.com/blog/): the feeds and your name's link need it. Type it.",
     me:
       "Addresses of your other profiles (a Mastodon account), for rel=\"me\" links; " <>
-        "spaces between. Type them.",
-    folder: "Where the site is written: a folder beside this file, or any path. Type it, or F3.",
-    upload: "After writing: upload by rsync over ssh, by SFTP, or not at all. SPACE switches.",
-    target: "rsync: where to (me@host:www/blog). SFTP: the server (host or host:port). Type it.",
-    user: "The user name on the SFTP server. Type it.",
-    remote_dir: "The folder on the SFTP server the site goes into. Type it."
+        "spaces between. Type them."
   }
 
-  @text_fields ~w(posts drafts title description author language base_url me folder target user remote_dir)a
+  @text_fields ~w(posts drafts title description author language base_url me)a
 
-  @doc "Opens the box with the file's settings."
-  @spec open(State.t()) :: State.t()
-  def open(state) do
+  @doc """
+  Publish ▸ Publish: the site made and the folder read, for the preview;
+  before the blog has settings (no posts category), the Site box first,
+  whose ENTER then goes on to publish.
+  """
+  @spec publish(State.t()) :: State.t()
+  def publish(%State{db: %{blog: %{posts: nil}}} = state), do: open(state, then_publish: true)
+
+  def publish(state) do
+    case State.command(state, {:prepare_publish, %{}}) do
+      {:ok, state, _changes} -> scan(state)
+      {:error, reason} -> State.error(state, error_text(reason))
+    end
+  end
+
+  @doc "Opens the Site box with the file's settings; `then_publish: true` publishes on ENTER."
+  @spec open(State.t(), keyword) :: State.t()
+  def open(state, opts \\ []) do
     blog = state.db.blog
     name = fn id -> if id, do: state.db.categories[id].name, else: "" end
 
@@ -72,10 +80,14 @@ defmodule Agendum.TUI.Extras.PublishBox do
       blog
       |> Map.from_struct()
       |> Map.merge(%{posts: name.(blog.posts) |> default("Posts"), drafts: name.(blog.drafts)})
-      |> Map.update!(:folder, &default(&1, "site"))
       |> Map.update!(:title, &default(&1, default_title(state)))
 
-    State.push(state, %Agendum.TUI.Modes.Publish{settings: settings, cursor: 0, typing: nil})
+    State.push(state, %Agendum.TUI.Modes.Publish{
+      settings: settings,
+      cursor: 0,
+      typing: nil,
+      then_publish: Keyword.get(opts, :then_publish, false)
+    })
   end
 
   defp default("", value), do: value
@@ -84,17 +96,8 @@ defmodule Agendum.TUI.Extras.PublishBox do
   defp default_title(state),
     do: if(state.path, do: Path.basename(state.path, Path.extname(state.path)), else: "My blog")
 
-  # the fields shown, in the cursor's order
-  defp fields(mode) do
-    hidden =
-      case mode.settings.upload do
-        :none -> [:target, :user, :remote_dir]
-        :rsync -> [:user, :remote_dir]
-        :sftp -> []
-      end
-
-    Template.fields(@layout) -- hidden
-  end
+  # the fields, in the cursor's order
+  defp fields(_mode), do: Template.fields(@layout)
 
   defp current(mode), do: Enum.at(fields(mode), min(mode.cursor, length(fields(mode)) - 1))
 
@@ -134,9 +137,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
     %{
       posts: &set_setting(&1, :posts, "Posts"),
       drafts: &set_setting(&1, :drafts, ""),
-      title: &set_setting(&1, :title, default_title(state)),
-      folder: &set_setting(&1, :folder, "site"),
-      upload: &set_setting(&1, :upload, :none)
+      title: &set_setting(&1, :title, default_title(state))
     }
   end
 
@@ -146,21 +147,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   def category_choice?(state, _mode, _field, id), do: not Agendum.Core.ingested?(state.db, id)
 
   @impl Box
-  def picked(state, _mode, :folder, path),
-    do: set_setting(state, :folder, beside_file(state, path))
-
   def picked(state, _mode, field, id), do: set_category(state, field, id)
-
-  # a folder inside the file's (or, unsaved, the working one) is kept
-  # relative to it, as the default `site` is, so the file can move
-  defp beside_file(state, path) do
-    base = Path.expand(if state.path, do: Path.dirname(state.path), else: ".")
-
-    case Path.relative_to(path, base) do
-      ^path -> path
-      relative -> relative
-    end
-  end
 
   # Posts or Drafts set to a category picked (F3, SPACE) or completed: its
   # name, as the box keeps the settings until ENTER; the box is found by
@@ -185,9 +172,9 @@ defmodule Agendum.TUI.Extras.PublishBox do
   def commands(_mode) do
     Box.settings_commands([
       {:edit, "Edit", "Edit the setting's text"},
-      {:pick_category, "Choices", "The categories or folders to pick from"},
+      {:pick_category, "Choices", "The categories to pick from"},
       {:clear, "Clear", "No drafts category"},
-      {:done, "Publish", "Keep settings, show what will change"},
+      {:done, "Keep", "Keep the settings"},
       {:close, "Cancel", "Close without publishing"}
     ])
   end
@@ -195,12 +182,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
   @impl Box
   def run(state, mode, :change), do: change(state, mode, current(mode))
   def run(state, mode, :edit), do: edit(state, mode, current(mode))
-  def run(state, mode, :done), do: publish(state, mode)
+  def run(state, mode, :done), do: keep(state, mode)
 
   def run(state, mode, :pick_category) do
     case current(mode) do
       field when field in [:posts, :drafts] -> pick(state, field)
-      :folder -> pick_folder(state, mode)
       _ -> state
     end
   end
@@ -218,14 +204,6 @@ defmodule Agendum.TUI.Extras.PublishBox do
   # does in the clone's boxes; on another text field it edits what is there
   defp change(state, _mode, field) when field in [:posts, :drafts], do: pick(state, field)
   defp change(state, mode, field) when field in @text_fields, do: edit(state, mode, field)
-
-  defp change(state, mode, :upload) do
-    uploads = Blog.uploads()
-    index = Enum.find_index(uploads, &(&1 == mode.settings.upload))
-    next = Enum.at(uploads, rem(index + 1, length(uploads)))
-    State.put_mode(state, %{mode | settings: %{mode.settings | upload: next}})
-  end
-
   defp change(state, _mode, _field), do: state
 
   # F2: edit the text as it is (on Posts and Drafts too, without
@@ -238,52 +216,49 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   defp edit(state, _mode, _field), do: state
 
-  # F3 on Folder: the folders, from the one the setting names
-  defp pick_folder(state, mode) do
-    dir = folder(state, mode.settings.folder)
-    Agendum.TUI.Boxes.SelectFile.open_folder(state, dir, {:box_field, :publish, :folder})
-  end
-
   defp pick(state, field),
     do: Agendum.TUI.CategoryScreens.open_picker(state, {:box_field, :publish, field}, nil)
 
-  # ENTER: the settings are kept and the posts get their ids, in one
-  # change (one undo step); then the site is made and the folder read
-  defp publish(state, mode) do
+  # ENTER: the settings kept (one undo step); opened by the first
+  # Publish, it then publishes, in the same key
+  defp keep(state, mode) do
     changes =
       mode.settings
-      |> Map.take([:upload | @text_fields -- [:posts, :drafts]])
+      |> Map.take(@text_fields -- [:posts, :drafts])
       |> Map.merge(%{
         posts: category_setting(state, :posts, mode.settings.posts),
         drafts: category_setting(state, :drafts, mode.settings.drafts)
       })
 
-    case State.command(state, {:prepare_publish, changes}) do
+    case State.command(state, {:set_blog, changes}) do
       {:ok, state, _changes} ->
-        folder = folder(state, state.db.blog.folder)
-        files = Agendum.Core.site(state.db)
+        state = State.pop(state)
 
-        state
-        |> State.pop()
-        |> State.info(Messages.text(:reading, state.db.blog.folder))
-        |> State.effect({:publish_scan, folder, files})
+        if mode.then_publish,
+          do: publish(state),
+          else: State.info(state, Messages.text(:site_kept))
 
-      {:error, :no_posts_category} ->
-        State.error(state, Messages.text(:no_posts_category))
-
-      {:error, :ambiguous} ->
-        State.error(state, Messages.text(:ambiguous))
-
-      {:error, :ingested} ->
-        State.error(state, Messages.text(:ingested))
-
-      {:error, :zettels_full} ->
-        State.error(state, Messages.text(:zettels_full))
-
-      {:error, _} ->
-        State.error(state, Messages.text(:bad_categories))
+      {:error, reason} ->
+        State.error(state, error_text(reason))
     end
   end
+
+  # the site made from the file, and the folder read: the preview comes
+  # when the shell has read it (`Publish.Results.publish_scanned/4`)
+  defp scan(state) do
+    upload = Agendum.Preferences.upload(state.prefs, state.path)
+    files = Agendum.Core.site(state.db)
+
+    state
+    |> State.info(Messages.text(:reading, upload.folder))
+    |> State.effect({:publish_scan, folder(state, upload.folder), files})
+  end
+
+  defp error_text(:no_posts_category), do: Messages.text(:no_posts_category)
+  defp error_text(:ambiguous), do: Messages.text(:ambiguous)
+  defp error_text(:ingested), do: Messages.text(:ingested)
+  defp error_text(:zettels_full), do: Messages.text(:zettels_full)
+  defp error_text(_reason), do: Messages.text(:bad_categories)
 
   # the category the box opened with, by its id, unless the person typed
   # another name: a name another category also has must not swap it
@@ -309,39 +284,30 @@ defmodule Agendum.TUI.Extras.PublishBox do
   end
 
   @impl Box
-  def title(_state, _mode), do: "Publish the blog"
+  def title(_state, _mode), do: "Publish: the site"
 
   @impl Box
   def width(state, _mode), do: min(state.width - 4, 76)
 
   @impl Box
   def content(_state, mode, inner, _max_rows) do
-    shown = fields(mode)
     s = mode.settings
 
     values =
       Map.new(Template.fields(@layout), fn field ->
-        value =
-          cond do
-            field not in shown -> nil
-            field == :upload -> upload_name(s.upload)
-            Map.fetch!(s, field) == "" and field == :drafts -> "(none)"
-            true -> Map.fetch!(s, field)
-          end
-
-        {field, value}
+        value = Map.fetch!(s, field)
+        {field, if(field == :drafts and value == "", do: "(none)", else: value)}
       end)
 
     Template.render(@layout, values, [selected: current(mode)] ++ FieldTyping.editing(mode)) ++
       [[], [{:box, " " <> posts_line(mode)}], Box.hint(keys(nil, mode), inner)]
   end
 
-  defp posts_line(mode),
+  defp posts_line(%{then_publish: true} = mode),
     do: "The items in #{mode.settings.posts} are the posts; ENTER shows what will change."
 
-  defp upload_name(:none), do: "None"
-  defp upload_name(:rsync), do: "rsync over ssh"
-  defp upload_name(:sftp), do: "SFTP"
+  defp posts_line(mode),
+    do: "The items in #{mode.settings.posts} are the posts; ENTER keeps the settings."
 
   @impl Box
   def keys(_state, _mode), do: Box.settings_keys([{"type", "Text"}])
@@ -355,21 +321,24 @@ defmodule Agendum.TUI.Extras.PublishBox do
   @impl Box
   def about(_state, _mode) do
     """
-    Publish writes the blog from this file: the items of the posts
-    category, each a post (its text the title, its note the content,
-    written in Markdown), newest first by When date (else the Entry
-    date). Posts also in the drafts category are left out.
+    Site holds what the blog is made from, kept in the file: the items
+    of the posts category, each a post (its text the title, its note the
+    content, written in Markdown), newest first by When date (else the
+    Entry date). Posts also in the drafts category are left out. The
+    title, description, author and language go on every page and in the
+    feeds; the base address makes the feeds' links whole.
 
     The site is plain HTML: an index, a page per post at its Zettel id
     (posts/bonalaku.html), an RSS feed and a JSON Feed, and a stylesheet
-    you can change (Agendum writes it only when there is none).
+    you can change (Agendum writes it only when there is none). Where it
+    is written and uploaded is Publish ▸ Upload, yours, not the file's.
 
     Type in a field to change it, F2 edits it. Posts and Drafts complete
     a category's name as you type (F5 takes exactly what you typed, a
     new category); SPACE or F3 lists the categories, DEL leaves Drafts
-    empty. SPACE edits the other texts, and on Upload chooses rsync,
-    SFTP or none. ENTER shows what publishing would add, change
-    and remove before anything is written; ESC closes the box.
+    empty. SPACE edits the other texts. ENTER keeps the settings (and,
+    the first time, goes on to show what publishing would change); ESC
+    closes the box.
     """
   end
 end

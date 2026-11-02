@@ -49,7 +49,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
     it changes, and those it removes (a post that is no longer a post).
     Nothing else in the folder is touched.
 
-    ENTER writes them, and uploads the site when the Publish box says so;
+    ENTER writes them, and uploads the site when Publish ▸ Upload says so;
     once uploaded, the posts are public. ESC changes nothing. While it is
     publishing, the box stays open; ESC then only closes it, and
     publishing goes on. ↑ ↓ PGUP PGDN scroll.
@@ -140,13 +140,13 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
 
   defp lines(state, mode) do
     c = mode.changes
-    blog = state.db.blog
+    upload = Agendum.Preferences.upload(state.prefs, state.path)
 
     where =
-      case blog.upload do
+      case upload.method do
         :none -> "Written to #{mode.folder}; not uploaded."
-        :rsync -> "Written to #{mode.folder}, then sent by rsync to #{blog.target}."
-        :sftp -> "Written to #{mode.folder}, then uploaded by SFTP to #{blog.target}."
+        :rsync -> "Written to #{mode.folder}, then sent by rsync to #{upload.target}."
+        :sftp -> "Written to #{mode.folder}, then uploaded by SFTP to #{upload.target}."
       end
 
     posts = Enum.count(mode.files, &String.starts_with?(elem(&1, 0), "posts/"))
