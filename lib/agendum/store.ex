@@ -54,7 +54,8 @@ defmodule Agendum.Store do
   (`Agendum.Core.Extras.Upload`; loading an older file keeps them in
   `Blog.moved_upload`, never written, for the program to move); 48 adds
   `Blog.address`, the address pattern, and `Blog.published`, what
-  publishing remembers of each post (`Agendum.Core.Extras.PostRecord`).
+  publishing remembers of each post (`Agendum.Core.Extras.PostRecord`);
+  49 adds `Blog.pages`, the category whose items are the site's pages.
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -65,7 +66,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 48
+  @format_version 49
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

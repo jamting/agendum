@@ -163,7 +163,7 @@ The micro-blog's settings (R74); left out, none: no posts category.
 
 | Key | Meaning |
 | --- | ------- |
-| `posts`, `drafts` | The posts category and the drafts category (ids), or `null`. |
+| `posts`, `drafts`, `pages` | The posts category, the drafts category and the pages category (ids), or `null`. |
 | `title`, `description`, `author`, `language` | What the pages and feeds say about the blog; `language` such as `"en"` or `"sv"`. |
 | `base_url` | Where the site is on the web (`"https://example.com/blog/"`), for the feeds' links. |
 | `me` | Addresses of the person's other profiles, for `rel="me"` links, separated by spaces. |

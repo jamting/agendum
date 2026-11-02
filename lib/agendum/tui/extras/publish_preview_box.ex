@@ -160,9 +160,11 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
 
     # the posts the site has today (a When still to come waits, R74)
     posts = Agendum.Core.blog_post_count(state.db, state.today)
+    pages = Agendum.Core.blog_page_count(state.db, state.today)
+    counted = if pages > 0, do: ", #{Draw.count(pages, "page")}", else: ""
 
     head =
-      ["#{Draw.count(posts, "post")} · #{summary(c)}", where] ++
+      ["#{Draw.count(posts, "post")}#{counted} · #{summary(c)}", where] ++
         waiting(state) ++ templates(mode) ++ [""]
 
     list =

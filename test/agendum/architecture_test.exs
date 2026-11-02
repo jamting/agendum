@@ -155,7 +155,7 @@ defmodule Agendum.ArchitectureTest do
     related_items relocation_conflicts reposition_refused section_calcs section_item_count shift_filters show_view subscription_name template view_statistics waiting?
     when_at when_text
     zettel zettels item_by_zettel zettel_links link_targets linked_from
-    blog_posts blog_waiting blog_post_count blog_address_default blog_needs_base_url? moved_upload upload_methods site site_default_templates site_changes feeds_due parse_feed export_opml
+    blog_posts blog_waiting blog_post_count blog_page_count blog_address_default blog_needs_base_url? moved_upload upload_methods site site_default_templates site_changes feeds_due parse_feed export_opml
   )a
 
   # Agendum.Core functions a command does: the ones a command calls by its

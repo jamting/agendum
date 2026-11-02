@@ -18,9 +18,10 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   @typep id :: Agendum.Core.id()
 
   @typedoc """
-  Settings to change: any of `Agendum.Core.Extras.Blog`'s fields, the posts and
-  drafts categories given by id or by name (`{:name, "Posts"}`, made
-  under MAIN when there is none of that name; `""` for no drafts).
+  Settings to change: any of `Agendum.Core.Extras.Blog`'s fields, the
+  posts, drafts and pages categories given by id or by name
+  (`{:name, "Posts"}`, made under MAIN when there is none of that name;
+  `{:name, ""}` or nil for no drafts or pages).
   """
   @type changes :: %{optional(atom) => term}
 
@@ -36,6 +37,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
     # `with` runs each step while it matches; an `{:error, _}` stops it
     with {:ok, db, posts} <- category(db, Map.get(changes, :posts, db.blog.posts)),
          {:ok, db, drafts} <- category(db, Map.get(changes, :drafts, db.blog.drafts)),
+         {:ok, db, pages} <- category(db, Map.get(changes, :pages, db.blog.pages)),
          {:ok, settings} <- settings(changes) do
       cond do
         posts == nil ->
@@ -44,10 +46,13 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
         # a feed's or a calendar's category (R75a) is never the blog's:
         # drafts are filed by hand, which it refuses, and its items are
         # other people's writing (the owner, 2026-10-27)
-        Enum.any?([posts, drafts], &(&1 && Ingested.ingested?(db, &1))) ->
+        Enum.any?([posts, drafts, pages], &(&1 && Ingested.ingested?(db, &1))) ->
           {:error, :ingested}
 
-        drafts == posts ->
+        # three different categories, Pages and Drafts each optional, none
+        # inside another: an item in a category is in its parents too, so
+        # Pages above Posts would take every post (code review 2026-11-02)
+        tangled?(db, [posts, drafts, pages]) ->
           {:error, :bad_setting}
 
         # each post must be able to have an address of its own, inside the
@@ -57,9 +62,25 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
         true ->
           {:ok,
-           %{db | blog: struct(db.blog, Map.merge(settings, %{posts: posts, drafts: drafts}))}}
+           %{
+             db
+             | blog:
+                 struct(
+                   db.blog,
+                   Map.merge(settings, %{posts: posts, drafts: drafts, pages: pages})
+                 )
+           }}
       end
     end
+  end
+
+  # two of the categories the same, or one above another
+  defp tangled?(db, ids) do
+    set = ids |> Enum.reject(&is_nil/1) |> Enum.with_index()
+
+    Enum.any?(
+      for {a, i} <- set, {b, j} <- set, i != j, do: a == b or a in Database.ancestors(db, b)
+    )
   end
 
   # a category by id, or by name: the first of that name, else a new one
@@ -118,10 +139,15 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
              | :ingested}
   def prepare_publish(db, changes) do
     with {:ok, db} <- set_blog(db, changes) do
-      ids = for item <- Blog.posts(db), item.zettel == nil, do: item.id
+      # pages too: a page whose title gives no slug has its Zettel id
+      ids = for item <- Blog.posts(db) ++ Blog.pages(db), item.zettel == nil, do: item.id
       Zettels.attach_zettels(db, ids)
     end
   end
+
+  @doc "How many pages the site has on `today` (R74)."
+  @spec blog_page_count(db, Date.t()) :: non_neg_integer
+  def blog_page_count(db, today), do: db |> Blog.pages(today) |> Enum.count(& &1.zettel)
 
   @doc """
   Published, on the clock's day (R74): each post's record kept as the
@@ -141,8 +167,8 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   def blog_address_default, do: Address.default()
 
   @doc """
-  The posts whose date (When, else Entry) is still to come on `today`,
-  the soonest first, each with that date (R74).
+  The posts and pages whose date (When, else Entry) is still to come on
+  `today`, the soonest first, each with that date (R74).
   """
   @spec blog_waiting(db, Date.t()) :: [{Agendum.Core.Item.t(), Date.t()}]
   def blog_waiting(db, today),

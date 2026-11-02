@@ -90,6 +90,18 @@ defmodule Agendum.TUI.Extras.PublishTest do
     assert screen(refused) =~ "needs {zettel} or {slug}"
   end
 
+  test "Site's Pages field completes a category, and DEL leaves none", %{state: state} do
+    {:ok, db, _} = Core.add_category(state.db, state.db.main_id, "Pages")
+    site = press(%{state | db: db}, [{:f, 10}, "e", "p", "s"])
+    assert screen(site) =~ ~r/Pages category : \(none\)/
+
+    kept = site |> to_setting("Pages category") |> press(["P", "a", "g", :enter, :enter])
+    assert kept.db.blog.pages == hd(Database.find_categories(kept.db, "Pages"))
+
+    cleared = site |> to_setting("Pages category") |> press(["P", "a", "g", :enter, :delete])
+    assert screen(cleared) =~ ~r/Pages category : \(none\)/
+  end
+
   test "the preview says when a post waits for its day", %{state: state} do
     {db, _} =
       Core.add_item(state.db, "Soon", ~D[2026-10-01],

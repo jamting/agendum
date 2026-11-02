@@ -1,0 +1,11 @@
+{{! A page, such as About: an item of the Pages category. Its values are
+    the same as a post's: title, title_html, content, updated and
+    updated_iso (the day it was last changed, empty until then), url. }}
+<main>
+{{#item}}<article class="page" id="{{zettel}}">
+<h1>{{{title_html}}}</h1>
+<div class="e-content">
+{{{content}}}
+</div>
+</article>
+{{/item}}</main>

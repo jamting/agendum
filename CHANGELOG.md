@@ -6,6 +6,17 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.82.0 — 2026-11-02
+
+- **Pages: About, Now and the like.** In Publish ▸ Site, choose a Pages category: each of its items becomes a page of its own, `about.html` from a title "About" (a note's `# Heading` gives the title, as for a post). Pages are not in the list of posts or in the feeds, and a page keeps its address as a post does.
+- **A menu on every page:** Home, then your pages from A to Z, the one you are on marked. No pages, no menu, so a blog without them looks as before. If you published with 0.81 and never changed `templates/menu.html`, it is replaced by the new one; a menu you wrote stays yours.
+- **`templates/page.html`** draws the pages. It shows no date; `{{updated}}` is there if you want one.
+- **File format 49:** the blog keeps its pages category.
+
+### Facade
+
+- Added `blog_page_count/2`; `set_blog/2` takes `pages`. `blog_posts/1` leaves out an item that is in the pages category too (it is a page), and `blog_waiting/2` lists pages as well as posts.
+
 ## 0.81.0 — 2026-11-02
 
 - **Change how your blog looks: templates.** The next time you publish, Agendum writes `templates/` into the site's folder: `layout.html`, `index.html`, `post.html` and `menu.html`. They make the pages as before (a `"` in a title is now written `&quot;`, which shows the same); change them, and your pages change. Agendum never overwrites a template that is there (delete one to get Agendum's back), and templates are never uploaded. They use `{{name}}` for a value, `{{#posts}}…{{/posts}}` to repeat, `{{> menu}}` to include another; nothing in them can run code. A mistake stops publishing and says where: "templates/post.html line 12: {{#post}} is not closed".

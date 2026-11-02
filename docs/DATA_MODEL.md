@@ -18,7 +18,7 @@ erDiagram
     DATABASE ||--o{ MACRO : "macros (by id, in macro_order)"
     CALENDAR }o--|| CATEGORY : "files items in"
     FEED }o--|| CATEGORY : "files items in"
-    BLOG }o--o| CATEGORY : "posts, drafts"
+    BLOG }o--o| CATEGORY : "posts, drafts, pages"
     CATEGORY ||--o{ CATEGORY : "children (ordered)"
     ITEM }o--o{ CATEGORY : "explicit assignment (LINKS)"
     CATEGORY }o--o{ CATEGORY : "also_assign"
@@ -161,6 +161,7 @@ erDiagram
     BLOG {
         int posts FK "category, or nil"
         int drafts FK "category, or nil"
+        int pages FK "category of the site's pages, or nil"
         string title
         string description
         string author
@@ -392,6 +393,7 @@ classDiagram
     class Blog {
         +posts : id or nil
         +drafts : id or nil
+        +pages : id or nil
         +title, description, author, language : String
         +base_url, me : String
         +address : String
@@ -599,7 +601,7 @@ The core maintains these, and the tests check them: `Agendum.Core.Invariants.vio
 9. **No direct link to both a category and its ancestor** (SPEC R7c). An item linked to a category is never also linked to one of its ancestors. `Assign.assign/3` clears the item's links to the category's ancestors and descendants before linking, and category moves resolve the conflicts they would create. Files saved before R7c may still contain such pairs; assigning those items again tidies them up.
 10. **Conditional marks are links.** Every `{item, category}` in `db.conditional` is also a link; `Database.unlink/3` and the delete operations remove marks with their links. A user assignment clears the mark, so only condition-made links are ever retracted (SPEC R15).
 11. **Zettel ids are unique.** No two items have the same `zettel`, and each is below `next_zettel` (R73). `Core.attach_zettels/2` takes the next number and counts on; nothing else sets one.
-12. **The blog's categories exist.** `blog.posts` and `blog.drafts` are categories in the file, or nil; `delete_category/2` clears them when they go (R74).
+12. **The blog's categories exist.** `blog.posts`, `blog.drafts` and `blog.pages` are categories in the file, or nil; `delete_category/2` clears them when they go (R74).
 13. **Feeds file into categories that exist.** A feed's `category_id` is a category; `delete_category/2` ends the subscription with it (R75). A feed's entries name items that exist, or nil (one that faded or was discarded); a refresh clears those the person discarded.
 14. **The trash is out of the file** (R24a). An item in `trash.items` is in neither `items` nor `item_order`, is there once, has an id below `next_id`, and kept no When or Done date or alarm (`Core.discard_items/3` strips them); `trash.day` is set exactly while the trash has items. Undisc puts an item back under its own id.
 
@@ -687,6 +689,7 @@ Format versions:
 | 46 | A live feed entry keeps `title_print` and `note_print`, fingerprints of what it filed, instead of `title`, `note` and `link`; a calendar event `summary_print` and `description_print` instead of `summary` and `description` (`Agendum.Core.Extras.Fingerprint`); `upgrade/1` converts older files (ADR 0048; meeting 2026-10-26-1732, § 5) |
 | 47 | `Blog` loses `folder`, `upload`, `target`, `user` and `remote_dir`: where the site is written and uploaded is the person's (`Agendum.Core.Extras.Upload`, in their preferences); `upgrade/1` lifts an older file's into `Blog.moved_upload`, never written, and opening the file moves them to the preferences (meeting 2026-11-02-1255, § 10) |
 | 48 | `Blog` gains `address`, the address pattern of a post's page, and `published`, what publishing remembers of each post by its item's id (`Agendum.Core.Extras.PostRecord`: its address, made once, a fingerprint, the day it was found changed; meeting 2026-11-02-1255, § 6) |
+| 49 | `Blog` gains `pages`, the category whose items are the site's pages (About, Now), outside the index and the feeds (meeting 2026-11-02-1255, § 8) |
 
 ## UI state around the database
 

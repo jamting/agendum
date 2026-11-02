@@ -11,13 +11,15 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:no_posts_category), do: "Name the category whose items are the posts"
 
   def text(:ambiguous),
-    do: "Two categories have that name: give the posts or drafts a name of their own"
+    do: "Two categories have that name: give the posts, drafts or pages a name of their own"
 
   def text(:ingested),
-    do: "The posts and drafts are your own categories, not a feed's or a calendar's"
+    do: "The posts, drafts and pages are your own categories, not a feed's or a calendar's"
 
   def text(:zettels_full), do: "Every Zettel id is in use; the posts cannot all have one"
-  def text(:bad_categories), do: "The posts and drafts categories must differ, and be categories"
+
+  def text(:bad_categories),
+    do: "The posts, drafts and pages categories must differ, and be categories"
 
   def text(:bad_address),
     do: "The address needs {zettel} or {slug}, must end in .html and stay in the site's folder"

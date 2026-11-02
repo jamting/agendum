@@ -140,4 +140,24 @@ defmodule Agendum.Extras.SiteTemplatesTest do
       assert scan.existing["assets/me.png"] == "png"
     end
   end
+
+  test "a menu.html still as Agendum 0.81 wrote it is replaced; one changed stays", %{
+    tmp_dir: dir
+  } do
+    old = File.read!("lib/agendum/core/extras/site_assets/templates/menu-0.81.html")
+    File.mkdir_p!(Path.join(dir, "templates"))
+    File.write!(Path.join(dir, "templates/menu.html"), old)
+
+    {:ok, scan} = Publish.scan(dir, [])
+    assert "templates/menu.html" in scan.templates_missing
+    assert {:ok, %{templates: templates}} = Publish.inputs(dir)
+    refute Map.has_key?(templates, "menu")
+
+    :ok = Publish.write_templates(dir, Core.site_default_templates())
+    assert File.read!(Path.join(dir, "templates/menu.html")) =~ "has_pages"
+
+    File.write!(Path.join(dir, "templates/menu.html"), old <> "<nav>mine</nav>")
+    :ok = Publish.write_templates(dir, Core.site_default_templates())
+    assert File.read!(Path.join(dir, "templates/menu.html")) =~ "<nav>mine</nav>"
+  end
 end

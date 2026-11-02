@@ -32,6 +32,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   @layout """
    Posts category : [posts            ]   Drafts   : [drafts          ]
+   Pages category : [pages            ]
    Site title     : [title                                            ]
    Description    : [description                                      ]
    Author         : [author           ]   Language : [language        ]
@@ -43,6 +44,8 @@ defmodule Agendum.TUI.Extras.PublishBox do
   @help %{
     posts: "The category whose items are the posts. Type a name (F5 a new one) or F3 to pick.",
     drafts: "A post also in it waits until it is ready. Type a name or F3 to pick; DEL for none.",
+    pages:
+      "Its items are pages (About, Now), in the menu, not in the feeds. Type a name or F3; DEL for none.",
     title: "The blog's name, on every page and in the feeds. Type it.",
     description: "A line about the blog, under its name and in the feeds. Type it.",
     author: "Your name, as the posts' author (an h-card for the fediverse). Type it.",
@@ -56,7 +59,9 @@ defmodule Agendum.TUI.Extras.PublishBox do
       "Where a post's page goes, made once: {zettel} {slug} {year} {month} {day}, ending .html. Type it."
   }
 
-  @text_fields ~w(posts drafts title description author language base_url me address)a
+  @text_fields ~w(posts drafts pages title description author language base_url me address)a
+  # the fields that name a category, completed as typed (R32)
+  @category_fields [:posts, :drafts, :pages]
 
   @doc """
   Publish ▸ Publish: the site made and the folder read, for the preview;
@@ -82,7 +87,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
     settings =
       blog
       |> Map.from_struct()
-      |> Map.merge(%{posts: name.(blog.posts) |> default("Posts"), drafts: name.(blog.drafts)})
+      |> Map.merge(%{
+        posts: name.(blog.posts) |> default("Posts"),
+        drafts: name.(blog.drafts),
+        pages: name.(blog.pages)
+      })
       |> Map.update!(:title, &default(&1, default_title(state)))
 
     State.push(state, %Agendum.TUI.Modes.Publish{
@@ -131,7 +140,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   end
 
   @impl Box
-  def category_fields(_mode), do: [:posts, :drafts]
+  def category_fields(_mode), do: @category_fields
 
   # F8 and ALT-F8 (R81c): what a new blog has, as the box opens with it
   # (the owner, 2026-10-27); Author, Description and the others have none
@@ -140,6 +149,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
     %{
       posts: &set_setting(&1, :posts, "Posts"),
       drafts: &set_setting(&1, :drafts, ""),
+      pages: &set_setting(&1, :pages, ""),
       title: &set_setting(&1, :title, default_title(state)),
       address: &set_setting(&1, :address, Agendum.Core.blog_address_default())
     }
@@ -177,7 +187,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
     Box.settings_commands([
       {:edit, "Edit", "Edit the setting's text"},
       {:pick_category, "Choices", "The categories to pick from"},
-      {:clear, "Clear", "No drafts category"},
+      {:clear, "Clear", "No drafts (or pages) category"},
       {:done, "Keep", "Keep the settings"},
       {:close, "Cancel", "Close without publishing"}
     ])
@@ -190,14 +200,14 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   def run(state, mode, :pick_category) do
     case current(mode) do
-      field when field in [:posts, :drafts] -> pick(state, field)
+      field when field in @category_fields -> pick(state, field)
       _ -> state
     end
   end
 
   def run(state, mode, :clear) do
-    if current(mode) == :drafts,
-      do: State.put_mode(state, %{mode | settings: %{mode.settings | drafts: ""}}),
+    if current(mode) in [:drafts, :pages],
+      do: State.put_mode(state, %{mode | settings: Map.put(mode.settings, current(mode), "")}),
       else: state
   end
 
@@ -206,7 +216,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
 
   # SPACE on Posts or Drafts opens the category list, as a category field
   # does in the clone's boxes; on another text field it edits what is there
-  defp change(state, _mode, field) when field in [:posts, :drafts], do: pick(state, field)
+  defp change(state, _mode, field) when field in @category_fields, do: pick(state, field)
   defp change(state, mode, field) when field in @text_fields, do: edit(state, mode, field)
   defp change(state, _mode, _field), do: state
 
@@ -214,7 +224,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   # completion, as Agenda's EDIT: `choice: :off`)
   defp edit(state, mode, field) when field in @text_fields do
     line = LineEdit.new(Map.fetch!(mode.settings, field))
-    choice = if field in [:posts, :drafts], do: :off, else: nil
+    choice = if field in @category_fields, do: :off, else: nil
     State.put_mode(state, %{mode | typing: {field, line}, choice: choice})
   end
 
@@ -228,10 +238,11 @@ defmodule Agendum.TUI.Extras.PublishBox do
   defp keep(state, mode) do
     changes =
       mode.settings
-      |> Map.take(@text_fields -- [:posts, :drafts])
+      |> Map.take(@text_fields -- @category_fields)
       |> Map.merge(%{
         posts: category_setting(state, :posts, mode.settings.posts),
-        drafts: category_setting(state, :drafts, mode.settings.drafts)
+        drafts: category_setting(state, :drafts, mode.settings.drafts),
+        pages: category_setting(state, :pages, mode.settings.pages)
       })
 
     case State.command(state, {:set_blog, changes}) do
@@ -301,7 +312,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
     values =
       Map.new(Template.fields(@layout), fn field ->
         value = Map.fetch!(s, field)
-        {field, if(field == :drafts and value == "", do: "(none)", else: value)}
+        {field, if(field in [:drafts, :pages] and value == "", do: "(none)", else: value)}
       end)
 
     Template.render(@layout, values, [selected: current(mode)] ++ FieldTyping.editing(mode)) ++
@@ -331,7 +342,9 @@ defmodule Agendum.TUI.Extras.PublishBox do
     content, written in Markdown), newest first by When date (else the
     Entry date). A note that starts with "# A title" gives the post that
     title instead. A post whose When is still to come waits for its day.
-    Posts also in the drafts category are left out. The title,
+    Posts also in the drafts category are left out. The items of the
+    pages category are pages (About, Now): each at its own address from
+    its title, listed in the menu, not in the index or the feeds. The title,
     description, author and language go on every page and in the feeds;
     the base address makes the feeds' links whole.
 

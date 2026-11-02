@@ -352,11 +352,12 @@ defmodule Agendum.Core.Database do
            calendars: Map.reject(db.calendars, fn {_, c} -> c.category_id in doomed_set end),
            # and a feed (R75)
            feeds: Map.reject(db.feeds, fn {_, f} -> f.category_id in doomed_set end),
-           # the blog forgets a posts or drafts category that is gone (R74)
+           # the blog forgets a posts, drafts or pages category that is gone (R74)
            blog: %{
              db.blog
              | posts: if(db.blog.posts in doomed_set, do: nil, else: db.blog.posts),
-               drafts: if(db.blog.drafts in doomed_set, do: nil, else: db.blog.drafts)
+               drafts: if(db.blog.drafts in doomed_set, do: nil, else: db.blog.drafts),
+               pages: if(db.blog.pages in doomed_set, do: nil, else: db.blog.pages)
            }
        }}
     end

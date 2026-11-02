@@ -52,13 +52,19 @@ defmodule Agendum.Core.Extras.Site do
 
   # the templates a site's pages are drawn from (`Agendum.Core.Extras.Template`),
   # written into its `templates/` folder when missing, then the person's
-  @template_names ~w(layout index post menu)
-  for name <- @template_names,
+  @template_names ~w(layout index post page menu)
+  for name <- @template_names ++ ["menu-0.81"],
       do: @external_resource(Path.join([@assets, "templates", name <> ".html"]))
 
   @default_templates Map.new(@template_names, fn name ->
                        {name, File.read!(Path.join([@assets, "templates", name <> ".html"]))}
                      end)
+
+  # templates an older Agendum wrote: one still word for word as it was is
+  # Agendum's, not the person's, so a newer one replaces it (as `style.css`)
+  @legacy_templates %{
+    "templates/menu.html" => [File.read!(Path.join([@assets, "templates", "menu-0.81.html"]))]
+  }
 
   @doc "The stylesheet's path: written only when the folder has none."
   @spec stylesheet() :: String.t()
@@ -70,6 +76,17 @@ defmodule Agendum.Core.Extras.Site do
   in `assets/`, as the shell read them (`Agendum.Extras.Publish.inputs/1`).
   """
   @type inputs :: %{templates: %{optional(String.t()) => String.t()}, assets: [file]}
+
+  @doc """
+  Whether `text` at `path` (`templates/menu.html`) is still word for word a
+  template an older Agendum wrote: then it is replaced, as missing.
+  """
+  @spec legacy_template?(String.t(), String.t()) :: boolean
+  def legacy_template?(path, text), do: text in Map.get(@legacy_templates, path, [])
+
+  @doc "Whether an older Agendum ever wrote another version of the template at `path`."
+  @spec had_legacy?(String.t()) :: boolean
+  def had_legacy?(path), do: Map.has_key?(@legacy_templates, path)
 
   @doc """
   The templates Agendum writes into a site's `templates/` folder when one
@@ -142,12 +159,20 @@ defmodule Agendum.Core.Extras.Site do
     blog = db.blog
     used = Zettels.zettels(db)
     posts = db |> Blog.posts(today) |> Enum.filter(& &1.zettel)
-    published = MapSet.new(posts, & &1.id)
-    site = %{db: db, blog: blog, used: used, published: published, posts: posts}
+    pages = db |> Blog.pages(today) |> Enum.filter(& &1.zettel)
+    published = MapSet.new(posts ++ pages, & &1.id)
+    site = %{db: db, blog: blog, used: used, published: published, posts: posts, pages: pages}
+    # the menu's pages, made once: each page drawn marks its own as current
+    site = Map.put(site, :menu, for(item <- pages, do: menu_entry(site, item)))
     draw = &draw(site, templates, &1, &2)
 
     with {:ok, index} <- draw.("index", index(site)),
-         {:ok, pages} <- post_pages(site, draw) do
+         {:ok, post_files} <-
+           each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
+         {:ok, page_files} <-
+           each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw) do
+      pages = post_files ++ page_files
+
       {:ok,
        [
          {"index.html", index},
@@ -158,9 +183,10 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
-  defp post_pages(site, draw) do
-    Enum.reduce_while(site.posts, {:ok, []}, fn item, {:ok, pages} ->
-      case draw.("post", post_page(site, item)) do
+  # each post's (or page's) page from its template, or the first mistake
+  defp each_page(items, template, context, site, draw) do
+    Enum.reduce_while(items, {:ok, []}, fn item, {:ok, pages} ->
+      case draw.(template, context.(item)) do
         {:ok, page} -> {:cont, {:ok, [{post_path(site.db, item), page} | pages]}}
         error -> {:halt, error}
       end
@@ -175,7 +201,7 @@ defmodule Agendum.Core.Extras.Site do
   # layout as `content`; the templates are each other's partials, so
   # `{{> menu}}` (or any template in the folder) can be included
   defp draw(site, templates, name, context) do
-    context = Map.merge(site_context(site), context)
+    context = site |> site_context() |> Map.merge(menu(site, context)) |> Map.merge(context)
 
     with {:ok, body} <- render(templates, name, context) do
       render(templates, "layout", Map.put(context, "content", body))
@@ -290,6 +316,16 @@ defmodule Agendum.Core.Extras.Site do
     }
   end
 
+  # the pages for the menu, on every page: each with its address from the
+  # site's root and whether it is the page being drawn
+  defp menu(site, context) do
+    pages = for entry <- site.menu, do: Map.put(entry, "current", entry["url"] == context["path"])
+    %{"pages" => pages, "has_pages" => pages != []}
+  end
+
+  defp menu_entry(site, item),
+    do: %{"title" => title_text(site, item), "url" => post_path(site.db, item)}
+
   defp index(site) do
     posts =
       site.posts
@@ -298,16 +334,25 @@ defmodule Agendum.Core.Extras.Site do
         post_context(site, item, "", :index) |> Map.put("first", i == 0)
       end)
 
-    %{"root" => "", "page" => %{"title" => site.blog.title, "index" => true}, "posts" => posts}
+    %{
+      "root" => "",
+      "path" => "index.html",
+      "page" => %{"title" => site.blog.title, "index" => true},
+      "posts" => posts
+    }
   end
 
-  defp post_page(site, item) do
-    root = root(post_path(site.db, item))
+  # a post's own page (its values under `post`) or a page's, such as About
+  # (under `item`, drawn from `page.html`)
+  defp own_page(site, item, key) do
+    path = post_path(site.db, item)
+    root = root(path)
 
     %{
       "root" => root,
+      "path" => path,
       "page" => %{"title" => "#{title_text(site, item)} · #{site.blog.title}", "index" => false},
-      "post" => post_context(site, item, root, :page)
+      key => post_context(site, item, root, :page)
     }
   end
 

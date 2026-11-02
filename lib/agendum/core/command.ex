@@ -108,7 +108,7 @@ defmodule Agendum.Core.Command do
      "Gives each item without a Zettel id the next one (bonalaku); an item that has one keeps it (R73)",
      [:items], :core},
     {:set_blog, "Blog settings",
-     "Changes the micro-blog's settings: its posts and drafts categories (by id or {:name, name}), title, base address, address pattern (R74)",
+     "Changes the micro-blog's settings: its posts, drafts and pages categories (by id or {:name, name}), title, base address, address pattern (R74)",
      [:value], :core},
     {:prepare_publish, "Publish",
      "Keeps the blog's settings and gives each post without a Zettel id one, before the site is written (R74)",

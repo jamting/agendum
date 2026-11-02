@@ -59,8 +59,14 @@ defmodule Agendum.Extras.Publish do
     |> Enum.sort()
     |> Enum.reduce_while({:ok, %{}}, fn name, {:ok, acc} ->
       case template(Path.join(dir, name)) do
-        {:ok, text} -> {:cont, {:ok, Map.put(acc, Path.rootname(name), text)}}
-        {:error, why} -> {:halt, {:error, "templates/#{name} #{why}"}}
+        # still word for word an older Agendum's: Agendum's own is used
+        {:ok, text} ->
+          if Site.legacy_template?("templates/" <> name, text),
+            do: {:cont, {:ok, acc}},
+            else: {:cont, {:ok, Map.put(acc, Path.rootname(name), text)}}
+
+        {:error, why} ->
+          {:halt, {:error, "templates/#{name} #{why}"}}
       end
     end)
   end
@@ -154,12 +160,29 @@ defmodule Agendum.Extras.Publish do
           into: %{},
           do: {path, content}
 
-    missing =
-      for {path, _} <- Site.default_templates(),
-          not File.exists?(Path.join(folder, path)),
-          do: path
+    missing = for {path, _} <- Site.default_templates(), replaced?(folder, path), do: path
 
     {:ok, %{existing: existing, published: published, templates_missing: missing}}
+  end
+
+  # a template Agendum writes: missing, or still word for word an older
+  # Agendum's own (read only where there was one, as `templates/1` reads:
+  # not through a link, nor a big file)
+  defp replaced?(folder, path) do
+    full = Path.join(folder, path)
+
+    case File.lstat(full) do
+      {:error, :enoent} -> true
+      {:ok, _} -> Site.had_legacy?(path) and legacy_copy?(path, full)
+      {:error, _} -> false
+    end
+  end
+
+  defp legacy_copy?(path, full) do
+    case template(full) do
+      {:ok, text} -> Site.legacy_template?(path, text)
+      {:error, _} -> false
+    end
   end
 
   defp existing(folder, "assets/" <> _ = path, contents) when is_map_key(contents, path) do
@@ -175,7 +198,7 @@ defmodule Agendum.Extras.Publish do
   """
   @spec write_templates(String.t(), [Site.file()]) :: :ok | {:error, String.t()}
   def write_templates(folder, templates) do
-    missing = Enum.reject(templates, &File.exists?(Path.join(folder, elem(&1, 0))))
+    missing = Enum.filter(templates, &replaced?(folder, elem(&1, 0)))
 
     with :ok <- each(folders(Enum.map(missing, &elem(&1, 0))), &mkdir(Path.join(folder, &1))) do
       each(missing, fn {path, text} -> put(folder, path, text) end)

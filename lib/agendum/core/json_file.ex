@@ -134,6 +134,7 @@ defmodule Agendum.Core.JSONFile do
     [
       posts: {:nullable, :int},
       drafts: {:nullable, :int},
+      pages: {:nullable, :int},
       title: :string,
       description: :string,
       author: :string,
@@ -1180,8 +1181,10 @@ defmodule Agendum.Core.JSONFile do
          "next_zettel must be above every Zettel id"},
         {Enum.all?(Map.values(db.calendars), &Map.has_key?(cats, &1.category_id)),
          "a calendar's category does not exist"},
-        {Enum.all?([db.blog.posts, db.blog.drafts], &(&1 == nil or Map.has_key?(cats, &1))),
-         "the blog's posts or drafts category does not exist"},
+        {Enum.all?(
+           [db.blog.posts, db.blog.drafts, db.blog.pages],
+           &(&1 == nil or Map.has_key?(cats, &1))
+         ), "the blog's posts, drafts or pages category does not exist"},
         {Enum.all?(Map.values(db.feeds), &Map.has_key?(cats, &1.category_id)),
          "a feed's category does not exist"}
       ] ++

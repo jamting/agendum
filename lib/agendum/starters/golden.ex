@@ -282,6 +282,7 @@ defmodule Agendum.Starters.Golden do
       Core.set_blog(db, %{
         posts: {:name, "Posts"},
         drafts: {:name, "Drafts"},
+        pages: {:name, "Pages"},
         title: "Owl's Notes",
         description: "Long words, spelled with care",
         author: "Owl",

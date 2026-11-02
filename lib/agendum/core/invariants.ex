@@ -350,7 +350,7 @@ defmodule Agendum.Core.Invariants do
   # --- 12. The blog's categories -------------------------------------------
 
   defp blog(db) do
-    for id <- [db.blog.posts, db.blog.drafts],
+    for id <- [db.blog.posts, db.blog.drafts, db.blog.pages],
         id != nil,
         not Map.has_key?(db.categories, id),
         do: "12. blog: category #{id} does not exist"
