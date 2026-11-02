@@ -9,7 +9,6 @@ defmodule Agendum.Core.Extras.PostMetadataTest do
   """
   use ExUnit.Case, async: true
 
-  import Agendum.Fixtures, only: [cat: 2]
   alias Agendum.Core
   alias Agendum.Core.Extras.{Address, Blog}
 
@@ -48,7 +47,7 @@ defmodule Agendum.Core.Extras.PostMetadataTest do
       assert file(files, "rss.xml") =~ "<title>Reverse engineering .AG</title>"
     end
 
-    test "without one the item's text is the title; ## or a later line does not count", ctx do
+    test "without one the item's text is the title; ## or a later line does not count" do
       assert Blog.title(%{text: "Plain post", note: ""}) == "Plain post"
       assert Blog.title(%{text: "T", note: "## Sub\nx"}) == "T"
       assert Blog.title(%{text: "T", note: "intro\n# Later"}) == "T"
