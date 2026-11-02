@@ -56,6 +56,8 @@ defmodule Mix.Tasks.Agendum.Pages do
       File.cp_r!(from, target)
     end
 
+    drop_site_sources(@out)
+
     # llms.txt is written below, from this list
     available = @out |> files() |> MapSet.put("llms.txt")
     version = Mix.Project.config()[:version]
@@ -73,6 +75,23 @@ defmodule Mix.Tasks.Agendum.Pages do
     if problems != [], do: Mix.raise("Broken links on the site:\n" <> Enum.join(problems, "\n"))
 
     Mix.shell().info("Wrote the site to #{@out} (#{MapSet.size(available) + 1} files)")
+  end
+
+  @doc """
+  A blog's folder (pages/devlog, published by Agendum, R74) holds what
+  makes the site beside the site: its templates and Agendum's own notes
+  (`.agendum-site`, `.agendum-unsent`) are taken out of `dir`, as they
+  are not to be served.
+  """
+  @spec drop_site_sources(String.t()) :: :ok
+  def drop_site_sources(dir) do
+    for marker <- Path.wildcard(Path.join(dir, "**/.agendum-site"), match_dot: true) do
+      blog = Path.dirname(marker)
+      File.rm_rf!(Path.join(blog, "templates"))
+      for note <- [".agendum-site", ".agendum-unsent"], do: File.rm(Path.join(blog, note))
+    end
+
+    :ok
   end
 
   # every file under `dir`, as a path relative to it

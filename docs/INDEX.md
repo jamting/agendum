@@ -67,7 +67,6 @@ Each plan starts with its status.
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
-| [`plans/PUBLISHER.md`](plans/PUBLISHER.md)                             | The publisher's roadmap: settings, metadata, templates, pages, several feeds, the editor, dogfooding (meeting 2026-11-02-1255) |
 | [`plans/STARTERS.md`](plans/STARTERS.md)                               | Ideas for new starter files: principles, systems (GTD, Things …), sketches, open questions (meeting 2026-10-28-0048) |
 
 ## Archive
@@ -76,6 +75,7 @@ Finished or dropped plans, kept as records of how something was done or why it w
 
 | Plan                                                                   | About                                                                          |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)           | The publisher's roadmap of seven steps, settings to dogfooding (meeting 2026-11-02-1255; done 2026-11-02) |
 | [`plans/archive/HELP.md`](plans/archive/HELP.md)                       | Agenda's help in our own words: what it covers, its keys, the steps, the checklist of Agenda's topics (done 2026-10-26) |
 | [`plans/archive/REFACTORING.md`](plans/archive/REFACTORING.md)         | Where organic growth left complexity, and what was done about it (done)        |
 | [`plans/archive/DOSBOX_STAGING.md`](plans/archive/DOSBOX_STAGING.md)   | Running the real Agenda for Claude (done differently)                          |

@@ -265,6 +265,28 @@ defmodule Agendum.Extras.Publish do
   defp continue(:ok), do: {:cont, :ok}
   defp continue(error), do: {:halt, error}
 
+  @doc """
+  Where the site of the file at `path` is written: a relative folder is
+  beside the file (or, for a file not saved yet, where Agendum was
+  started), `~` the home folder.
+  """
+  @spec folder(String.t() | nil, String.t()) :: String.t()
+  def folder(path, folder) do
+    if path != nil and Path.type(folder) == :relative and not String.starts_with?(folder, "~"),
+      do: Path.join(Path.dirname(path), folder),
+      else: folder
+  end
+
+  @doc """
+  Writes the site into `dir` (Agendum's templates where one is missing:
+  the person's then), without uploading it.
+  """
+  @spec write_site(String.t(), [Site.file()], Site.changes()) :: :ok | {:error, String.t()}
+  def write_site(dir, files, changes) do
+    with :ok <- write(dir, files, changes),
+         do: write_templates(dir, Agendum.Core.site_default_templates())
+  end
+
   # --- uploading ------------------------------------------------------------------
 
   @doc """

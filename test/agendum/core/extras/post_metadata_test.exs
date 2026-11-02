@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.PostMetadataTest do
   @moduledoc """
-  A post's metadata (R74; plans/PUBLISHER.md step 2, meeting
+  A post's metadata (R74; plans/archive/PUBLISHER.md step 2, meeting
   2026-11-02-1255, § 6): the title from a note's first-line `# Heading`, a
   future When held back until its day, the modified date stamped when
   publishing finds a post changed, and its address made once from the

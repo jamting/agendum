@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.TemplateTest do
   @moduledoc """
-  The site's templates (R74; plans/PUBLISHER.md step 3, meeting
+  The site's templates (R74; plans/archive/PUBLISHER.md step 3, meeting
   2026-11-02-1255, § 7): a logic-less, Mustache-style language read by
   Agendum's own reader. Nothing in a template runs code; a mistake is
   refused with its line.

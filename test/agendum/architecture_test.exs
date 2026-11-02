@@ -301,7 +301,11 @@ defmodule Agendum.ArchitectureTest do
     {Agendum.TUI.Update, :arrive, 1},
     # the tests' key presser answers Publish's read of the site's folder as
     # the shell (`App`) would, for a folder of no templates of its own
-    {Agendum.TUIHelpers, :read_site_folder, 2}
+    {Agendum.TUIHelpers, :read_site_folder, 2},
+    # the blog published without the screen (R74): `agendum --publish FILE`
+    # and `mix agendum.publish FILE`, asked for by name on the command line
+    {Agendum.CLI, :publish, 3},
+    {Mix.Tasks.Agendum.Publish, :publish, 2}
   ]
 
   test "faithful code reaches the extras' boxes only through their doors (R77)", %{

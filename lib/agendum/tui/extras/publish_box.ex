@@ -292,12 +292,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   for a file not saved yet, where Agendum was started).
   """
   @spec folder(State.t(), String.t()) :: String.t()
-  def folder(state, folder) do
-    if state.path != nil and Path.type(folder) == :relative and
-         not String.starts_with?(folder, "~"),
-       do: Path.join(Path.dirname(state.path), folder),
-       else: folder
-  end
+  def folder(state, folder), do: Agendum.Extras.Publish.folder(state.path, folder)
 
   @impl Box
   def title(_state, _mode), do: "Publish: the site"

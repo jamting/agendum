@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. [ ] **The publisher's roadmap** (meeting 2026-11-02-1255, § 13; [`plans/PUBLISHER.md`](plans/PUBLISHER.md) § The steps), step 7: dogfooding (a headless `mix agendum.publish FILE`, and the project's site built with it: the front page a Page, the devlog a feed). Steps 1–6 are done (v0.79.0–v0.84.0). The seven steps in their order are in the plan, one per release.
+(empty: the owner picks the next. The publisher's roadmap is done, 2026-11-02: [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md), v0.79.0–v0.85.0.)
 
 Starters are done for now (the owner, 2026-11-02): GTD and the Journal are built and in use; the two in lane 3 are parked.
 
@@ -80,7 +80,7 @@ The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each ite
 
 **In this order** (the owner, 2026-10-31); the rest after, unranked:
 
-1. [ ] **The publisher** first, as the site uses it: its fixes and polish before other extras' when found; its roadmap of seven steps (settings, metadata, templates, pages, several feeds, the note editor for Markdown, dogfooding the project's site) is [`plans/PUBLISHER.md`](plans/PUBLISHER.md) (meeting 2026-11-02-1255). Then the same list-and-properties-box pattern for the Feeds and Calendars' settings (§ 10)
+1. [ ] **The publisher** first, as the site uses it: its fixes and polish before other extras' when found; its roadmap of seven steps is done (v0.79.0–v0.85.0, [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)). Left from it: the same list-and-properties-box pattern for the RSS Feeds' and the Calendars' settings (meeting 2026-11-02-1255, § 10)
 2. [ ] **Modern keys and command names**, an extra (ADR 0038, amended 2026-10-31): today's names and standard keys (Open not Retrieve, Delete not Discard, CTRL-O/S/Z/F/N…) as a second keymap and the menu's names, a setting in the same program (Utilities ▸ Customize ▸ Keys: Agenda, the default, or Modern; meeting 2026-10-22-2130, § 6), never a second program.
 
    - **Made from the keymaps** (ADR 0045), kept apart from Agenda's; the function keys stay required (ADR 0032).
@@ -159,6 +159,7 @@ Changes to how the program works at its heart, which cannot be a switch (ADR 004
 
 An idea moves up when the owner chooses it. Each names the group in `VISION.md` it serves (meeting 2026-10-16-2056, § 6).
 
+- _Group 1._ The project's whole site from a public Agendum file, built in CI by `mix agendum.publish` (the publisher's step 7 as the meeting planned it): the front page drawn from the site's own templates and assets, the devlog a feed; the devlog's posts then written in that public file. Left for later (the owner, 2026-11-02): the headless publish is built, the devlog stays published from the owner's own file
 - _Group 1._ Export the blog's posts as Markdown with front matter (title, date, slug), for a third-party static site generator (Hugo, Zola, Eleventy) if one is ever wanted; parked, as Agendum keeps its own publisher (meeting 2026-11-02-1255, § 11)
 - _Groups 1 and 2._ Attachments (meeting 2026-10-25-2252, § 5): files of any kind on an item or a category (an image that belongs to a note, the CV a note is about).
 

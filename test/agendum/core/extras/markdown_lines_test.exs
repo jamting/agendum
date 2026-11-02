@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.MarkdownLinesTest do
   @moduledoc """
-  One line of a note as Markdown, for the note editor (R64h; plans/PUBLISHER.md
+  One line of a note as Markdown, for the note editor (R64h; plans/archive/PUBLISHER.md
   step 6, meeting 2026-11-02-1255, § 5): what it is, what ENTER continues
   it with, and what CTRL-T makes of its task box. The rules are the
   site's own, so editor and site agree.

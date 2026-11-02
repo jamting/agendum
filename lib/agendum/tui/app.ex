@@ -520,9 +520,7 @@ defmodule Agendum.TUI.App do
 
   # the site written into its folder, then uploaded, in the background task
   defp publish_site(upload, dir, files, changes, password) do
-    # Agendum's templates where one is missing: they are the person's then
-    with :ok <- Publish.write(dir, files, changes),
-         :ok <- Publish.write_templates(dir, Agendum.Core.site_default_templates()),
+    with :ok <- Publish.write_site(dir, files, changes),
          do: Publish.upload(upload, dir, files, changes, password)
   end
 

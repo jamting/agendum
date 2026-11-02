@@ -1,6 +1,6 @@
 # The publisher: a roadmap
 
-**Status:** under way (meeting 2026-11-02-1255): steps 1–6 done (v0.79.0–v0.84.0); step 7 next. The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
+**Status:** done (2026-11-02): all seven steps built, v0.79.0–v0.85.0; kept as the record. Step 7 was built as the headless publish only (the owner's choice, 2026-11-02): the project's site from a public file built in CI is an idea on the roadmap. What is left of § 10, the list-and-properties-box pattern for the RSS Feeds and the Calendars, is on the roadmap (lane 4). The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
 
 The owner asked for an idea meeting to give the publisher a roadmap. The meeting decided what each part should be and in what order; the details of each step are settled when it is built (the `feature` skill), and the decisions below are the starting point, not a specification.
 
@@ -58,4 +58,4 @@ One step per release, each tried by the owner before the next.
 4. [x] Pages: the Pages category, the menu partial; v0.82.0, format 49. The owner chose: Home then pages A–Z in the menu, an item in Posts and Pages is a page, the page template's date left to the template
 5. [x] Several feeds: Posts' children as feeds, the Feeds list and each feed's box; v0.83.0, format 50. The owner chose: direct children only, a Feeds line on the main index, a folder that can be changed (the feed moves)
 6. [x] The note editor for Markdown: highlighting, list continuation, the task-box toggle; v0.84.0 (R64h). The owner chose: an empty item ends the list, CTRL-T, [ ] ↔ [x] adding a box, headings bold, markers coloured, done dimmed
-7. [ ] Dogfooding: `mix agendum.publish`, the project's site built with it
+7. [x] Dogfooding: `mix agendum.publish FILE` and `agendum --publish FILE`, the blog published without the screen; `mix agendum.pages` no longer serves a blog folder's templates and notes; v0.85.0. The owner chose the headless publish only: the devlog stays published from their own file, the whole site from a public file in CI is an idea for later

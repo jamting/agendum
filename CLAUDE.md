@@ -12,6 +12,7 @@ mix test test/agendum/core # one directory
 mix run -e 'Agendum.CLI.main(["--demo"])'   # run the TUI with sample data (needs a real terminal)
 mix escript.build && ./agendum my.agendum  # build (always for prod: no dev tools inside) and run the binary
 mix docs --open           # API docs, design documents, guide and manual (_build/docs/index.html), in the browser
+mix agendum.publish FILE  # publish a file's blog without the screen (--preview: only what would change)
 ```
 
 A change is done when `mix check` passes. Do not leave warnings. Credo (`.credo.exs`) and Dialyzer are dev/test-only tools; fix what they report rather than silencing it, and keep `@spec`s true. An exception needs an inline `# credo:disable-for-next-line` with the reason.

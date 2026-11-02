@@ -21,6 +21,9 @@ defmodule Agendum.CLI do
       agendum --date-separator S  / - . , or : between a date's numbers
       agendum --clock 12|24     how you type times (default: the language's)
       agendum --version         print the version and the build, then quit
+      agendum --publish FILE    publish FILE's blog without the screen, as
+                                Extras ▸ Publish does, then quit; with
+                                --preview, only say what would change
 
   Your preferences (Utilities ▸ Customize, saved in
   ~/.config/agendum/preferences) give the theme, languages and input
@@ -61,6 +64,7 @@ defmodule Agendum.CLI do
     case parse_args(args, env, prefs) do
       :help -> IO.puts(@moduledoc)
       :version -> IO.puts(version_text())
+      {:publish, file, preview?} -> publish(file, prefs, preview?)
       {:ok, options} -> start(options, prefs, DebugLog.start(env, args))
       {:error, message} -> exit_with(message)
     end
@@ -79,7 +83,11 @@ defmodule Agendum.CLI do
   then the default. Pure.
   """
   @spec parse_args([String.t()], %{String.t() => String.t()}, Preferences.t()) ::
-          {:ok, options} | :help | :version | {:error, String.t()}
+          {:ok, options}
+          | :help
+          | :version
+          | {:publish, String.t(), boolean}
+          | {:error, String.t()}
   def parse_args(args, env, prefs \\ %Preferences{}) do
     {opts, files, invalid} =
       OptionParser.parse(args,
@@ -96,7 +104,10 @@ defmodule Agendum.CLI do
           fallback: :string,
           number_order: :string,
           date_separator: :string,
-          clock: :string
+          clock: :string,
+          # the blog published without the screen (R74), and what it would do
+          publish: :string,
+          preview: :boolean
         ],
         aliases: [h: :help, v: :version]
       )
@@ -110,6 +121,16 @@ defmodule Agendum.CLI do
 
       invalid != [] ->
         {:error, "Unknown option: #{invalid |> hd() |> elem(0)} (try --help)"}
+
+      # one file published, nothing else named
+      opts[:publish] && files != [] ->
+        {:error, "--publish takes one file: #{Enum.join(files, " ")} is one too many"}
+
+      opts[:publish] ->
+        {:publish, opts[:publish], opts[:preview] == true}
+
+      opts[:preview] ->
+        {:error, "--preview goes with --publish FILE"}
 
       true ->
         with {:ok, theme} <- theme(opts, env, prefs),
@@ -334,6 +355,15 @@ defmodule Agendum.CLI do
 
       {:error, reason} ->
         {:error, "Could not open #{path}: #{inspect(reason)}"}
+    end
+  end
+
+  # `--publish FILE` (R74): the blog published without the screen, each
+  # line said; a failure says why and exits with 1
+  defp publish(file, prefs, preview?) do
+    case Agendum.Extras.Publish.Headless.run(file, prefs, App.local_today(), preview: preview?) do
+      {:ok, lines} -> Enum.each(lines, &IO.puts/1)
+      {:error, message} -> exit_with(message)
     end
   end
 

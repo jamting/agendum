@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.SitePagesTest do
   @moduledoc """
-  The site's pages (R74; plans/PUBLISHER.md step 4, meeting 2026-11-02-1255,
+  The site's pages (R74; plans/archive/PUBLISHER.md step 4, meeting 2026-11-02-1255,
   § 8): the items of a Pages category are pages such as About, each at
   `/<slug>.html`, drawn from `page.html`, outside the index and the feeds,
   and listed in the menu after Home, A to Z.

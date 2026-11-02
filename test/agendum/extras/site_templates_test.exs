@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Extras.SiteTemplatesTest do
   @moduledoc """
-  The site's templates and assets (R74; plans/PUBLISHER.md step 3,
+  The site's templates and assets (R74; plans/archive/PUBLISHER.md step 3,
   meeting 2026-11-02-1255, § 7): the pages are drawn from the folder's
   `templates/` (Agendum's own where one is missing, written there for the
   person to change, never uploaded), and `assets/` is copied as it is.

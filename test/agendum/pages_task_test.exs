@@ -73,4 +73,20 @@ defmodule Agendum.PagesTaskTest do
     # from a page in a folder, ../ climbs out of it, and a folder means its index
     assert [] = Pages.link_problems("guide/index.html", ~s(<a href="../">home</a>), @available)
   end
+
+  @tag :tmp_dir
+  test "a blog's templates and Agendum's notes are not served", %{tmp_dir: dir} do
+    blog = Path.join(dir, "devlog")
+    File.mkdir_p!(Path.join(blog, "templates"))
+    File.write!(Path.join(blog, "templates/post.html"), "{{#post}}")
+    File.write!(Path.join(blog, ".agendum-site"), "index.html\n")
+    File.write!(Path.join(blog, "index.html"), "<p>hi</p>")
+    File.write!(Path.join(dir, "index.html"), "front")
+
+    :ok = Pages.drop_site_sources(dir)
+    refute File.exists?(Path.join(blog, "templates"))
+    refute File.exists?(Path.join(blog, ".agendum-site"))
+    assert File.exists?(Path.join(blog, "index.html"))
+    assert File.exists?(Path.join(dir, "index.html"))
+  end
 end

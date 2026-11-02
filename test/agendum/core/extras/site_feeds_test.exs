@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.Core.Extras.SiteFeedsTest do
   @moduledoc """
-  The blog's own feeds (R74; plans/PUBLISHER.md step 5, meeting
+  The blog's own feeds (R74; plans/archive/PUBLISHER.md step 5, meeting
   2026-11-02-1255, §§ 9–10): each child category of Posts is a feed, with
   its own index page and feeds in its folder; the site's main index and
   feeds keep every post, and the main index names the feeds.

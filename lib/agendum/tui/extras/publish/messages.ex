@@ -101,4 +101,57 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   @spec text(atom, boolean, String.t(), :needs_base_url) :: String.t()
   def text(:published, uploaded?, summary, :needs_base_url),
     do: text(:published, uploaded?, summary) <> ". The feeds need a Base address"
+
+  @doc "The changes in a few words: \"2 added, 1 changed, 0 removed\"."
+  @spec summary(map) :: String.t()
+  def summary(c),
+    do: "#{length(c.added)} added, #{length(c.changed)} changed, #{length(c.removed)} removed"
+
+  @doc """
+  What publishing would do, as lines (R74): the posts and pages and the
+  changes in a few words, where the site goes, the posts still waiting,
+  the templates Agendum writes, then each file added (+), changed (~)
+  and removed (−). The preview box shows them, and `agendum --publish
+  FILE --preview` prints them, so the two always say the same.
+  """
+  @spec preview(Agendum.Core.db(), Date.t(), Agendum.Core.Extras.Upload.t(), String.t(), map, [
+          String.t()
+        ]) :: [String.t()]
+  def preview(db, today, upload, folder, c, templates) do
+    pages = Agendum.Core.blog_page_count(db, today)
+    counted = if pages > 0, do: ", #{count(pages, "page")}", else: ""
+    head = "#{count(Agendum.Core.blog_post_count(db, today), "post")}#{counted} · #{summary(c)}"
+
+    where =
+      case upload.method do
+        :none -> "Written to #{folder}; not uploaded."
+        :rsync -> "Written to #{folder}, then sent by rsync to #{upload.target}."
+        :sftp -> "Written to #{folder}, then uploaded by SFTP to #{upload.target}."
+      end
+
+    waiting =
+      case Agendum.Core.blog_waiting(db, today) do
+        [] -> []
+        [{_first, date} | _] = all -> [text(:waiting, length(all), day(db, date))]
+      end
+
+    written =
+      if templates == [],
+        do: [],
+        else: [text(:templates_written, Enum.map_join(templates, ", ", &Path.basename/1))]
+
+    list =
+      if Enum.all?([c.added, c.changed, c.removed], &(&1 == [])),
+        do: ["The folder already holds this site: nothing to write."],
+        else:
+          Enum.map(c.added, &("  + " <> &1)) ++
+            Enum.map(c.changed, &("  ~ " <> &1)) ++ Enum.map(c.removed, &("  − " <> &1))
+
+    [head, where] ++ waiting ++ written ++ [""] ++ list
+  end
+
+  # a date as the file shows its dates
+  defp day(db, date), do: Agendum.Core.DateFormat.date(date, db.date_format)
+
+  defp count(n, word), do: "#{n} " <> if(n == 1, do: word, else: word <> "s")
 end

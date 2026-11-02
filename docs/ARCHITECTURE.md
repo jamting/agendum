@@ -244,6 +244,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.Preferences`                          | ✘     | The person's preferences file: theme, languages, input format (with the number separators), key map, confirm mode, auto-save, sound, name, company, last file, where each file was left (`Agendum.Preferences.Place`, R69), the defaults for new files (R82a) (`key = value`, ADR 0008).               |
 | `Agendum.Extras.CalendarFetch`                        | ✘     | Downloads a subscribed calendar (HTTPS, `:httpc`) and reads its events (R45).                                                    |
 | `Agendum.Extras.FeedFetch`                            | ✘     | Reads a feed from the web (the calendar's HTTPS download) and opens a link in the browser (R75).                                 |
+| `Agendum.Extras.Publish.Headless`                     | ✘     | The blog published without the screen: `agendum --publish FILE`, `mix agendum.publish FILE` (R74). |
 | `Agendum.Extras.Publish`                              | ✘     | The blog's folder read and written, and uploaded by rsync or SFTP (`:ssh_sftp`); `~/.netrc` passwords (R74, ADR 0041).           |
 | `Agendum.CLI`                                  | ✘     | `main/1` for the escript.                                                                                                        |
 

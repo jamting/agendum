@@ -6,6 +6,16 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.85.0 — 2026-11-02
+
+- **Publish without opening Agendum: `agendum --publish FILE`.** It does what Extras ▸ Publish ▸ Publish and ENTER on its preview do, with your Upload settings, and prints what changed. Add `--preview` to only see what would change. For a file with a password, or a server that asks for one, publish in Agendum. (`mix agendum.publish FILE` does the same from the source.)
+- The project's site no longer serves a blog folder's `templates/`.
+- **The publisher's roadmap is done:** settings, post titles and addresses, templates, pages, several feeds, Markdown in notes, and now this.
+
+### Facade
+
+- No changes.
+
 ## 0.84.0 — 2026-11-02
 
 - **Writing Markdown in a note is easier** (with the extras on). ENTER at the end of a list item starts the next one (`- `, `2. `, `- [ ] `); ENTER on an empty item leaves the list. **CTRL-T** ticks or unticks a task box, or gives a list item one. Headings, list markers and task boxes are coloured, and done tasks dimmed, on every line but the one you are typing in. Nothing about the note's text changes: it is what the blog reads.

@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.NoteMarkdownTest do
   @moduledoc """
-  The note editor for Markdown (R64h, an extra; plans/PUBLISHER.md step 6,
+  The note editor for Markdown (R64h, an extra; plans/archive/PUBLISHER.md step 6,
   meeting 2026-11-02-1255, § 5): ENTER continues a list or leaves it,
   CTRL-T ticks a task box, and headings, list markers and task boxes are
   coloured; with the extras off, and in a macro's keystrokes, none of it.

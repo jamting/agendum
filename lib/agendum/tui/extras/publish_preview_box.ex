@@ -43,9 +43,7 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
 
   @doc "The changes in a few words: \"2 added, 1 changed, 0 removed\"."
   @spec summary(Site.changes()) :: String.t()
-  def summary(changes),
-    do:
-      "#{length(changes.added)} added, #{length(changes.changed)} changed, #{length(changes.removed)} removed"
+  def summary(changes), do: Messages.summary(changes)
 
   @impl Box
   def about(_state, _mode) do
@@ -147,52 +145,11 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   @impl Box
   def width(state, _mode), do: min(state.width - 8, 72)
 
+  # the preview's lines, said as `agendum --publish --preview` says them
   defp lines(state, mode) do
-    c = mode.changes
     upload = Agendum.Preferences.upload(state.prefs, state.path)
-
-    where =
-      case upload.method do
-        :none -> "Written to #{mode.folder}; not uploaded."
-        :rsync -> "Written to #{mode.folder}, then sent by rsync to #{upload.target}."
-        :sftp -> "Written to #{mode.folder}, then uploaded by SFTP to #{upload.target}."
-      end
-
-    # the posts the site has today (a When still to come waits, R74)
-    posts = Agendum.Core.blog_post_count(state.db, state.today)
-    pages = Agendum.Core.blog_page_count(state.db, state.today)
-    counted = if pages > 0, do: ", #{Draw.count(pages, "page")}", else: ""
-
-    head =
-      ["#{Draw.count(posts, "post")}#{counted} · #{summary(c)}", where] ++
-        waiting(state) ++ templates(mode) ++ [""]
-
-    list =
-      if nothing?(c),
-        do: ["The folder already holds this site: nothing to write."],
-        else:
-          Enum.map(c.added, &("  + " <> &1)) ++
-            Enum.map(c.changed, &("  ~ " <> &1)) ++ Enum.map(c.removed, &("  − " <> &1))
-
-    head ++ list
-  end
-
-  # Agendum's templates it writes as they are missing: yours to change then
-  defp templates(%{templates: [_ | _] = paths}),
-    do: [Messages.text(:templates_written, Enum.map_join(paths, ", ", &Path.basename/1))]
-
-  defp templates(_mode), do: []
-
-  # posts whose When is still to come wait for their day (R74)
-  defp waiting(state) do
-    case Agendum.Core.blog_waiting(state.db, state.today) do
-      [] ->
-        []
-
-      [{_first, date} | _] = waiting ->
-        day = Agendum.Core.DateFormat.date(date, state.db.date_format)
-        [Messages.text(:waiting, length(waiting), day)]
-    end
+    templates = Map.get(mode, :templates) || []
+    Messages.preview(state.db, state.today, upload, mode.folder, mode.changes, templates)
   end
 
   @impl Box
