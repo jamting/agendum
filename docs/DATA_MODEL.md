@@ -170,6 +170,7 @@ erDiagram
         string me "rel=me links"
         string address "a post's page address pattern, posts/{zettel}.html by default"
         map published "item id => PostRecord: address made once, fingerprint, modified day"
+        map feeds "category id => BlogFeed: title, description, folder"
         map moved_upload "an older file's upload settings, on their way to the preferences; never written"
     }
     MACRO {
@@ -398,6 +399,7 @@ classDiagram
         +base_url, me : String
         +address : String
         +published : Map~id, PostRecord~
+        +feeds : Map~id, BlogFeed~
         +moved_upload : Upload or nil, never written
     }
     class Macro {
@@ -450,6 +452,7 @@ classDiagram
 | `Calendar`                            | `lib/agendum/core/extras/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
 | `Feed`                                | `lib/agendum/core/extras/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
 | `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address (R74). |
+| `BlogFeed`                            | `lib/agendum/core/extras/blog_feed.ex`     | One of the blog's own feeds, in `Blog.feeds` by its category (a child of Posts): its title, description and folder (R74, format 50). |
 | `PostRecord`                          | `lib/agendum/core/extras/post_record.ex`   | What publishing remembers of a post, in `Blog.published`: its page's address (made once), a fingerprint of its title, note and date, and the day a publish found it changed (R74, format 48). |
 | `Upload`                              | `lib/agendum/core/extras/upload.ex`        | Where the blog is written and how it is uploaded: the person's, kept in their preferences by the file's path, never in the file (R74, format 47). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
@@ -690,6 +693,7 @@ Format versions:
 | 47 | `Blog` loses `folder`, `upload`, `target`, `user` and `remote_dir`: where the site is written and uploaded is the person's (`Agendum.Core.Extras.Upload`, in their preferences); `upgrade/1` lifts an older file's into `Blog.moved_upload`, never written, and opening the file moves them to the preferences (meeting 2026-11-02-1255, § 10) |
 | 48 | `Blog` gains `address`, the address pattern of a post's page, and `published`, what publishing remembers of each post by its item's id (`Agendum.Core.Extras.PostRecord`: its address, made once, a fingerprint, the day it was found changed; meeting 2026-11-02-1255, § 6) |
 | 49 | `Blog` gains `pages`, the category whose items are the site's pages (About, Now), outside the index and the feeds (meeting 2026-11-02-1255, § 8) |
+| 50 | `Blog` gains `feeds`, the settings of the blog's own feeds (each child category of Posts) by category id: title, description, folder (`Agendum.Core.Extras.BlogFeed`; meeting 2026-11-02-1255, §§ 9–10) |
 
 ## UI state around the database
 

@@ -509,7 +509,9 @@ defmodule Agendum.TUI.Commands do
   """
   @spec extra_actions() :: [atom]
   def extra_actions,
-    do: @extras.view ++ [:calendars, :publish, :publish_site, :publish_upload, :feeds]
+    do:
+      @extras.view ++
+        [:calendars, :publish, :publish_site, :publish_feeds, :publish_upload, :feeds]
 
   @doc "A place's command by id, or nil."
   @spec get(atom, atom) :: Command.t() | nil

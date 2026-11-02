@@ -185,6 +185,8 @@ Indentation shows what opens what. `type` is the mode's type; the module draws o
 - **Imported from Agenda** `:ag_import` (by itself, after File ▸ Transfer ▸ Import or `agendum OLD.AG` imported a Lotus Agenda file): what came over, what was left out, and the items filed differently from Agenda; CTRL-P writes it to a text file (R72). `Agendum.TUI.Boxes.ImportReportBox`. Before it, for a file with a password, a **Prompt** `:prompt` whose text shows as stars.
 
 - **Publish: the site** `:publish` (Extras ▸ Publish ▸ Site; the first Publish too): the micro-blog's settings kept in the file, its posts and drafts categories, title and address (R74). `Agendum.TUI.Extras.PublishBox`. ENTER keeps them; opened by the first Publish, it goes on as Publish does.
+- **Publish: feeds** `:publish_feeds` (Extras ▸ Publish ▸ Feeds): the blog's own feeds, one for each category under Posts; ENTER opens one's properties (R74). `Agendum.TUI.Extras.BlogFeedsBox`.
+  - **Feed: …** `:publish_feed`: a feed's title, description and folder, kept in the file (R74). `Agendum.TUI.Extras.BlogFeedBox`.
 - **Publish: upload** `:publish_upload` (Extras ▸ Publish ▸ Upload): where the site is written and how it is uploaded, the person's, kept in their preferences for this file (R74). `Agendum.TUI.Extras.UploadBox`.
 - Extras ▸ Publish ▸ Publish makes the site and reads the folder, then:
   - **Publish: what will change** `:publish_preview`: the files publishing adds, changes and removes, before anything is written; ENTER writes and uploads (R74). `Agendum.TUI.Extras.PublishPreviewBox`. An SFTP server that wants a password asks in a **Prompt** `:prompt` whose text shows as stars.
@@ -256,6 +258,8 @@ Commands that act at once and open nothing (F4 done, F7 mark, ALT-O dependencies
 | `:publish`           | box           | `Agendum.TUI.Extras.PublishBox`           | Extras ▸ Publish ▸ Site                  | R74            |
 | `:publish_preview`   | box           | `Agendum.TUI.Extras.PublishPreviewBox`    | Extras ▸ Publish ▸ Publish                        | R74            |
 | `:publish_upload`    | box           | `Agendum.TUI.Extras.UploadBox`            | Extras ▸ Publish ▸ Upload                | R74            |
+| `:publish_feeds`     | box           | `Agendum.TUI.Extras.BlogFeedsBox`         | Extras ▸ Publish ▸ Feeds                 | R74            |
+| `:publish_feed`      | box           | `Agendum.TUI.Extras.BlogFeedBox`          | ENTER in Publish ▸ Feeds                 | R74            |
 | `:calendar`          | box           | `Agendum.TUI.Boxes.CalendarBox`          | F3 in a date column, ALT-C                        | R46            |
 | `:view_props`        | box           | `Agendum.TUI.Boxes.ViewProps`            | View ▸ Properties, F6 in the view manager         | R78            |
 | `:view_stats`        | box           | `Agendum.TUI.Boxes.ViewStatsBox`         | View Properties ▸ View statistics                 | R78            |

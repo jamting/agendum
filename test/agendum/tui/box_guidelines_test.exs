@@ -176,6 +176,7 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
       publish: &Agendum.TUI.Extras.PublishBox.open/1,
       # kept by the file's path, so the file needs one
       publish_upload: &Agendum.TUI.Extras.UploadBox.open(%{&1 | path: "/owl/blog.agendum"}),
+      publish_feed: &publish_feed/1,
       subscription_props: &subscription_props/1
     }
   end
@@ -195,5 +196,15 @@ defmodule Agendum.TUI.BoxGuidelinesTest do
   defp cat(state, name) do
     {id, _} = Enum.find(state.db.categories, fn {_, c} -> c.name == name end)
     id
+  end
+
+  # a feed of the blog's own: a category under Posts (R74)
+  defp publish_feed(state) do
+    {:ok, db, posts} = Agendum.Core.add_category(state.db, state.db.main_id, "Posts")
+    {:ok, db, _} = Agendum.Core.add_category(db, posts, "Devlog")
+    {:ok, db} = Agendum.Core.set_blog(db, %{posts: posts})
+    state = %{state | db: db}
+    [feed] = Agendum.Core.blog_feeds(db, state.today)
+    Agendum.TUI.Extras.BlogFeedBox.open(state, feed)
   end
 end

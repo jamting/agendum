@@ -357,7 +357,9 @@ defmodule Agendum.Core.Database do
              db.blog
              | posts: if(db.blog.posts in doomed_set, do: nil, else: db.blog.posts),
                drafts: if(db.blog.drafts in doomed_set, do: nil, else: db.blog.drafts),
-               pages: if(db.blog.pages in doomed_set, do: nil, else: db.blog.pages)
+               pages: if(db.blog.pages in doomed_set, do: nil, else: db.blog.pages),
+               # and a feed's settings, its category gone
+               feeds: Map.drop(db.blog.feeds, MapSet.to_list(doomed_set))
            }
        }}
     end

@@ -33,6 +33,8 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:up_to_date), do: "The folder already holds this site: nothing to publish"
   def text(:password_later), do: "Not published: the server asks for a password. Publish again"
   def text(:site_kept), do: "Kept the site settings"
+  def text(:feed_kept), do: "Kept the feed's settings"
+  def text(:bad_slug), do: "A feed's folder: a-z, 0-9 and -, one no other feed or the site has"
   def text(:save_first), do: "Save the file first: its upload settings are kept by its name"
 
   def text(:upload_session_only),
@@ -47,6 +49,15 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:cannot_read_folder, reason), do: "Could not read the site's folder: #{reason}"
   def text(:not_published, reason), do: "Not published: #{reason}"
   def text(:upload_kept, file), do: "Kept the upload settings for #{file}"
+
+  def text(:no_feeds, posts),
+    do: "No feeds yet · a category under #{posts} is one (add it in the category manager, F9)"
+
+  def text(:feed_made, slug),
+    do: "Its folder, made from its name at the first publish: /#{slug}/"
+
+  def text(:feed_where, slug),
+    do: "Its page and feeds: /#{slug}/index.html, rss.xml, feed.json"
 
   def text(:templates_written, names),
     do: "Writes templates/ for you to change: #{names} (never uploaded)"

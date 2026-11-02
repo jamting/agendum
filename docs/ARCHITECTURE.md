@@ -68,6 +68,7 @@ A function of the first two is removed or changed only after it has been marked 
 | `Agendum.Core.Extras.Feed`, `Agendum.Core.Extras.FeedSync`                    | A feed subscription, and its entries mirrored into items: new ones added, changed ones updated, old ones fading unless kept (R75).                       |
 | `Agendum.Core.Extras.Blog`                                             | The micro-blog's settings, kept in the file, and its posts, newest first (R74).                                                                         |
 | `Agendum.Core.Extras.Address`                                          | A post's page address from the Site's pattern (`{zettel}`, `{slug}`, `{year}` …), made unique, and the slug from a title (R74).                          |
+| `Agendum.Core.Extras.BlogFeed`                                         | One of the blog's own feeds' settings: title, description, folder (R74).                                                                                  |
 | `Agendum.Core.Extras.PostRecord`                                       | What publishing remembers of a post: its address, a fingerprint, the day it was found changed (R74).                                                    |
 | `Agendum.Core.Extras.Template`                                         | The site's templates: a logic-less, Mustache-style language read by Agendum's own reader; a mistake with its line (R74).                                 |
 | `Agendum.Core.Extras.Upload`                                           | Where the blog is written and how it is uploaded, the person's (kept in their preferences, not the file); the rsync target check (R74).                  |
@@ -181,6 +182,8 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | Extras ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
 | `Agendum.TUI.Extras.FeedsBox`                         | ✔     | Extras ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
 | `Agendum.TUI.Extras.PublishBox`                       | ✔     | Extras ▸ Publish ▸ Publish and Site: publishing, and the micro-blog's settings kept in the file (R74). |
+| `Agendum.TUI.Extras.BlogFeedsBox`                     | ✔     | Extras ▸ Publish ▸ Feeds: the blog's own feeds, one for each category under Posts (R74). |
+| `Agendum.TUI.Extras.BlogFeedBox`                      | ✔     | A feed's title, description and folder (R74). |
 | `Agendum.TUI.Extras.UploadBox`                        | ✔     | Extras ▸ Publish ▸ Upload: where the site is written and uploaded, the person's; an older file's moved to the preferences (R74). |
 | `Agendum.TUI.Extras.SubscriptionPropsBox`             | ✔     | F6 in the Feeds or Calendars manager: a feed's or a calendar's name and settings (R75, R45). |
 | `Agendum.TUI.Extras.Feeds.Messages`                   | ✔     | What the feeds say: prompts, questions, messages, kept beside the extra (UI guidelines rule 7.5). |

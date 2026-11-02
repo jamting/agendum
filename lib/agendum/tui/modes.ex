@@ -116,6 +116,8 @@ defmodule Agendum.TUI.Modes do
     publish: [:choice, :cursor, :settings, :then_publish, :typing],
     publish_preview: [:changes, :files, :folder, :publishing, :templates, :top],
     publish_upload: [:cursor, :settings, :typing],
+    publish_feeds: [:count, :cursor],
+    publish_feed: [:category, :cursor, :made, :settings, :typing],
     prompt: [:action, :label],
     props: [:cat_id, :cursor, :opened],
     questions: [:cursor, :item, :picked],

@@ -10,7 +10,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   alias Agendum.Core.Database
   alias Agendum.Core.Context
-  alias Agendum.Core.Extras.{Address, Blog, Ingested, Site}
+  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Ingested, Site}
   alias Agendum.Core.Facade.Categories
   alias Agendum.Core.Facade.Extras.Zettels
 
@@ -143,6 +143,57 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
       ids = for item <- Blog.posts(db) ++ Blog.pages(db), item.zettel == nil, do: item.id
       Zettels.attach_zettels(db, ids)
     end
+  end
+
+  @doc """
+  The blog's own feeds on `today` (R74, § 9): one for each child category
+  of Posts, with its title, description, folder and posts
+  (`Agendum.Core.Extras.Blog.feeds/3`).
+  """
+  @spec blog_feeds(db, Date.t()) :: [Blog.feed()]
+  def blog_feeds(db, today), do: Site.feeds(db, today)
+
+  @doc """
+  Changes a feed's settings (Extras ▸ Publish ▸ Feeds): its `title`
+  (the category's own name, or empty, follows the category when it is
+  renamed), `description` and `slug`, its folder on the site (a–z, 0–9
+  and `-`; `""` to make it from the name at the next publish). A folder
+  set takes its place before one made from a name. Refused for a category
+  that is not a child of Posts, and for a folder the site or another of
+  today's feeds has set.
+  """
+  @spec set_blog_feed(db, id, %{optional(atom) => String.t()}) ::
+          {:ok, db} | {:error, :not_a_feed | :bad_slug | :bad_setting}
+  def set_blog_feed(db, id, changes) do
+    changes = Map.take(changes, [:title, :description, :slug])
+
+    cond do
+      db.blog.posts == nil or id not in db.categories[db.blog.posts].children ->
+        {:error, :not_a_feed}
+
+      not Enum.all?(Map.values(changes), &is_binary/1) ->
+        {:error, :bad_setting}
+
+      true ->
+        changes = Map.new(changes, fn {k, v} -> {k, String.trim(v)} end)
+        put_feed(db, id, changes)
+    end
+  end
+
+  defp put_feed(db, id, changes) do
+    settings = struct(Map.get(db.blog.feeds, id, %BlogFeed{}), changes)
+    # the category's own name is no title of its own: a rename follows
+    settings =
+      if settings.title == db.categories[id].name, do: %{settings | title: ""}, else: settings
+
+    siblings = db.categories[db.blog.posts].children -- [id]
+    others = for {other, %{slug: slug}} <- db.blog.feeds, other in siblings, slug != "", do: slug
+
+    if settings.slug == "" or
+         (BlogFeed.slug?(settings.slug) and settings.slug not in elem(Site.own(), 1) and
+            settings.slug not in others),
+       do: {:ok, put_in(db.blog.feeds[id], settings)},
+       else: {:error, :bad_slug}
   end
 
   @doc "How many pages the site has on `today` (R74)."

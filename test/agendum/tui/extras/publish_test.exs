@@ -102,6 +102,61 @@ defmodule Agendum.TUI.Extras.PublishTest do
     assert screen(cleared) =~ ~r/Pages category : \(none\)/
   end
 
+  describe "Publish ▸ Feeds" do
+    setup %{state: state} do
+      posts = hd(Database.find_categories(state.db, "Posts"))
+      {:ok, db, devlog} = Core.add_category(state.db, posts, "Devlog")
+      {:ok, db} = Core.set_blog(db, %{posts: posts})
+      %{state: %{state | db: db}, devlog: devlog}
+    end
+
+    test "lists each category under Posts, its folder and its posts", %{state: state} do
+      list = press(state, [{:f, 10}, "e", "p", "f"])
+      assert screen(list) =~ "Publish: feeds"
+      assert screen(list) =~ ~r"Devlog\s+/devlog/\s+0 posts"
+    end
+
+    test "ENTER opens a feed's box; ENTER there keeps its settings", %{
+      state: state,
+      devlog: devlog
+    } do
+      box = press(state, [{:f, 10}, "e", "p", "f", :enter])
+      assert screen(box) =~ "Feed: Devlog"
+      # still to be made from its name at the first publish
+      assert screen(box) =~ "made from its name at the first publish: /devlog/"
+
+      kept =
+        box
+        |> to_setting("Description")
+        |> type("How it is made")
+        |> to_setting("Folder")
+        |> press({:f, 2})
+        |> press({:ctrl, "u"})
+        |> type("workshop")
+        |> press(:enter)
+
+      assert kept.db.blog.feeds[devlog].description == "How it is made"
+      assert kept.db.blog.feeds[devlog].slug == "workshop"
+      assert screen(kept) =~ "Kept the feed's settings"
+    end
+
+    test "a folder that cannot be one is refused, saying why", %{state: state} do
+      box = press(state, [{:f, 10}, "e", "p", "f", :enter])
+      refused = box |> to_setting("Folder") |> press({:f, 2}) |> press({:ctrl, "u"})
+      refused = refused |> type("fonts") |> press(:enter)
+      assert screen(refused) =~ "A feed's folder: a-z, 0-9 and -"
+    end
+
+    test "with no category under Posts, the list says how to make one", %{
+      state: state,
+      devlog: devlog
+    } do
+      {:ok, db} = Core.discard_category(state.db, devlog)
+      list = press(%{state | db: db}, [{:f, 10}, "e", "p", "f"])
+      assert screen(list) =~ "No feeds yet"
+    end
+  end
+
   test "the preview says when a post waits for its day", %{state: state} do
     {db, _} =
       Core.add_item(state.db, "Soon", ~D[2026-10-01],

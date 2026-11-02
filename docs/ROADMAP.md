@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. [ ] **The publisher's roadmap** (meeting 2026-11-02-1255, § 13; [`plans/PUBLISHER.md`](plans/PUBLISHER.md) § The steps), step 5: several feeds (each child category of Posts a feed with its own index page and feeds under `/<slug>/`; Publish ▸ Feeds, a list whose ENTER opens a feed's properties box). Steps 1–4 are done (v0.79.0–v0.82.0). The seven steps in their order are in the plan, one per release.
+1. [ ] **The publisher's roadmap** (meeting 2026-11-02-1255, § 13; [`plans/PUBLISHER.md`](plans/PUBLISHER.md) § The steps), step 6: the note editor for Markdown (an extra: headings, list markers and task boxes highlighted; ENTER continues a list; a key toggles a task box). Steps 1–5 are done (v0.79.0–v0.83.0). The seven steps in their order are in the plan, one per release.
 
 Starters are done for now (the owner, 2026-11-02): GTD and the Journal are built and in use; the two in lane 3 are parked.
 

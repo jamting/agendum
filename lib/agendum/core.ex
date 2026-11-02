@@ -161,6 +161,8 @@ defmodule Agendum.Core do
   defdelegate record_published(db, clock), to: Publishing
   defdelegate blog_post_count(db, today), to: Publishing
   defdelegate blog_page_count(db, today), to: Publishing
+  defdelegate blog_feeds(db, today), to: Publishing
+  defdelegate set_blog_feed(db, id, changes), to: Publishing
   defdelegate blog_waiting(db, today), to: Publishing
   defdelegate blog_address_default(), to: Publishing
   defdelegate moved_upload(db), to: Publishing

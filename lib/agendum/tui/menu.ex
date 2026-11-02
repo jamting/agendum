@@ -175,6 +175,7 @@ defmodule Agendum.TUI.Menu do
           [
             {"Publish", "Write the blog from the posts as a website, and upload it", :publish},
             {"Site", "The blog's posts category, title, author, base address …", :publish_site},
+            {"Feeds", "The blog's own feeds: each category under Posts", :publish_feeds},
             {"Upload", "Where the site is written and how it is uploaded (yours)",
              :publish_upload}
           ]},

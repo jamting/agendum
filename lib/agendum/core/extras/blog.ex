@@ -19,6 +19,8 @@ defmodule Agendum.Core.Extras.Blog do
       links (a fediverse account, micro.blog), separated by spaces
     * `address`: where a post's page goes, a pattern such as
       `posts/{zettel}.html` (`Agendum.Core.Extras.Address`)
+    * `feeds`: each feed's settings, by its category's id (each child
+      category of Posts is a feed; `Agendum.Core.Extras.BlogFeed`; format 50)
     * `published`: what publishing remembers of each post, by the item's
       id: its address, a fingerprint, the day it was found changed
       (`Agendum.Core.Extras.PostRecord`; format 48)
@@ -28,7 +30,7 @@ defmodule Agendum.Core.Extras.Blog do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.Core.Extras.{Address, Fingerprint, PostRecord}
+  alias Agendum.Core.Extras.{Address, BlogFeed, Fingerprint, PostRecord}
 
   @type t :: %__MODULE__{
           posts: Database.id() | nil,
@@ -42,6 +44,7 @@ defmodule Agendum.Core.Extras.Blog do
           me: String.t(),
           address: String.t(),
           published: %{optional(Database.id()) => PostRecord.t()},
+          feeds: %{optional(Database.id()) => BlogFeed.t()},
           moved_upload: Agendum.Core.Extras.Upload.t() | nil
         }
 
@@ -56,6 +59,7 @@ defmodule Agendum.Core.Extras.Blog do
             me: "",
             address: "posts/{zettel}.html",
             published: %{},
+            feeds: %{},
             moved_upload: nil
 
   @doc """
@@ -107,6 +111,121 @@ defmodule Agendum.Core.Extras.Blog do
     |> Enum.filter(&Database.member?(db, &1.id, blog.pages))
     |> Enum.reject(&in?(db, &1, blog.drafts))
     |> Enum.sort_by(&{alphabetical(title(&1), blog.language), &1.id})
+  end
+
+  @typedoc "A feed as the site makes it: its category, settings, folder and posts."
+  @type feed :: %{
+          category: Database.id(),
+          title: String.t(),
+          description: String.t(),
+          slug: String.t(),
+          made: boolean,
+          posts: [Agendum.Core.Item.t()]
+        }
+
+  @doc """
+  The blog's own feeds (R74; meeting 2026-11-02-1255, § 9): one for each
+  child category of Posts, in the category manager's order, each with
+  its posts due on `today` (those in it or under it, newest first), its
+  title (the category's name unless one is set) and its folder: its slug,
+  else one made from the name (`made`); a folder taken already (by
+  another feed, or by one of the site's own, `own_folders`) gets `-2`,
+  `-3` …. A folder set takes its place before one made from a name.
+  """
+  @spec feeds(Database.t(), Date.t(), [String.t()]) :: [feed]
+  def feeds(%Database{blog: %__MODULE__{posts: nil}}, _today, _own_folders), do: []
+
+  def feeds(%Database{blog: blog} = db, today, own_folders) do
+    due = posts(db, today)
+    children = db.categories[blog.posts].children
+    stored = &stored_slug(blog, &1)
+
+    # Domain: a folder the person set (or a publish kept) is taken first,
+    # in the categories' order, so one made from a name never takes it
+    {set, taken} =
+      Enum.flat_map_reduce(children, MapSet.new(own_folders), fn id, taken ->
+        case stored.(id) do
+          nil -> {[], taken}
+          slug -> free_folder(slug, taken, 1) |> then(&{[{id, &1}], MapSet.put(taken, &1)})
+        end
+      end)
+
+    set = Map.new(set)
+
+    {feeds, _taken} =
+      Enum.map_reduce(children, taken, fn id, taken ->
+        name = db.categories[id].name
+        settings = Map.get(blog.feeds, id, %BlogFeed{})
+
+        {slug, taken} =
+          case set do
+            %{^id => slug} ->
+              {slug, taken}
+
+            _ ->
+              slug = free_folder(feed_slug(name, id), taken, 1)
+              {slug, MapSet.put(taken, slug)}
+          end
+
+        feed = %{
+          category: id,
+          title: if(settings.title == "", do: name, else: settings.title),
+          description: settings.description,
+          slug: slug,
+          made: stored.(id) == nil,
+          posts: Enum.filter(due, &Database.member?(db, &1.id, id))
+        }
+
+        {feed, taken}
+      end)
+
+    feeds
+  end
+
+  # a feed's folder the person set or a publish kept, when it is a plain
+  # one (a crafted file's is not used)
+  defp stored_slug(blog, id) do
+    case Map.get(blog.feeds, id) do
+      %BlogFeed{slug: slug} when slug != "" -> if BlogFeed.slug?(slug), do: slug
+      _ -> nil
+    end
+  end
+
+  defp feed_slug(name, id) do
+    case Address.slug(name) do
+      "" -> "feed-#{id}"
+      slug -> slug
+    end
+  end
+
+  # `-2`, `-3` … after a slug cut to leave room for them, so a folder is
+  # never longer than `BlogFeed.slug?/1` allows
+  defp free_folder(slug, taken, n) do
+    candidate =
+      if n == 1,
+        do: slug,
+        else:
+          String.trim_trailing(String.slice(slug, 0, 60 - String.length("-#{n}")), "-") <> "-#{n}"
+
+    if MapSet.member?(taken, candidate), do: free_folder(slug, taken, n + 1), else: candidate
+  end
+
+  @doc """
+  Publishing: each feed whose slug was still to be made keeps the one it
+  was published under, so renaming its category later does not move it.
+  """
+  @spec record_feeds(Database.t(), [feed]) :: Database.t()
+  def record_feeds(db, feeds) do
+    kept =
+      Enum.reduce(feeds, db.blog.feeds, fn feed, kept ->
+        settings = Map.get(kept, feed.category, %BlogFeed{})
+
+        if feed.made,
+          do: Map.put(kept, feed.category, %{settings | slug: feed.slug}),
+          else: kept
+      end)
+
+    %{db | blog: %{db.blog | feeds: kept}}
   end
 
   @doc "The posts and pages still waiting for their day on `today`, the soonest first."

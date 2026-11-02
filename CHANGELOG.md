@@ -6,6 +6,17 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.83.0 — 2026-11-02
+
+- **Several feeds on one blog.** Each category right under your posts category is a feed of its own: Posts ▸ Devlog gets `devlog/` with its own index page, RSS and JSON Feed, so a reader can follow only that. The main index and feeds still have every post, and the main index says "Feeds: Devlog · Links". A new feed is a new category under Posts.
+- **Publish ▸ Feeds** lists them; ENTER on one sets its title, a line about it, and its folder. Change the folder and the feed moves when you next publish.
+- If you published with 0.81 or 0.82 and never changed `templates/index.html`, it is replaced by one that knows feeds; one you changed stays.
+- **File format 50:** the blog keeps its feeds' settings.
+
+### Facade
+
+- Added `blog_feeds/2` and `set_blog_feed/3`.
+
 ## 0.82.0 — 2026-11-02
 
 - **Pages: About, Now and the like.** In Publish ▸ Site, choose a Pages category: each of its items becomes a page of its own, `about.html` from a title "About" (a note's `# Heading` gives the title, as for a post). Pages are not in the list of posts or in the feeds, and a page keeps its address as a post does.

@@ -292,6 +292,16 @@ defmodule Agendum.Starters.Golden do
         address: "{year}/{month}/{day}-{slug}.html"
       })
 
+    # one of the blog's own feeds, every setting set (format 50)
+    {:ok, db, devlog} = Core.add_category(db, db.blog.posts, "Devlog")
+
+    {:ok, db} =
+      Core.set_blog_feed(db, devlog, %{
+        title: "Owl's devlog",
+        description: "How the house was built",
+        slug: "devlog"
+      })
+
     # a post published, then changed and published again: its record has
     # an address, a fingerprint and a modified date (format 48)
     {db, post} = Core.add_item(db, "On spelling", @today, section: db.blog.posts)

@@ -50,10 +50,13 @@ defmodule Agendum.Core.Extras.Site do
   @legacy_stylesheet File.read!(Path.join(@assets, "legacy-style.css"))
   @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
+  # a feed's own files, in its folder (R74, § 9)
+  @feed_files ~w(index.html rss.xml feed.json)
+
   # the templates a site's pages are drawn from (`Agendum.Core.Extras.Template`),
   # written into its `templates/` folder when missing, then the person's
   @template_names ~w(layout index post page menu)
-  for name <- @template_names ++ ["menu-0.81"],
+  for name <- @template_names ++ ["menu-0.81", "index-0.81"],
       do: @external_resource(Path.join([@assets, "templates", name <> ".html"]))
 
   @default_templates Map.new(@template_names, fn name ->
@@ -63,7 +66,8 @@ defmodule Agendum.Core.Extras.Site do
   # templates an older Agendum wrote: one still word for word as it was is
   # Agendum's, not the person's, so a newer one replaces it (as `style.css`)
   @legacy_templates %{
-    "templates/menu.html" => [File.read!(Path.join([@assets, "templates", "menu-0.81.html"]))]
+    "templates/menu.html" => [File.read!(Path.join([@assets, "templates", "menu-0.81.html"]))],
+    "templates/index.html" => [File.read!(Path.join([@assets, "templates", "index-0.81.html"]))]
   }
 
   @doc "The stylesheet's path: written only when the folder has none."
@@ -155,32 +159,72 @@ defmodule Agendum.Core.Extras.Site do
   defp pages(%Database{} = db, today, templates, assets) do
     # the addresses and modified days publishing would record now: shown in
     # the preview, kept only once the person publishes (`record/2`)
-    db = Blog.record_posts(db, today, own())
+    {db, feeds} = plan(db, today)
     blog = db.blog
     used = Zettels.zettels(db)
     posts = db |> Blog.posts(today) |> Enum.filter(& &1.zettel)
     pages = db |> Blog.pages(today) |> Enum.filter(& &1.zettel)
+    feeds = for feed <- feeds, do: %{feed | posts: Enum.filter(feed.posts, & &1.zettel)}
     published = MapSet.new(posts ++ pages, & &1.id)
-    site = %{db: db, blog: blog, used: used, published: published, posts: posts, pages: pages}
+
+    site = %{
+      db: db,
+      blog: blog,
+      used: used,
+      published: published,
+      posts: posts,
+      pages: pages,
+      feeds: feeds
+    }
+
     # the menu's pages, made once: each page drawn marks its own as current
     site = Map.put(site, :menu, for(item <- pages, do: menu_entry(site, item)))
     draw = &draw(site, templates, &1, &2)
 
     with {:ok, index} <- draw.("index", index(site)),
+         {:ok, feed_files} <- feed_files(site, draw),
          {:ok, post_files} <-
            each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
          {:ok, page_files} <-
            each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw) do
-      pages = post_files ++ page_files
+      pages = post_files ++ page_files ++ feed_files
+      main = main_feed(site)
 
       {:ok,
        [
          {"index.html", index},
-         {"rss.xml", rss(site)},
-         {"feed.json", json_feed(site)},
+         {"rss.xml", rss(site, main)},
+         {"feed.json", json_feed(site, main)},
          {@stylesheet, default_stylesheet()}
        ] ++ pages ++ @font_files ++ assets}
     end
+  end
+
+  # each feed's index page, from the index template, and its own RSS and
+  # JSON Feed, in its folder (R74, § 9)
+  defp feed_files(site, draw) do
+    site.feeds
+    |> Enum.reduce_while({:ok, []}, fn feed, {:ok, files} ->
+      case draw.("index", feed_index(site, feed)) do
+        {:ok, index} ->
+          meta = own_feed(site, feed)
+
+          three = [
+            {feed.slug <> "/index.html", index},
+            {feed.slug <> "/rss.xml", rss(site, meta)},
+            {feed.slug <> "/feed.json", json_feed(site, meta)}
+          ]
+
+          {:cont, {:ok, [three | files]}}
+
+        error ->
+          {:halt, error}
+      end
+    end)
+    |> then(fn
+      {:ok, files} -> {:ok, files |> Enum.reverse() |> List.flatten()}
+      error -> error
+    end)
   end
 
   # each post's (or page's) page from its template, or the first mistake
@@ -239,7 +283,39 @@ defmodule Agendum.Core.Extras.Site do
   (`Agendum.Core.Extras.Blog.record_posts/3`), as the site was built.
   """
   @spec record(Database.t(), Date.t()) :: Database.t()
-  def record(db, today), do: Blog.record_posts(db, today, own())
+  def record(db, today) do
+    {db, feeds} = plan(db, today)
+    Blog.record_feeds(db, feeds)
+  end
+
+  @doc """
+  The blog's own feeds on `today` as the site makes them (R74): their
+  folders kept from the site's own, and from a post already at a feed's
+  index or feeds (`Agendum.Core.Extras.Blog.feeds/3`).
+  """
+  @spec feeds(Database.t(), Date.t()) :: [Blog.feed()]
+  def feeds(db, today) do
+    {_files, folders} = own()
+
+    clashing =
+      for %{path: path} <- Map.values(db.blog.published),
+          Path.basename(path) in @feed_files,
+          Path.dirname(path) != ".",
+          do: Path.dirname(path)
+
+    Blog.feeds(db, today, folders ++ clashing)
+  end
+
+  # The feeds first; then the posts' and pages' records, none of them on a
+  # feed's index or feeds (the rest of a feed's folder is free: a feed
+  # named Posts leaves `posts/<zettel id>.html` alone).
+  defp plan(db, today) do
+    feeds = feeds(db, today)
+    {files, folders} = own()
+    feed_files = for feed <- feeds, file <- @feed_files, do: "#{feed.slug}/#{file}"
+    db = Blog.record_posts(db, today, {files ++ feed_files, folders})
+    {db, feeds}
+  end
 
   @doc """
   Where a post's page is: the address publishing made for it the first
@@ -326,20 +402,45 @@ defmodule Agendum.Core.Extras.Site do
   defp menu_entry(site, item),
     do: %{"title" => title_text(site, item), "url" => post_path(site.db, item)}
 
+  # the main index: every post, the blog's description, and a line naming
+  # its own feeds (the owner's choice, 2026-11-02)
   defp index(site) do
-    posts =
-      site.posts
+    feeds =
+      site.feeds
       |> Enum.with_index()
-      |> Enum.map(fn {item, i} ->
-        post_context(site, item, "", :index) |> Map.put("first", i == 0)
+      |> Enum.map(fn {feed, i} ->
+        %{"title" => feed.title, "url" => feed.slug <> "/index.html", "first" => i == 0}
       end)
 
     %{
       "root" => "",
       "path" => "index.html",
       "page" => %{"title" => site.blog.title, "index" => true},
-      "posts" => posts
+      "summary" => site.blog.description,
+      "feeds" => feeds,
+      "has_feeds" => feeds != [],
+      "posts" => listed(site, site.posts, "")
     }
+  end
+
+  # a feed's own index: its posts, its description, its title as heading
+  defp feed_index(site, feed) do
+    %{
+      "root" => "../",
+      "path" => feed.slug <> "/index.html",
+      "page" => %{"title" => "#{feed.title} · #{site.blog.title}", "index" => false},
+      "summary" => feed.description,
+      "feed" => %{"title" => feed.title, "slug" => feed.slug},
+      "posts" => listed(site, feed.posts, "../")
+    }
+  end
+
+  defp listed(site, posts, root) do
+    posts
+    |> Enum.with_index()
+    |> Enum.map(fn {item, i} ->
+      post_context(site, item, root, :index) |> Map.put("first", i == 0)
+    end)
   end
 
   # a post's own page (its values under `post`) or a page's, such as About
@@ -364,7 +465,9 @@ defmodule Agendum.Core.Extras.Site do
 
     %{
       "zettel" => Zettels.zettel(item),
-      "url" => post_path(site.db, item),
+      # from the page it is shown on: an index in a feed's folder too, so
+      # a template written before feeds (`href="{{url}}"`) still works
+      "url" => root <> post_path(site.db, item),
       "title" => title_text(site, item),
       "title_html" => title_html(site, item, root),
       "date" => shown(site, date),
@@ -442,11 +545,35 @@ defmodule Agendum.Core.Extras.Site do
 
   # --- feeds ---------------------------------------------------------------------
 
-  defp rss(site) do
+  # what a feed says about itself: the site's main one, or a child's of
+  # Posts at `slug/` (R74, § 9)
+  defp main_feed(site) do
+    %{
+      title: site.blog.title,
+      description: site.blog.description,
+      home: home(site),
+      folder: "",
+      posts: site.posts
+    }
+  end
+
+  defp own_feed(site, feed) do
+    home = if home(site) == "", do: "", else: absolute(site, feed.slug <> "/")
+
+    %{
+      title: "#{site.blog.title} · #{feed.title}",
+      description: if(feed.description == "", do: site.blog.description, else: feed.description),
+      home: home,
+      folder: feed.slug <> "/",
+      posts: feed.posts
+    }
+  end
+
+  defp rss(site, meta) do
     blog = site.blog
 
     items =
-      Enum.map_join(site.posts, "", fn item ->
+      Enum.map_join(meta.posts, "", fn item ->
         url = absolute(site, post_path(site.db, item))
 
         """
@@ -463,12 +590,12 @@ defmodule Agendum.Core.Extras.Site do
     <?xml version="1.0" encoding="UTF-8"?>
     <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-    <title>#{xml(blog.title)}</title>
-    <link>#{xml(home(site))}</link>
-    <description>#{xml(blog.description)}</description>
+    <title>#{xml(meta.title)}</title>
+    <link>#{xml(meta.home)}</link>
+    <description>#{xml(meta.description)}</description>
     <language>#{xml(blog.language)}</language>
     <generator>Wol's Agendum</generator>
-    <atom:link href="#{xml(absolute(site, "rss.xml"))}" rel="self" type="application/rss+xml"/>
+    <atom:link href="#{xml(absolute(site, meta.folder <> "rss.xml"))}" rel="self" type="application/rss+xml"/>
     #{items}</channel>
     </rss>
     """
@@ -492,11 +619,11 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
-  defp json_feed(site) do
+  defp json_feed(site, meta) do
     blog = site.blog
 
     items =
-      Enum.map(site.posts, fn item ->
+      Enum.map(meta.posts, fn item ->
         url = absolute(site, post_path(site.db, item))
         date = Blog.date(item)
         modified = modified(site, item)
@@ -518,10 +645,10 @@ defmodule Agendum.Core.Extras.Site do
 
     json([
       {"version", "https://jsonfeed.org/version/1.1"},
-      {"title", blog.title},
-      {"home_page_url", home(site)},
-      {"feed_url", absolute(site, "feed.json")},
-      {"description", blog.description},
+      {"title", meta.title},
+      {"home_page_url", meta.home},
+      {"feed_url", absolute(site, meta.folder <> "feed.json")},
+      {"description", meta.description},
       {"language", blog.language},
       {"authors", authors},
       {"items", items}

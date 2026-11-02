@@ -35,7 +35,7 @@ defmodule Agendum.Core.JSONFile do
     View
   }
 
-  alias Agendum.Core.Extras.{Address, Blog, Calendar, Feed, PostRecord}
+  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Calendar, Feed, PostRecord}
 
   alias Agendum.Core.View.{Column, ItemColumn, Section, SortKey}
   alias Agendum.Core.Facade.Extras.Zettels
@@ -142,9 +142,13 @@ defmodule Agendum.Core.JSONFile do
       base_url: :string,
       me: :string,
       address: :string,
-      published: {:records, PostRecord}
+      published: {:records, PostRecord},
+      feeds: {:records, BlogFeed, "category"}
     ]
   end
+
+  # one of the blog's own feeds (R74), by its category's id
+  defp spec(BlogFeed), do: [title: :string, description: :string, slug: :string]
 
   # what publishing remembers of a post (R74), by its item's id
   defp spec(PostRecord), do: [path: :string, print: :int, modified: {:nullable, :date}]
@@ -467,10 +471,12 @@ defmodule Agendum.Core.JSONFile do
 
   # a map of id => struct, as a list of objects in id order, each with
   # its "item" first
-  defp value(v, {:records, _module}) when is_map(v) do
+  defp value(v, {:records, module}) when is_map(v), do: value(v, {:records, module, "item"})
+
+  defp value(v, {:records, _module, key}) when is_map(v) do
     for {id, record} <- Enum.sort(v) do
       {:obj, fields} = struct_obj(record)
-      {:obj, [{"item", id} | fields]}
+      {:obj, [{key, id} | fields]}
     end
   end
 
@@ -1088,6 +1094,11 @@ defmodule Agendum.Core.JSONFile do
         not Address.safe?(record.path),
         do: bad("blog.published", "item #{id}: not a safe address: #{inspect(record.path)}")
 
+    # a feed's slug is a folder on the site: plain, or empty until made
+    for {id, feed} <- blog.feeds,
+        feed.slug != "" and not BlogFeed.slug?(feed.slug),
+        do: bad("blog.feeds", "category #{id}: not a feed's folder: #{inspect(feed.slug)}")
+
     blog
   end
 
@@ -1125,13 +1136,16 @@ defmodule Agendum.Core.JSONFile do
     end
   end
 
-  defp convert(value, {:records, module}, path) when is_list(value) do
+  defp convert(value, {:records, module}, path) when is_list(value),
+    do: convert(value, {:records, module, "item"}, path)
+
+  defp convert(value, {:records, module, key}, path) when is_list(value) do
     value
     |> Enum.with_index()
     |> Map.new(fn {object, i} ->
       at = "#{path}[#{i}]"
       unless is_map(object), do: bad(at, "should be an object")
-      {req(object, "item", :int, at), read_struct(%{"r" => object}, "r", module, at)}
+      {req(object, key, :int, at), read_struct(%{"r" => object}, "r", module, at)}
     end)
   end
 
