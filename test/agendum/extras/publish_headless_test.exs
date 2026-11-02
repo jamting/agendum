@@ -80,6 +80,27 @@ defmodule Agendum.Extras.PublishHeadlessTest do
     refute File.exists?(Path.join(ctx.site, "index.html"))
   end
 
+  test "an image's missing asset stops it, saying which and where; once there, it goes out",
+       ctx do
+    {:ok, db} = Store.load(ctx.path)
+    post = Enum.find(Core.blog_posts(db), &(&1.text == "Hello, Wood"))
+    :ok = Store.save(Core.set_note(db, post.id, "![Owl](assets/owl.png)", @today), ctx.path)
+
+    assert {:error, message} = Headless.run(ctx.path, ctx.prefs, @today)
+
+    assert message ==
+             "assets/owl.png, an image in Hello, Wood, is not in the site folder's assets/"
+
+    refute File.exists?(Path.join(ctx.site, "index.html"))
+
+    File.mkdir_p!(Path.join(ctx.site, "assets"))
+    File.write!(Path.join(ctx.site, "assets/owl.png"), "png")
+    assert {:ok, _lines} = Headless.run(ctx.path, ctx.prefs, @today)
+
+    assert File.read!(Path.join(ctx.site, "index.html")) =~
+             ~s(<img src="assets/owl.png" alt="Owl">)
+  end
+
   test "the binary's --publish flag is read; a mistyped or lone flag is refused" do
     assert {:publish, "blog", true} =
              Agendum.CLI.parse_args(["--publish", "blog", "--preview"], %{})

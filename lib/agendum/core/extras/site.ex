@@ -105,34 +105,43 @@ defmodule Agendum.Core.Extras.Site do
   come waits; a post without a Zettel id is left out, as Publish gives
   each one first, R73), its pages drawn from the folder's
   templates (Agendum's own where one is missing) and its assets copied as
-  they are; or why not: a template's mistake, with where it is, or an
-  asset's name that cannot be on the web.
+  they are; or why not: a template's mistake, with where it is, an
+  asset's name that cannot be on the web, or an image in a post or a page
+  naming an asset the folder does not have (R74c).
   """
   @typedoc """
   Why the site could not be made: a template's mistake (its name, the
-  line or nil, and what, `Agendum.Core.Extras.Template`), or an asset's
-  name that cannot be on the web.
+  line or nil, and what, `Agendum.Core.Extras.Template`), an asset's
+  name that cannot be on the web, or an asset an image names that is not
+  there (its path, and the title of the post or page it is in).
   """
   @type error ::
           {:template, String.t(), pos_integer | nil, Template.mistake() | Template.render_error()}
           | {:asset_name, String.t()}
+          | {:missing_asset, String.t(), String.t()}
 
   @spec build(Database.t(), Date.t(), inputs) :: {:ok, [file]} | {:error, error}
-  def build(db, today, inputs) do
+  def build(db, today, inputs), do: build(db, today, inputs, true)
+
+  @doc """
+  Every file of the site on `today`, with Agendum's own templates and no
+  assets (an image's asset is not asked for).
+  """
+  @spec build(Database.t(), Date.t()) :: [file]
+  def build(db, today) do
+    {:ok, files} = build(db, today, %{templates: %{}, assets: []}, false)
+    files
+  end
+
+  defp build(db, today, inputs, check_images?) do
     with {:ok, templates} <- parse(Map.merge(@default_templates, inputs.templates)),
          :ok <- assets_named_well(inputs.assets) do
       # an included template's last newline is not part of it, so a
       # partial can be a file ending in a newline and still sit in a line
       partials = Map.new(templates, fn {n, tree} -> {n, drop_last_newline(tree)} end)
-      pages(db, today, %{whole: templates, partials: partials}, inputs.assets)
+      templates = %{whole: templates, partials: partials}
+      pages(db, today, templates, inputs.assets, check_images?)
     end
-  end
-
-  @doc "Every file of the site on `today`, with Agendum's own templates and no assets."
-  @spec build(Database.t(), Date.t()) :: [file]
-  def build(db, today) do
-    {:ok, files} = build(db, today, %{templates: %{}, assets: []})
-    files
   end
 
   # each template parsed, or the first mistake and where
@@ -148,6 +157,31 @@ defmodule Agendum.Core.Extras.Site do
     end)
   end
 
+  # Each image in a post or a page that names an asset (`assets/owl.jpg`)
+  # needs that file in the folder's `assets/`; the first that is missing
+  # stops publishing, with the post's title (R74c). A path that leads out of
+  # `assets/` (`assets/../x`) is never one of its files, so it is missing too.
+  defp images_there(_site, _assets, false), do: :ok
+
+  defp images_there(site, assets, true) do
+    have = MapSet.new(assets, &elem(&1, 0))
+
+    missing =
+      Enum.find_value(site.posts ++ site.pages, fn item ->
+        (Markdown.inline_assets(Blog.title(item)) ++ Markdown.assets(item.note))
+        |> Enum.find(&(not MapSet.member?(have, &1)))
+        |> case do
+          nil -> nil
+          path -> {path, title_text(site, item)}
+        end
+      end)
+
+    case missing do
+      nil -> :ok
+      {path, title} -> {:error, {:missing_asset, path, title}}
+    end
+  end
+
   # an asset's path goes into web addresses as it is: plain characters only
   defp assets_named_well(assets) do
     case Enum.find(assets, fn {path, _} -> not Address.plain?(path) end) do
@@ -156,7 +190,7 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
-  defp pages(%Database{} = db, today, templates, assets) do
+  defp pages(%Database{} = db, today, templates, assets, check_images?) do
     # the addresses and modified days publishing would record now: shown in
     # the preview, kept only once the person publishes (`record/2`)
     {db, feeds} = plan(db, today)
@@ -181,7 +215,8 @@ defmodule Agendum.Core.Extras.Site do
     site = Map.put(site, :menu, for(item <- pages, do: menu_entry(site, item)))
     draw = &draw(site, templates, &1, &2)
 
-    with {:ok, index} <- draw.("index", index(site)),
+    with :ok <- images_there(site, assets, check_images?),
+         {:ok, index} <- draw.("index", index(site)),
          {:ok, feed_files} <- feed_files(site, draw),
          {:ok, post_files} <-
            each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
@@ -469,13 +504,14 @@ defmodule Agendum.Core.Extras.Site do
       # a template written before feeds (`href="{{url}}"`) still works
       "url" => root <> post_path(site.db, item),
       "title" => title_text(site, item),
-      "title_html" => title_html(site, item, root),
+      "title_html" => site |> title_html(item, root) |> place_assets(root),
       "date" => shown(site, date),
       "date_iso" => date && Date.to_iso8601(date),
       "updated" => shown(site, modified),
       "updated_iso" => modified && Date.to_iso8601(modified),
       "permalink" => permalink(site, item),
-      "content" => Markdown.to_html(item.note, site.used, link_fun(site, root))
+      "content" =>
+        item.note |> Markdown.to_html(site.used, link_fun(site, root)) |> place_assets(root)
     }
   end
 
@@ -664,8 +700,13 @@ defmodule Agendum.Core.Extras.Site do
   defp json(list) when is_list(list), do: "[" <> Enum.map_join(list, ",", &json/1) <> "]"
   defp json(value), do: JSON.encode!(value)
 
-  defp content_html(site, item),
-    do: Markdown.to_html(item.note, site.used, absolute_link_fun(site))
+  # in the feeds, an image's asset is a whole address too (from the site's
+  # root without a Base address, as the links are)
+  defp content_html(site, item) do
+    item.note
+    |> Markdown.to_html(site.used, absolute_link_fun(site))
+    |> place_assets(attr(absolute(site, "")))
+  end
 
   # in the feeds, links to other posts are whole addresses
   defp absolute_link_fun(site) do
@@ -680,6 +721,15 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   # --- addresses -------------------------------------------------------------------
+
+  # An image's asset is written from the site's root (`assets/owl.jpg`);
+  # on a page in a folder it needs `root` before it (`../assets/owl.jpg`).
+  # Only Markdown's own images can start so: every `<` of a note's text is
+  # escaped, so the note itself cannot write `<img src="assets/`.
+  defp place_assets(html, ""), do: html
+
+  defp place_assets(html, root),
+    do: String.replace(html, ~s(<img src="assets/), ~s(<img src="#{root}assets/))
 
   defp home(%{blog: %{base_url: ""}}), do: ""
   defp home(site), do: base(site)

@@ -6,6 +6,14 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.87.0 — 2026-11-03
+
+- **Images in posts and pages from your site's `assets/` folder.** Put a picture in the site folder's `assets/` and write `![Owl by the tree](assets/owl.jpg)` in a post's note: every page, and the feeds, get the right address to it. An image whose file is not in `assets/` stops publishing and says which, and in which post. Leave the text in `[ ]` empty for a picture that only decorates.
+
+### Facade
+
+- `Agendum.Core.site/3` can also answer `{:error, {:missing_asset, path, title}}`.
+
 ## 0.86.0 — 2026-11-02
 
 - **A new theme, Amber:** amber on near-black, as the amber monitors of the 1980s (from the Amber CRT Retro colour scheme). Choose it in Utilities ▸ Customize, or with `--theme amber`.

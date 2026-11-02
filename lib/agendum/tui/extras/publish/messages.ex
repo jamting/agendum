@@ -69,6 +69,9 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def site_error({:asset_name, path}),
     do: "#{path}: an asset's name may hold only a-z, A-Z, 0-9 and . _ ~ - /"
 
+  def site_error({:missing_asset, path, title}),
+    do: "#{path}, an image in #{title}, is not in the site folder's assets/"
+
   def site_error({:template, name, line, why}) do
     where = if line, do: "templates/#{name}.html line #{line}", else: "templates/#{name}.html"
     "#{where}: #{template_mistake(why)}"

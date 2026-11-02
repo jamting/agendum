@@ -16,8 +16,10 @@ defmodule Agendum.Core.Extras.Markdown do
     * a rule, `---`
 
   In a line: `*emphasis*` or `_emphasis_`, `**strong**`, `` `code` ``,
-  `[text](https://…)` links, `![alt](https://…)` images, bare `https://`
-  addresses, and Zettel links (R73b) through the `link` function given:
+  `[text](https://…)` links, `![alt](https://…)` images and
+  `![alt](assets/owl.jpg)` ones from the site folder's `assets/` (written
+  from the site's root; `Agendum.Core.Extras.Site` makes the address right
+  for each page), bare `https://` addresses, and Zettel links (R73b) through the `link` function given:
   `[[bonalaku]]`, or an id an item has. A backslash keeps the next
   character as it is. Everything else is text: `<` and `&` are escaped,
   so a note can never put HTML or a script in a page.
@@ -42,6 +44,31 @@ defmodule Agendum.Core.Extras.Markdown do
     |> String.split("\n")
     |> blocks([])
     |> Enum.map_join("\n", &block_html(&1, used, link))
+  end
+
+  @doc """
+  The paths of the assets `text`'s images name (`assets/owl.jpg`), in
+  order, once each: those the site must have to publish it.
+  """
+  @spec assets(String.t()) :: [String.t()]
+  def assets(text), do: text |> to_html() |> assets_in()
+
+  @doc """
+  The assets the images of a one-line text name, read as `inline/3` reads
+  it (a post's title: no blocks, so a title starting with ` ``` ` is not
+  a code block there).
+  """
+  @spec inline_assets(String.t()) :: [String.t()]
+  def inline_assets(text), do: text |> inline(%{}, &default_link/2) |> assets_in()
+
+  # Read from the HTML: an image is the only way `<img` gets into it, as
+  # every `<` of the text itself is escaped, so a code span or an escaped
+  # `\\![…]` names nothing.
+  defp assets_in(html) do
+    ~r/<img src="(assets\/[^"]*)"/
+    |> Regex.scan(html, capture: :all_but_first)
+    |> List.flatten()
+    |> Enum.uniq()
   end
 
   @doc "A link without a target page: the id as written, in a span."
@@ -216,7 +243,10 @@ defmodule Agendum.Core.Extras.Markdown do
   @inline [
     escaped: ~r/^\\([\\`*_\[\]()#!>-])/,
     code: ~r/^`([^`]{1,500})`/,
-    image: ~r/^!\[([^\]]{0,500})\]\((https?:\/\/[^\s)]+)\)/,
+    # an asset's path holds only the characters an asset's name may have
+    # (`Address.plain?/1`), so it goes into the page as it is; at most 500
+    # of them, as the rest are bounded
+    image: ~r/^!\[([^\]]{0,500})\]\((https?:\/\/[^\s)]+|assets\/[A-Za-z0-9._~\/-]{1,500})\)/,
     link: ~r/^\[([^\]]{1,500})\]\((https?:\/\/[^\s)]+)\)/,
     strong: ~r/^\*\*(.{1,500}?)\*\*/,
     emphasis: ~r/^\*([^*\s][^*]{0,500}?)\*/,
