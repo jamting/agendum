@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.76.2 — 2026-11-02
+
+- **In the GTD starter, Agendas sits beside the Inbox, as the Planner's People do** (the owner's layout). An item can now be in a context and on someone's agenda at once: "Call Marie about the shelves" is in @Calls and under Marie, and "Meet Kari and Hjalmar" is on both their agendas. An item on an agenda leaves the Inbox, and Next Actions shows who each action involves in an Agendas column.
+
 ## 0.76.1 — 2026-11-02
 
 - **The GTD starter has Agendas:** what to bring up with each person. Add a person under Agendas in the category manager (F9, INS), and an item that names them ("Ask Marie about the shelves") goes to their agenda by itself; the Agendas view has a section per person, and Next Actions a section for them all. A call stays a call: "Call Marie" goes to @Calls.

@@ -1077,15 +1077,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
   Its categories:
 
-  - **Inbox**, exclusive, holding the lists: **Contexts** (exclusive: @Anywhere, @Calls, @Computer, @Errands, @Home, @Office, and **Agendas** with a child per person, Sample Person), **Waiting For** and **Someday/Maybe**.
-  - **Projects** (Sample Project), beside the lists.
+  - **Inbox**, exclusive, holding the lists: **Contexts** (exclusive: @Anywhere, @Calls, @Computer, @Errands, @Home, @Office), **Waiting For** and **Someday/Maybe**.
+  - **Agendas**, a child per person (Sample Person), and **Projects** (Sample Project), beside the Inbox: an item can be in a list and on agendas and in a project at once.
 
-  An item not filed yet is in the Inbox itself; a filed one is in one list, and giving it another takes it out of the first (R7a). Words file an item as it is typed (R16): call, phone, ring (@Calls); email, online, website (@Computer); buy, shop, "pick up" (@Errands); read, think (@Anywhere); "waiting for" (Waiting For, by its name); someday (Someday/Maybe); a person's name (their agenda, by the name). One context each, so "Call Marie" is a call (@Calls), not on Marie's agenda.
+  An item not filed yet is in the Inbox itself; a filed one is in one list, and giving it another takes it out of the first (R7a). Words file an item as it is typed (R16): call, phone, ring (@Calls); email, online, website (@Computer); buy, shop, "pick up" (@Errands); read, think (@Anywhere); "waiting for" (Waiting For, by its name); someday (Someday/Maybe); a person's name (their agenda, by the name). "Call Marie" is in @Calls and on Marie's agenda.
 
   Its views, in the method's order:
 
-  - **Inbox** (where it opens): the Inbox section filtered to the items in no list, so a filed item leaves it, by its words or by hand. Columns Contexts, Projects, When.
-  - **Next Actions**: a section per context, Agendas the last.
+  - **Inbox** (where it opens): the Inbox section filtered to the items in no list and on no agenda, so a filed item leaves it, by its words or by hand. Columns Contexts, Projects, When.
+  - **Next Actions**: a section per context; columns Agendas, Projects, When.
   - **Agendas**: a section per person, what to bring up when you meet; a person added in the category manager becomes a section by itself (R42).
   - **Projects**: a section per project; a project without a next action is an empty section, and a new project becomes a section by itself (R42).
   - **Waiting For**, with the Entry date; **Someday/Maybe**.

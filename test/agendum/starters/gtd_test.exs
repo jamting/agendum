@@ -48,18 +48,19 @@ defmodule Agendum.Starters.GTDTest do
   end
 
   describe "the file" do
-    test "the categories: the Inbox family and its lists, then Projects", %{db: db} do
-      assert Enum.filter(children(db, "MAIN"), &(&1 in ["Inbox", "Projects"])) == [
-               "Inbox",
-               "Projects"
-             ]
+    test "the categories: the Inbox family and its lists, then Agendas and Projects",
+         %{db: db} do
+      assert Enum.filter(children(db, "MAIN"), &(&1 in ~w(Inbox Agendas Projects))) ==
+               ~w(Inbox Agendas Projects)
 
       assert children(db, "Inbox") == ["Contexts", "Waiting For", "Someday/Maybe"]
 
       assert children(db, "Contexts") ==
-               ~w(@Anywhere @Calls @Computer @Errands @Home @Office Agendas)
+               ~w(@Anywhere @Calls @Computer @Errands @Home @Office)
 
+      # several people at once: not exclusive
       assert children(db, "Agendas") == ["Sample Person"]
+      refute db.categories[cat(db, "Agendas")].exclusive
 
       assert children(db, "Projects") == ["Sample Project"]
 
@@ -73,8 +74,8 @@ defmodule Agendum.Starters.GTDTest do
                ["Inbox", "Next Actions", "Agendas", "Projects", "Waiting For"] ++
                  ["Someday/Maybe", "Weekly Review"]
 
-      assert sections(db, "Next Actions") ==
-               ~w(@Anywhere @Calls @Computer @Errands @Home @Office Agendas)
+      assert sections(db, "Next Actions") == ~w(@Anywhere @Calls @Computer @Errands @Home @Office)
+      assert hd(columns(db, "Next Actions")) == ["Agendas", "Projects", "When"]
 
       assert sections(db, "Agendas") == ["Sample Person"]
       assert sections(db, "Weekly Review") == ["Inbox", "Waiting For", "Someday/Maybe", "Done"]
@@ -135,15 +136,18 @@ defmodule Agendum.Starters.GTDTest do
 
     test "a person's name files an item in their agenda", %{db: db} do
       {db, ask} = type_in_inbox(db, "Ask Sample Person about the shelves")
-      assert lists(db, ask) == ["Inbox", "Contexts", "Agendas"]
       assert Database.member?(db, ask, cat(db, "Sample Person"))
+      refute Database.member?(db, ask, cat(db, "Contexts"))
+      # on an agenda is filed: it leaves the Inbox view
       refute show(db, "Inbox") =~ "Ask Sample Person"
       assert show(db, "Agendas") =~ "Ask Sample Person about the shelves"
-      assert show(db, "Next Actions") =~ "Ask Sample Person about the shelves"
 
-      # a call is an action: @Calls, not the agenda (one context each)
+      # a call naming a person is in both: @Calls and their agenda
       {db, call} = type_in_inbox(db, "Call Sample Person about the shelves")
       assert lists(db, call) == ["Inbox", "Contexts", "@Calls"]
+      assert Database.member?(db, call, cat(db, "Sample Person"))
+      assert show(db, "Agendas") =~ "Call Sample Person about the shelves"
+      assert show(db, "Next Actions") =~ "Call Sample Person about the shelves"
     end
 
     test "a person added in the category manager is a section of Agendas (R42)", %{db: db} do
@@ -151,7 +155,6 @@ defmodule Agendum.Starters.GTDTest do
       assert sections(db, "Agendas") == ["Sample Person", "Marie"]
 
       {db, ask} = type_in_inbox(db, "Ask Marie about the shelves")
-      assert lists(db, ask) == ["Inbox", "Contexts", "Agendas"]
       assert Database.member?(db, ask, cat(db, "Marie"))
     end
 

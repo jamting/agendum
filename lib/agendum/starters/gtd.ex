@@ -7,8 +7,7 @@ defmodule Agendum.Starters.GTD do
 
   Every item lives in the exclusive **Inbox** family: an item not filed
   yet is in the Inbox itself, a filed one in one of its lists, a context
-  (`Contexts`, exclusive too, Agendas among them), Waiting For or
-  Someday/Maybe. Giving an
+  (`Contexts`, exclusive too), Waiting For or Someday/Maybe. Giving an
   item a list takes it out of the one it was in, as exclusive children
   do (R7a), and the Inbox view shows only the items in no list. So an
   item typed there that its words file ("Call Anna" in @Calls) leaves it
@@ -16,11 +15,13 @@ defmodule Agendum.Starters.GTD do
   filled by a condition would not work: an item typed under it is
   assigned by hand, and conditions never break that (R15).
 
-  Agendas is GTD's list of what to bring up with each person: a context
-  whose children are people, so a typed item that names one ("Ask Marie
-  about the shelves") files itself by the name, as the Planner's People
-  do. Projects are a family of their own beside the lists, and a project
-  without a next action is an empty section of the Projects view.
+  Agendas (what to bring up with each person) and Projects are families
+  of their own beside the Inbox, as the Planner's People and Project are:
+  an item can be in a context and on a person's agenda at once ("Call
+  Marie about the shelves" is in @Calls and under Marie), and a typed
+  item that names a person files itself by the name. An item on an agenda
+  counts as filed, so it leaves the Inbox view too. A project without a
+  next action is an empty section of the Projects view.
 
   One item, a welcome whose note says how the file works; the person
   discards it. Built through `Agendum.Core` like any file a person makes,
@@ -59,7 +60,7 @@ defmodule Agendum.Starters.GTD do
   File the rest: type a context (@Home, @Office ...) in the Contexts column, or assign Waiting For or Someday/Maybe (ALT-M). Filed, an item leaves the Inbox; each item is in one list.
 
   Next Actions: what you can do, by context.
-  Agendas: what to bring up with each person. "Ask Marie about the shelves" goes to Marie once Marie is a person under Agendas: add one in the category manager (F9, INS).
+  Agendas: what to bring up with each person. Add a person under Agendas in the category manager (F9, INS); then "Ask Marie about the shelves" goes to Marie by itself, and "Call Marie" goes to both @Calls and Marie.
   Projects: a section per project; an empty one has no next action yet. Type a new name in a Projects column to start a project.
   Waiting For: what others owe you, with the day it was entered.
   Someday/Maybe: ideas for later, out of the other views.
@@ -97,8 +98,10 @@ defmodule Agendum.Starters.GTD do
     {:ok, db, someday} = Core.add_category(db, inbox, "Someday/Maybe", off)
     db = also_match(db, someday, "someday")
 
-    # a person's name files an item, so Sample Person keeps name matching
-    {:ok, db, agendas} = Core.add_category(db, contexts, "Agendas", off)
+    # beside the Inbox, not one of its lists, so an item can be on an
+    # agenda and in a context at once; a person's name files an item, so
+    # Sample Person keeps name matching
+    {:ok, db, agendas} = Core.add_category(db, db.main_id, "Agendas", off)
     {:ok, db, _} = Core.add_category(db, agendas, "Sample Person")
 
     {:ok, db, projects} = Core.add_category(db, db.main_id, "Projects", off)
@@ -118,8 +121,8 @@ defmodule Agendum.Starters.GTD do
 
   # --- views ---
 
-  # the items in a list, so not in the Inbox itself any more
-  @filed ["Contexts", "Waiting For", "Someday/Maybe"]
+  # the items in a list or on an agenda, so not in the Inbox any more
+  @filed ["Contexts", "Waiting For", "Someday/Maybe", "Agendas"]
 
   defp views(db) do
     inbox = hd(db.view_order)
@@ -128,7 +131,7 @@ defmodule Agendum.Starters.GTD do
     |> columns(inbox, ["Contexts", "Projects"])
     |> filter(inbox, :view, Enum.map(@filed, &{&1, :not_assigned}))
     |> option(inbox, :hide_done)
-    |> view("Next Actions", Enum.map(@contexts, &elem(&1, 0)) ++ ["Agendas"], ["Projects", "When"])
+    |> view("Next Actions", Enum.map(@contexts, &elem(&1, 0)), ["Agendas", "Projects", "When"])
     |> view("Agendas", ["Sample Person"], ["Projects", "When"])
     |> view("Projects", ["Sample Project"], ["Contexts", "When"])
     |> view("Waiting For", ["Waiting For"], ["Entry", "Projects"])
