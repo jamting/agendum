@@ -160,6 +160,8 @@ defmodule Agendum.TUI.Keymap do
     # ours (R64g): the view's undo keys, a word at a time in the note
     {:ctrl, "z"} => :undo,
     {:ctrl, "y"} => :redo,
+    # an extra (R64h): a task box ticked or unticked
+    {:ctrl, "t"} => :toggle_task,
     # Agenda's (R64f)
     {:alt_f, 9} => :append,
     {:alt_f, 8} => :get_items,

@@ -106,6 +106,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R64e | The note editor's editing keys | 4 |
 | R64f | A note's connections: APPEND, GETITMS, the calendar | 4 |
 | R64g | Undo in a note | 4 |
+| R64h | Markdown in a note (an extra) | 4 |
 | R65 | Commands, keymaps and a count | 5 |
 | R65a | Commands that cannot run now | 5 |
 | R65b | The commands' longer texts | 5 |
@@ -939,6 +940,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - Typing after an undo drops what could be redone. Undoing every step leaves the note unchanged, so ESC asks nothing.
 
   The steps end with the note: once it is closed, CTRL-Z in the view puts the whole note back as it was opened, one step as before (R30; the owner's choices, 2026-11-02).
+
+- **R64h ✅ Markdown in a note** (ours; an extra, R77, ADR 0043; meeting 2026-11-02-1255, § 5; the owner's choices, 2026-11-02). With the extras on, in a note of an item or a category (not a macro's keystrokes), the editor helps with the Markdown the blog reads (R74), by the same rules (`Agendum.Core.markdown_line/1`):
+
+  - **ENTER at the end of a list item** starts the next with the same marker: `- ` or `* `, a number counted on (`9.` → `10. `), and a task box empty (`- [x] eggs` → `- [ ] `). On an item with nothing after its marker, ENTER removes the marker instead (keeping its indent), so two ENTERs leave the list; a list's ENTER is an undo step of its own (R64g). ENTER inside a line, or on any other line, is a plain new line.
+  - **CTRL-T** ticks the line's task box (`[ ]` → `[x]`), unticks it, opens a cancelled one (`[-]` → `[ ]`), and gives a list item without one a box (`- milk` → `- [ ] milk`). On any other line it says "CTRL-T ticks a task box: a line such as - [ ] call Kanga" and changes nothing.
+  - Inside a code block (between ``` lines) a list or a heading is only text, as on the site: ENTER, CTRL-T and the colours leave it alone. A line is a heading or a list item for the editor exactly when the site reads it as one. In a macro's keystrokes CTRL-T does nothing.
+  - **On every line but the cursor's**, as Zettel links are: a heading's `#` marker and text in a section head's colour, a list's marker and task box in a link's colour, a done or cancelled task's text as a done item's. The text stays as typed; nothing is stored differently.
+
+  With the extras off, ENTER and CTRL-T are as before and nothing is coloured.
 
 - **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar shows the date and time, as Agenda's (checked in Agenda): the date, two spaces and the time right-aligned in seven columns, at the end of the line (`10/25/26   9:18pm`, `10/25/26  10:30am`; `2026-10-25    09:05` on a 24-hour clock).
 

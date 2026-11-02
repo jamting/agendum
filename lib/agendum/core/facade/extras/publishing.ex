@@ -10,7 +10,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   alias Agendum.Core.Database
   alias Agendum.Core.Context
-  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Ingested, Site}
+  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Ingested, Markdown, Site}
   alias Agendum.Core.Facade.Categories
   alias Agendum.Core.Facade.Extras.Zettels
 
@@ -195,6 +195,25 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
        do: {:ok, put_in(db.blog.feeds[id], settings)},
        else: {:error, :bad_slug}
   end
+
+  @doc "What a line of a note is, as Markdown (R64h; `Agendum.Core.Extras.Markdown.line/1`)."
+  @spec markdown_line(String.t()) :: Markdown.line()
+  def markdown_line(text), do: Markdown.line(text)
+
+  @doc "What ENTER at the end of a note's line starts the next with (R64h)."
+  @spec markdown_continue(String.t()) :: {:continue, String.t()} | {:end, String.t()} | :none
+  def markdown_continue(text), do: Markdown.continue(text)
+
+  @doc """
+  A note's line with its task box ticked or unticked (R64h), with where the
+  change begins; nil for a line that is no list item.
+  """
+  @spec markdown_toggle(String.t()) :: {String.t(), non_neg_integer} | nil
+  def markdown_toggle(text), do: Markdown.toggle(text)
+
+  @doc "The rows of a note inside a code block, where Markdown is only text (R64h)."
+  @spec markdown_code_rows([String.t()]) :: MapSet.t(non_neg_integer)
+  def markdown_code_rows(lines), do: Markdown.code_rows(lines)
 
   @doc "How many pages the site has on `today` (R74)."
   @spec blog_page_count(db, Date.t()) :: non_neg_integer

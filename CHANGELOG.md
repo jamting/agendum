@@ -6,6 +6,14 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.84.0 — 2026-11-02
+
+- **Writing Markdown in a note is easier** (with the extras on). ENTER at the end of a list item starts the next one (`- `, `2. `, `- [ ] `); ENTER on an empty item leaves the list. **CTRL-T** ticks or unticks a task box, or gives a list item one. Headings, list markers and task boxes are coloured, and done tasks dimmed, on every line but the one you are typing in. Nothing about the note's text changes: it is what the blog reads.
+
+### Facade
+
+- Added `markdown_line/1`, `markdown_continue/1` and `markdown_toggle/1`.
+
 ## 0.83.0 — 2026-11-02
 
 - **Several feeds on one blog.** Each category right under your posts category is a feed of its own: Posts ▸ Devlog gets `devlog/` with its own index page, RSS and JSON Feed, so a reader can follow only that. The main index and feeds still have every post, and the main index says "Feeds: Devlog · Links". A new feed is a new category under Posts.

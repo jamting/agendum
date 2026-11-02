@@ -144,6 +144,7 @@ defmodule Agendum.TUI.Commands do
     {:insert_date, "Date", "Type today's date", :none},
     {:insert_time, "Time", "Type the time", :none},
     {:insert_link, "Insert link", "Type a link to the marked item(s)", :none},
+    {:toggle_task, "Tick task", "Tick or untick the line's task box", :none},
     {:next_note, "Next note", "Save; the next item's note", :none},
     {:previous_note, "Previous note", "Save; the previous item's note", :none},
     {:make_item, "Make item", "Make the marked text an item", :none},
@@ -381,7 +382,7 @@ defmodule Agendum.TUI.Commands do
     # the views by recently used (R68)
     viewmgr: [:order],
     # a link to the marked items typed into a note (R73b)
-    note: [:insert_link]
+    note: [:insert_link, :toggle_task]
   }
 
   # The key bar's labels (ADR 0045), by place: Agenda's own, as captured

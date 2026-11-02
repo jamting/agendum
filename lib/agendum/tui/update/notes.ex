@@ -123,7 +123,43 @@ defmodule Agendum.TUI.Update.Notes do
     State.put_mode(state, %{mode | edit: edit, match: nil})
   end
 
+  # ENTER at the end of a list's line continues the list, or on an empty
+  # item leaves it (R64h, an extra; Markdown's rules, `Core.markdown_continue/1`);
+  # not inside a code block, where a list is only text
   defp edit_text(state, mode, key) do
+    line = TextEdit.line(mode.edit)
+
+    action =
+      if Keymap.lookup(:text, key) == :new_line and markdown_here?(state, mode) and
+           mode.edit.col == String.length(line),
+         do: Agendum.Core.markdown_continue(line),
+         else: :none
+
+    case action do
+      :none -> plain_edit(state, mode, key)
+      action -> list_enter(state, mode, action)
+    end
+  end
+
+  # a note's line where its Markdown counts: a Markdown note, outside code
+  defp markdown_here?(state, mode) do
+    State.markdown_note?(state, mode) and
+      not MapSet.member?(Agendum.Core.markdown_code_rows(mode.edit.lines), mode.edit.row)
+  end
+
+  # `chunk: :list` tells the note's undo (`Typing.NoteUndo`) this ENTER is
+  # a step of its own, not a space after the word before it
+  defp list_enter(state, mode, action) do
+    edit =
+      case action do
+        {:end, indent} -> TextEdit.replace_line(mode.edit, indent)
+        {:continue, marker} -> mode.edit |> TextEdit.insert("\n") |> TextEdit.insert(marker)
+      end
+
+    State.put_mode(state, %{mode | edit: edit, match: nil, chunk: :list})
+  end
+
+  defp plain_edit(state, mode, key) do
     case TextEdit.handle(mode.edit, key, Wrap.width(state)) do
       {:ok, edit} -> State.put_mode(state, Map.merge(mode, %{edit: edit, match: nil}))
       :unhandled -> state
@@ -167,6 +203,28 @@ defmodule Agendum.TUI.Update.Notes do
   defp command(state, mode, :insert_time) do
     time = DateFormat.time(NaiveDateTime.to_time(state.now), state.db.date_format)
     type_in_note(state, mode, time)
+  end
+
+  # CTRL-T (R64h, an extra): the line's task box ticked or unticked, or a
+  # box given to a list item without one
+  # (a macro's keystrokes and a code block are only text: left alone)
+  defp command(state, mode, :toggle_task) do
+    cond do
+      not markdown_here?(state, mode) ->
+        state
+
+      toggled = Agendum.Core.markdown_toggle(TextEdit.line(mode.edit)) ->
+        {line, at} = toggled
+
+        State.put_mode(state, %{
+          mode
+          | edit: TextEdit.replace_line(mode.edit, line, at),
+            match: nil
+        })
+
+      true ->
+        State.error(state, "CTRL-T ticks a task box: a line such as - [ ] call Kanga")
+    end
   end
 
   defp command(state, mode, :insert_link) do

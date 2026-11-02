@@ -418,6 +418,23 @@ defmodule Agendum.TUI.Typing.TextEdit do
     end
   end
 
+  @doc "The line the cursor is on."
+  @spec line(t) :: String.t()
+  def line(e), do: current(e)
+
+  @doc """
+  The cursor's line replaced by `text`, changed from column `at` on: a
+  cursor before `at` stays where it is, one after it moves by as much as
+  the line grew or shrank, so it stays on the same character; the mark
+  goes, as on any change.
+  """
+  @spec replace_line(t, String.t(), non_neg_integer) :: t
+  def replace_line(e, text, at \\ 0) do
+    shift = if e.col < at, do: 0, else: String.length(text) - String.length(current(e))
+    col = (e.col + shift) |> max(0) |> min(String.length(text))
+    %{put(e, text) | col: col, mark: nil}
+  end
+
   defp current(e), do: Enum.at(e.lines, e.row)
   defp put(e, line), do: %{e | lines: List.replace_at(e.lines, e.row, line)}
 

@@ -1,6 +1,6 @@
 # The publisher: a roadmap
 
-**Status:** under way (meeting 2026-11-02-1255): steps 1–5 done (v0.79.0–v0.83.0); step 6 next. The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
+**Status:** under way (meeting 2026-11-02-1255): steps 1–6 done (v0.79.0–v0.84.0); step 7 next. The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
 
 The owner asked for an idea meeting to give the publisher a roadmap. The meeting decided what each part should be and in what order; the details of each step are settled when it is built (the `feature` skill), and the decisions below are the starting point, not a specification.
 
@@ -57,5 +57,5 @@ One step per release, each tried by the owner before the next.
 3. [x] Templates and assets: the Mustache-style reader, the default templates, `assets/`; v0.81.0. The owner chose: in the site folder, written when missing, the page template with step 4, a mistake refuses
 4. [x] Pages: the Pages category, the menu partial; v0.82.0, format 49. The owner chose: Home then pages A–Z in the menu, an item in Posts and Pages is a page, the page template's date left to the template
 5. [x] Several feeds: Posts' children as feeds, the Feeds list and each feed's box; v0.83.0, format 50. The owner chose: direct children only, a Feeds line on the main index, a folder that can be changed (the feed moves)
-6. [ ] The note editor for Markdown: highlighting, list continuation, the task-box toggle
+6. [x] The note editor for Markdown: highlighting, list continuation, the task-box toggle; v0.84.0 (R64h). The owner chose: an empty item ends the list, CTRL-T, [ ] ↔ [x] adding a box, headings bold, markers coloured, done dimmed
 7. [ ] Dogfooding: `mix agendum.publish`, the project's site built with it

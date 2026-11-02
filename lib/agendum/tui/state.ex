@@ -309,6 +309,14 @@ defmodule Agendum.TUI.State do
   end
 
   @doc """
+  Whether the note `mode` helps with Markdown (R64h): with the extras on,
+  in a note of an item or a category, not a macro's keystrokes.
+  """
+  @spec markdown_note?(t, map) :: boolean
+  def markdown_note?(state, mode),
+    do: state.prefs.extras and not match?({:macro, _}, Map.get(mode, :target))
+
+  @doc """
   A new, empty file as this person's new files start: with the defaults
   they kept with File Properties ▸ Update defaults (R82a), or Agenda's
   settings when they kept none. Also what F8 Default gives in File

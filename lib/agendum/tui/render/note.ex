@@ -16,13 +16,19 @@ defmodule Agendum.TUI.Render.Note do
     edit = mode.edit
     width = Wrap.width(state)
     region = TextEdit.region(edit)
-    # links (R73b) on the lines without the cursor, a mark or a match
+    # links (R73b) on the lines without the cursor, a mark or a match; and
+    # Markdown's headings, lists and task boxes there, with the extras on,
+    # in a note of text (not a macro's keystrokes; R64h)
     used = Agendum.Core.zettels(state.db)
+    markdown? = State.markdown_note?(state, mode)
+    code = if markdown?, do: Agendum.Core.markdown_code_rows(edit.lines), else: MapSet.new()
 
     edit.lines
     |> Enum.with_index()
     |> Enum.flat_map(fn {text, row} ->
       # the whole line styled, then cut into its rows
+      # a code block's lines are only text, as on the site
+      used = if markdown? and not MapSet.member?(code, row), do: {:markdown, used}, else: used
       styled = line(text, row, edit, region, Map.get(mode, :match), used)
       Wrap.in_columns(text, Wrap.rows(text, width)) |> cut(styled)
     end)
@@ -108,6 +114,36 @@ defmodule Agendum.TUI.Render.Note do
   defp line(text, row, %{row: row} = edit, _region, _match, _used),
     do: Draw.field(text, edit.col, :normal)
 
+  defp line(text, _row, _edit, _region, _match, {:markdown, used}),
+    do: markdown(text, used)
+
   defp line(text, _row, _edit, _region, _match, used),
     do: Agendum.TUI.Render.Text.with_links(text, used, :normal)
+
+  # Domain: the line's own text stays as typed; only its parts are coloured,
+  # in styles every theme has: a heading as a section's head, a list's
+  # marker and task box as a link, a done task as a done item
+  defp markdown(text, used) do
+    links = &Agendum.TUI.Render.Text.with_links(&1, used, &2)
+
+    case Agendum.Core.markdown_line(text) do
+      {:heading, marker, rest} ->
+        [{:section, marker} | links.(rest, :section)]
+
+      {:item, indent, marker, box, rest} when box in ["x", "X", "-"] ->
+        [{:normal, indent}, {:link, marker <> "[#{box}] "} | links.(rest, :item_done)]
+
+      {:item, indent, marker, box, rest} ->
+        mark = if box, do: marker <> "[#{box}] ", else: marker
+        [{:normal, indent}, {:link, mark} | links.(rest, :normal)]
+
+      :text ->
+        links.(text, :normal)
+    end
+    |> Enum.reject(&(elem(&1, 1) == ""))
+    |> then(fn
+      [] -> [{:normal, ""}]
+      parts -> parts
+    end)
+  end
 end

@@ -72,6 +72,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Give the item, or the marked items, a Zettel id (ours, R73; an extra, R77)                     | —                             | **CTRL-T**, or menu Item ▸ Zettel ▸ Attach                 |
 | Follow the item's Zettel links / show the items linking to it (ours, R73b; an extra, R77)      | —                             | **CTRL-G** / **CTRL-R**, or Item ▸ Zettel ▸ Follow / Linked |
 | In a note: type a link to each marked item, `[[bonalaku]]` (ours, R73b; an extra, R77)          | —                             | **CTRL-L**                                                  |
+| In a note: tick or untick the line's task box, `- [ ]` (ours, R64h; an extra, R77)               | —                             | **CTRL-T**                                                  |
 | Open the item's web link in the browser: a feed entry's article (ours, R75; an extra, R77)     | —                             | **CTRL-V**, or menu Item ▸ Open link                       |
 | Category manager: the category above / below                                                   | ↑ or BACKSPACE / ↓ or ENTER    | ↑ or ⌫ / ↓ or ENTER                   |
 | Category manager: add a sibling below / above                                                   | ALT-D (or ALT-I, INS) / ALT-U | ⌥d / ⌥u, or **CTRL-N**                                     |

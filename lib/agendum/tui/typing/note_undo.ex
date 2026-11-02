@@ -51,7 +51,8 @@ defmodule Agendum.TUI.Typing.NoteUndo do
         next |> drop_redo(n) |> push(i, n, step(b, steps), nil)
 
       b.edit.lines != n.edit.lines ->
-        kind = kind(before, key)
+        # a list's ENTER (R64h, `chunk: :list`) is a step of its own
+        kind = if n.chunk == :list, do: :other, else: kind(before, key)
 
         if continues?(n.chunk, kind),
           do: put_note(next, i, %{n | chunk: kind}),

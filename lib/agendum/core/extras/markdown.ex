@@ -375,4 +375,109 @@ defmodule Agendum.Core.Extras.Markdown do
   @doc "Text made safe inside a double-quoted HTML attribute."
   @spec attribute(String.t()) :: String.t()
   def attribute(text), do: text |> escape() |> String.replace("\"", "&quot;")
+
+  # --- one line, for the note editor (R64h) --------------------------------------
+  #
+  # Domain: the site's own rules, so a line the editor shows as a list item
+  # or a heading is one on the site too: the site trims a line, then reads
+  # `- `, `* `, `1. ` or `1) ` as a list, `#` to `######` and a space before
+  # some text as a heading (`blocks/2`); a test holds the two together. A
+  # box with nothing after it (`- [ ]`) is a box here too.
+
+  @item ~r/^(\s*)([-*] |\d+[.)] )(?:\[([ xX-])\](?: |$))?(.*)$/
+  @heading ~r/^(\s*\#{1,6}\s+)(\S.*)$/
+
+  @typedoc """
+  A line as Markdown: a heading (its marker, then its text), a list item
+  (its indent, its marker, its task box's mark or nil, then its text), or
+  plain text.
+  """
+  @type line ::
+          {:heading, String.t(), String.t()}
+          | {:item, String.t(), String.t(), String.t() | nil, String.t()}
+          | :text
+
+  @doc "What a line of a note is, as Markdown."
+  @spec line(String.t()) :: line
+  def line(text) do
+    cond do
+      match = Regex.run(@item, text) ->
+        # `Regex.run/2` gives "" for the box when there is none
+        [_, indent, marker, box, rest] = match
+        {:item, indent, marker, if(box == "", do: nil, else: box), rest}
+
+      match = Regex.run(@heading, text) ->
+        [_, marker, rest] = match
+        {:heading, marker, rest}
+
+      true ->
+        :text
+    end
+  end
+
+  @doc """
+  The rows of `lines` inside a code block (between ``` lines, those
+  included), as the site reads them: there a list or a heading is only
+  text.
+  """
+  @spec code_rows([String.t()]) :: MapSet.t(non_neg_integer)
+  def code_rows(lines) do
+    {rows, _inside} =
+      lines
+      |> Enum.with_index()
+      |> Enum.reduce({MapSet.new(), false}, fn {line, row}, {rows, inside} ->
+        fence? = String.starts_with?(String.trim(line), "```")
+
+        cond do
+          fence? -> {MapSet.put(rows, row), not inside}
+          inside -> {MapSet.put(rows, row), inside}
+          true -> {rows, inside}
+        end
+      end)
+
+    rows
+  end
+
+  @doc """
+  What ENTER at the end of `text` does: starts the next line with the
+  list's marker (a number counted on, a task box empty); on an item with
+  nothing after its marker, leaves the list, keeping only its indent
+  (`{:end, indent}`); or `:none`.
+  """
+  @spec continue(String.t()) :: {:continue, String.t()} | {:end, String.t()} | :none
+  def continue(text) do
+    case line(text) do
+      {:item, indent, _marker, _box, ""} -> {:end, indent}
+      {:item, indent, marker, box, _rest} -> {:continue, indent <> next(marker) <> box(box)}
+      _other -> :none
+    end
+  end
+
+  defp next(marker) do
+    case Integer.parse(marker) do
+      {n, rest} -> Integer.to_string(n + 1) <> rest
+      :error -> marker
+    end
+  end
+
+  defp box(nil), do: ""
+  defp box(_mark), do: "[ ] "
+
+  @doc """
+  CTRL-T on `text`: a task box ticked or unticked (a cancelled one opened
+  again), a box added to a list item without one, as `{line, at}` where
+  `at` is where the change begins (the cursor before it stays); nil for
+  any other line.
+  """
+  @spec toggle(String.t()) :: {String.t(), non_neg_integer} | nil
+  def toggle(text) do
+    case line(text) do
+      {:item, indent, marker, box, rest} ->
+        mark = if box == " ", do: "[x] ", else: "[ ] "
+        {indent <> marker <> mark <> rest, String.length(indent <> marker)}
+
+      _other ->
+        nil
+    end
+  end
 end
