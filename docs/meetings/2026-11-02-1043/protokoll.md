@@ -61,6 +61,12 @@ When the agenda has enough items; the starters' other open questions (how a pers
 
 The chair closed the meeting with thanks. *Owl's closing speech grew longer as it went, and Marie gently handed him his hat.*
 
+## Addition after the meeting: a health tracker
+
+**Background.** After the closing, the chair asked that the Journal also hold a simple health tracker for headaches, colds and such, and that it be added to these minutes.
+
+**Decided by the chair** (not discussed by the panel; the secretary's sketch, to be settled when the Journal is built): a **Health** collection in the Journal: one item per complaint, filed from Today by words (headache, migraine, cold, cough, fever …) into a Symptoms family (Headache, Cold, Fever, Stomach, Other; not exclusive, as a cold can bring a headache); a numeric Severity 1–5 with its Average and the Count of entries under each month; medicine and notes in the item's note. Like the other collections, a month without complaints shows nothing.
+
 ## Decisions and where they are recorded
 
 | § | Decision | Recorded in |
@@ -68,5 +74,6 @@ The chair closed the meeting with thanks. *Owl's closing speech grew longer as i
 | 5 | One To-do lists starter with a Projects view; no project-management starter | `docs/ROADMAP.md` (Towards parity, In order 2), `docs/plans/STARTERS.md` (open question 2) |
 | 6 | One Journal starter of collections, cut to their core columns, opening on Today | `docs/ROADMAP.md` (Towards parity, In order 1), `docs/plans/STARTERS.md` |
 | 7 | A Gym collection in the Journal, with Sets, Reps, Weight and a typed Volume; the Journal first | `docs/ROADMAP.md` (In order 1–3), `docs/plans/STARTERS.md` |
+| Addition | A Health collection in the Journal: Symptoms by words, Severity 1–5, a monthly Count and Average | `docs/ROADMAP.md` (Towards parity), `docs/plans/STARTERS.md` |
 
 *Minutes kept by Claude. Approved by Little Marie-Who-Folds and Dr. Russell.*

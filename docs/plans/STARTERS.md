@@ -61,7 +61,7 @@ The trackers are where small daily wins live: each opens on a Today view with on
 For a later meeting (the chair, 2026-10-28):
 
 1. **Which to build first.** No order yet (§ 5).
-2. ~~**The merges** (§ 7)~~ Decided (meeting 2026-11-02-1043): to-do lists and project management are one starter, **To-do lists**, opening on the lists, with a Projects view (Due, an example of prerequisites); the dream, mood and training trackers are one **Journal** starter of collections, each cut to its core columns, with a **Gym** collection added (Sets, Reps, Weight, Volume typed by hand).
+2. ~~**The merges** (§ 7)~~ Decided (meeting 2026-11-02-1043): to-do lists and project management are one starter, **To-do lists**, opening on the lists, with a Projects view (Due, an example of prerequisites); the dream, mood and training trackers are one **Journal** starter of collections, each cut to its core columns, with a **Gym** collection added (Sets, Reps, Weight, Volume typed by hand) and, after the meeting, a **Health** collection (headaches, colds and such: Symptoms by words, Severity 1–5).
 3. **Expenses alone**, or only in the Planner?
 4. **How a person gets a starter.** Today a starter is copied from the repository (`starters/planner.agendum`, README); a person with only the binary has none. Built into the binary, offered when making a new file, or a command-line flag?
 5. **Agenda's other three starters** (Account Manager, People Manager, Information Sifter; Starter Applications chapters 2–4): rebuilt from code as the Planner was, without the macros Agendum cannot run? Their `.AG` files are test fixtures only (`test/fixtures/ag/`).
