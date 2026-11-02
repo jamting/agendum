@@ -43,7 +43,7 @@
   <p>The user guide. Wol's Agendum (Agendum for short) is a personal information
      manager in the spirit of Lotus Agenda (1988), for people with a great many small
      things to remember. Follow a Very Small Animal as he plans a birthday party.</p>
-  <p class="written-for">Written for Agendum 0.72</p>
+  <p class="written-for">Written for Agendum 0.77</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -177,7 +177,9 @@ uses it as the Meta key (Terminal.app: Settings ▸ Profiles ▸ Keyboard), and
 <p class="in-which">In Which Piglet Writes Down a Balloon, a Cake and Pooh</p>
 
 <p>To add an item, just start typing under a section and press <kbd>ENTER</kbd>.
-<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts a new item below the highlighted one.</p>
+<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts a new item below the highlighted one. A long
+item wraps onto more lines as you type; <kbd>↑</kbd> <kbd>↓</kbd> move between them, and
+only <kbd>ENTER</kbd> (or <kbd>TAB</kbd>) takes the text.</p>
 
 <div class="story">Piglet types, one after another:
 “Buy a balloon for Eeyore”, “Ask Owl to write on the cake”,
@@ -190,7 +192,8 @@ uses it as the Meta key (Terminal.app: Settings ▸ Profiles ▸ Keyboard), and
   <tr><td>Mark it done (‼)</td><td><kbd>F4</kbd> (or <kbd>CTRL-K</kbd>)</td></tr>
   <tr><td>See and change all about it</td><td><kbd>F6</kbd> Item Properties</td></tr>
   <tr><td>Mark several items to act on together (♦ in the bullet's place)</td><td><kbd>F7</kbd>; <kbd>ALT-F7</kbd> unmarks all</td></tr>
-  <tr><td>Move it to another section</td><td><kbd>ALT-F10</kbd></td></tr>
+  <tr><td>Move it to another section (it goes last there)</td><td><kbd>ALT-F10</kbd>, then pick the section</td></tr>
+  <tr><td>Move it up or down its own section</td><td><strong>Item ▸ Reposition</strong>: <kbd>↑</kbd> <kbd>↓</kbd>, then <kbd>ENTER</kbd></td></tr>
   <tr><td>Put it in another section as well (the same item, not a copy)</td><td><kbd>ALT-F9</kbd></td></tr>
   <tr><td>Take it out of this section only</td><td><kbd>DEL</kbd> (<strong>Item ▸ BrkAssign</strong>), after “Remove this item from the section?”</td></tr>
   <tr><td>Bring back the item <kbd>DEL</kbd> last took out, into this section</td><td><kbd>ALT-Y</kbd></td></tr>
@@ -212,7 +215,8 @@ must know by now, and then is not so sure. <strong>Item ▸ Undisc</strong> brin
 back.</div>
 
 <p>With items marked, <kbd>F4</kbd>, <kbd>DEL</kbd>, <kbd>ALT-F4</kbd> and friends first ask
-whether you mean the marked items or just the current one.</p>
+whether you mean the marked items or just the current one. Marked items moved with
+<kbd>ALT-F10</kbd> arrive in the order you marked them.</p>
 
 <p>In a note, the top line says whose note it is (“Note for: Plan the party”), and on
 the right which line the cursor is on and whether you are inserting (<code>INS</code>) or
@@ -709,7 +713,7 @@ at the top right, and <strong>Utilities ▸ Questions</strong> goes through the 
   <tr><td>Save</td><td><kbd>CTRL-S</kbd> (or <kbd>ALT-W</kbd>)</td></tr>
   <tr><td>Save a copy under another name (you stay in this file)</td><td><strong>File ▸ Maintenance ▸ MakeCopy</strong></td></tr>
   <tr><td>Go back to the file as you last saved it</td><td><strong>File ▸ Abandon</strong> (<kbd>CTRL-Z</kbd> brings your changes back)</td></tr>
-  <tr><td>Open another file</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>); <kbd>F3</kbd> picks it from a list</td></tr>
+  <tr><td>Open another file (a damaged one is refused, saying what is wrong)</td><td><kbd>CTRL-O</kbd> (or <kbd>ALT-G</kbd>); <kbd>F3</kbd> picks it from a list</td></tr>
   <tr><td>Start a new file</td><td><strong>File ▸ Retrieve</strong> with a name that isn't a file yet: the <em>New File</em> box asks for a description and a password, both optional</td></tr>
   <tr><td>Throw a file away (into your computer's Trash)</td><td><strong>File ▸ Maintenance ▸ Erase</strong></td></tr>
   <tr><td>Start a file like this one, without its items</td><td><strong>File ▸ Transfer ▸ Template</strong></td></tr>
@@ -787,17 +791,17 @@ files, so far), and any item Agendum files differently from Agenda.</p>
 Agenda finds it as it was. With the extras on, you get calendars from the web (below), the
 <em>While you were away</em> box for alarms, ► before the view you are in and
 <kbd>F5</kbd> for recently used views in the view manager, longer key bar labels on a wide
-screen, and three that are still young: Zettel ids and links between items
-(<strong>Item ▸ Zettel</strong>), a small blog published from the file
-(<strong>File ▸ Transfer ▸ Publish</strong>) and a news reader for RSS feeds
-(<strong>File ▸ Transfer ▸ Feeds</strong>). Turning them off again hides them, but
-nothing in the file is lost.</p>
+screen, and three that are still young: Zettel ids and links between items, a small
+blog published from the file, and a news reader for RSS feeds. Their commands are
+together in a menu of their own, <strong>Extras</strong> (<kbd>F10</kbd> <kbd>E</kbd>),
+between Utilities and Quit: Calendars, Feeds, Publish, Open link and Zettel. Turning the
+extras off again hides them, and that menu, but nothing in the file is lost.</p>
 
 <h3>Calendars from the web</h3>
 <p>If a calendar you use is published on the web (an address ending in
 <code>.ics</code>, or starting with <code>webcal://</code>), Agendum can bring its events
 in as items, once the <a href="#extras">extras</a> are on.
-<strong>File ▸ Transfer ▸ Calendars</strong> lists your subscriptions. <kbd>INS</kbd> (or
+<strong>Extras ▸ Calendars</strong> lists your subscriptions. <kbd>INS</kbd> (or
 <kbd>CTRL-N</kbd>) asks for the address and reads the calendar at once, then offers the
 calendar's own name for its category, which you may change; one that cannot be read is
 not subscribed, and you are told why. The calendars' categories sit together in a
@@ -826,7 +830,7 @@ Piglet subscribes to it as <em>Roo's swimming</em>, so the party won't clash wit
 Thursday's lesson.</div>
 
 <h3>News from the web</h3>
-<p><strong>File ▸ Transfer ▸ Feeds</strong> is a quiet news reader for RSS and Atom
+<p><strong>Extras ▸ Feeds</strong> is a quiet news reader for RSS and Atom
 feeds. It works as the Calendars box does (<kbd>INS</kbd>, <kbd>ENTER</kbd>,
 <kbd>ALT-ENTER</kbd>, <kbd>F2</kbd>, <kbd>F6</kbd>, <kbd>DEL</kbd>), and <kbd>F7</kbd> /
 <kbd>F8</kbd> bring in or write out a list of feeds as OPML, the file other news readers
@@ -836,10 +840,10 @@ feed makes a <em>News</em> view, newest first.</p>
 <p>Nothing asks to be read: there are no unread counts. An entry fades away after 30
 days (<kbd>F6</kbd> changes how long), unless you kept it by giving it a note, a
 category of your own or a Zettel id. <kbd>F4</kbd> dismisses one, and <kbd>CTRL-V</kbd>
-(<strong>Item ▸ Open link</strong>) opens its page in your browser.</p>
+(<strong>Extras ▸ Open link</strong>) opens its page in your browser.</p>
 
 <h3>A small blog</h3>
-<p><strong>File ▸ Transfer ▸ Publish</strong> makes a website from the items in a
+<p><strong>Extras ▸ Publish</strong> makes a website from the items in a
 category (<em>Posts</em> at first): the item's text is the title, its note the post,
 written in Markdown. The box holds the blog's settings, which folder it goes to and how
 it is uploaded (rsync or SFTP, or not at all); <kbd>F8</kbd> and <kbd>ALT-F8</kbd> put a
@@ -859,19 +863,37 @@ agendum --mono party.agendum      # the same as --theme mono
 NO_COLOR=1 agendum party.agendum  # mono, unless you chose a theme</pre>
 <p>In a terminal that shows 24-bit colour, the colours are exact.</p>
 
-<h3 id="planner">A ready-made planner</h3>
-<p>Agenda came with ready-made files to start from, and Agendum with one of them: the
-<em>Activities Planner</em>, <code>starters/planner.agendum</code> in Agendum's
-<a href="https://github.com/jamting/agendum/tree/main/starters">source</a>. Download it
-and open the copy. It has no items yet, but categories for people, projects, tasks, activities
-(calls, meetings, mail …), priorities and expenses, which file what you type, and views
-to go with them: Tasks, Calls, Overdue, expense reports, datebooks for today, tomorrow,
-this week and this month. Three macros come with it: change the date settings, hide or
-show done items, and print the view.</p>
+<h3 id="planner">Ready-made files</h3>
+<p>Agenda came with ready-made files to start from, and Agendum comes with three, in
+<code>starters/</code> in Agendum's
+<a href="https://github.com/jamting/agendum/tree/main/starters">source</a>. Download one
+and open the copy.</p>
+<ul>
+  <li><strong>The Activities Planner</strong> (<code>planner.agendum</code>), Agenda's
+  own: categories for people, projects, tasks, activities (calls, meetings, mail …),
+  priorities and expenses, which file what you type, and views to go with them: Tasks,
+  Calls, Overdue, expense reports, datebooks for today, tomorrow, this week and this
+  month. Three macros come with it: change the date settings, hide or show done items,
+  and print the view. It has no items yet.</li>
+  <li><strong>Getting Things Done</strong> (<code>gtd.agendum</code>): type everything
+  into the Inbox, and words file some of it by themselves (“Call Anna” goes to
+  @Calls, “Buy milk” to @Errands, “Waiting for Bob's reply” to Waiting For); the rest
+  you file by typing a context in its column, and a filed item leaves the Inbox. Next
+  Actions by context, Agendas (what to bring up with each person), Projects (one with
+  nothing next shows as an empty section), Waiting For, Someday/Maybe and a Weekly
+  Review. Its first item says how it works.</li>
+  <li><strong>A Journal</strong> (<code>journal.agendum</code>): dreams, mood, training,
+  the gym and health in one file. Type a line in Today and its words file it (“Ran by
+  the river” to Training, “Bench press” to Gym, “Headache after lunch” to Health); type
+  its numbers in the collection's view, which shows this month week by week with the
+  week's totals, averages or best under it. A week with nothing logged is not shown. The
+  ♪ on the Journal head (<kbd>F5</kbd>) says how it works.</li>
+</ul>
 <pre class="shell">agendum ~/Downloads/planner.agendum</pre>
 
 <div class="story">Rabbit, of course, starts from the planner, and has his
-friends-and-relations filed under <em>People</em> by lunchtime.</div>
+friends-and-relations filed under <em>People</em> by lunchtime. Eeyore takes the Journal,
+and finds that a week with nothing in it is simply not shown, which suits him.</div>
 </section>
 
 <!-- ===================================================================== -->
@@ -937,7 +959,7 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
   <tr><td><kbd>ALT-F7</kbd></td><td>Unmark all</td><td></td></tr>
   <tr><td><kbd>ALT-F8</kbd></td><td>Last view</td><td></td></tr>
   <tr><td><kbd>ALT-F9</kbd></td><td>Copy the item (or the marked ones) to another section as well</td><td></td></tr>
-  <tr><td><kbd>ALT-F10</kbd></td><td>Move item; on a section or column head, move the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
+  <tr><td><kbd>ALT-F10</kbd></td><td>Move item to another section (a box of the sections); on a section or column head, move the section or column</td><td>On a head: <strong>View ▸ Section ▸ Move</strong>, <strong>View ▸ Column ▸ Move</strong></td></tr>
   <tr><td><kbd>ALT-A</kbd></td><td>Set an alarm</td><td></td></tr>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter to other dates</td><td><kbd>⌥b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>Show the calendar</td><td><kbd>⌥c</kbd></td></tr>
