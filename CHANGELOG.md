@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.86.0 — 2026-11-02
+
+- **A new theme, Amber:** amber on near-black, as the amber monitors of the 1980s (from the Amber CRT Retro colour scheme). Choose it in Utilities ▸ Customize, or with `--theme amber`.
+
 ## 0.85.1 — 2026-11-02
 
 - **Item Properties (F6) is fast again on an item with a Zettel id.** In a file of 2,000 items it took about a second to open and a second or two for each ↑ or ↓, as it looked through every item's text for links to it; now about 35 ms. Publishing gives every post a Zettel id, which is why a post's properties had become slow.

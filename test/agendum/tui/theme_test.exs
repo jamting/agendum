@@ -148,6 +148,7 @@ defmodule Agendum.TUI.ThemeTest do
     assert Theme.parse("mono") == {:ok, :mono}
     assert Theme.parse("CLASSIC") == {:ok, :classic}
     assert Theme.parse("borland") == {:ok, :borland}
+    assert Theme.parse("amber") == {:ok, :amber}
     # the old blue theme is gone: a preference for it falls back to the default
     assert Theme.parse("blue") == :error
     assert Theme.parse("pink") == :error

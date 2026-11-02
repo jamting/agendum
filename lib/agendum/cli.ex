@@ -11,7 +11,7 @@ defmodule Agendum.CLI do
       agendum --rabbit          open Rabbit's file from the manual
       agendum --theme NAME      draw with a theme: classic (default), mono,
                                 modus-operandi, modus-vivendi, alabaster,
-                                zenburn, ayu or borland
+                                zenburn, ayu, borland or amber
       agendum --mono            the same as --theme mono
       agendum --lang NAME       read dates in item text in a language:
                                 english (default) or swedish

@@ -163,3 +163,31 @@ Themes copied from https://terminalthemes.com/
 - ANSI 13 (bright): #ff9cfe
 - ANSI 14 (bright): #dfdffe
 - ANSI 15 (bright): #ffffff
+
+## Amber CRT Retro
+
+From an iTerm2 colour file (`Amber CRT Retro.itermcolors`), not terminalthemes.com.
+
+- Background: #1a1200
+- Foreground: #ffb000
+- Bold: #ffb000
+- Selection background: #3a2a00
+- Selected text: #5a5240
+- Cursor: #ffb000
+- Cursor text: #1a1200
+- ANSI 0: #2a1e00
+- ANSI 1: #ff6a00
+- ANSI 2: #ffb000
+- ANSI 3: #ffc742
+- ANSI 4: #ff8c00
+- ANSI 5: #ffa033
+- ANSI 6: #ffd27f
+- ANSI 7: #ffd9a0
+- ANSI 8 (bright): #6a4e00
+- ANSI 9 (bright): #ff8a1e
+- ANSI 10 (bright): #ffc742
+- ANSI 11 (bright): #ffe08a
+- ANSI 12 (bright): #ffab3d
+- ANSI 13 (bright): #ffc266
+- ANSI 14 (bright): #ffe3b0
+- ANSI 15 (bright): #fff0d6

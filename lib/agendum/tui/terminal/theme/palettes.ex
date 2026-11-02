@@ -3,11 +3,11 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
   @moduledoc """
   Themes made from terminal colour schemes (`docs/THEMES.md`, copied from
   terminalthemes.com): Modus Operandi, Modus Vivendi, Alabaster, Zenburn,
-  Ayu and Borland (SPEC R40).
+  Ayu, Borland and Amber CRT Retro (SPEC R40).
 
   A scheme gives a palette of colour roles (background, foreground,
   selection, cursor and a few ANSI colours); `styles/0` lays every screen
-  style out on those roles, the same way for each scheme, so the five look
+  style out on those roles, the same way for each scheme, so the schemes look
   alike in their parts and differ only in colour. `Agendum.TUI.Terminal.Theme` uses
   both at compile time.
 
@@ -140,6 +140,26 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
       accent: {"#ffffff", 97},
       accent2: {"#a8ff60", 92},
       alert: {"#ff6c60", 31}
+    },
+    # amber on near-black, as an amber monochrome monitor of the 1980s
+    amber: %{
+      bg: {"#1a1200", 39},
+      fg: {"#ffb000", 39},
+      sel_bg: {"#3a2a00", 30},
+      # the scheme's selected text (#5a5240) is hard to read on its
+      # selection: ANSI 7, a pale amber
+      sel_fg: {"#ffd9a0", 37},
+      cursor: {"#ffb000", 33},
+      cursor_fg: {"#1a1200", 30},
+      tint: {"#2a1e00", 30},
+      # between the screen and the pane
+      help_bg: {"#221800", 30},
+      shade: {"#0d0900", 30},
+      # ANSI 8 (#6a4e00) is hard to read on the screen: a lighter brown
+      muted: {"#9a7420", 90},
+      accent: {"#ffd27f", 36},
+      accent2: {"#ff8c00", 34},
+      alert: {"#ff6a00", 31}
     }
   }
 
@@ -207,7 +227,7 @@ defmodule Agendum.TUI.Terminal.Theme.Palettes do
 
   @doc "The schemes' names, in the order they are offered."
   @spec names() :: [atom]
-  def names, do: [:modus_operandi, :modus_vivendi, :alabaster, :zenburn, :ayu, :borland]
+  def names, do: [:modus_operandi, :modus_vivendi, :alabaster, :zenburn, :ayu, :borland, :amber]
 
   @doc """
   The colour roles of a scheme, each as `{"r;g;b", ansi}`: the hex colour

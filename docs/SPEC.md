@@ -993,7 +993,7 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 ### Colours and dates on the screen
 
-- **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's colours, from screenshots of the real program, ADR 0018), `mono` (bold, dim, underline and reverse only), or one of six terminal colour schemes (`docs/THEMES.md`): `modus_operandi`, `modus_vivendi`, `alabaster`, `zenburn`, `ayu` and `borland`.
+- **R40 ✅ Colour themes** (Setting Up Agenda 1-25 to 1-31). The screen is drawn with a theme chosen at start: `classic` (the default: Agenda 2.0's colours, from screenshots of the real program, ADR 0018), `mono` (bold, dim, underline and reverse only), or one of seven terminal colour schemes (`docs/THEMES.md`): `modus_operandi`, `modus_vivendi`, `alabaster`, `zenburn`, `ayu`, `borland` and `amber` (Amber CRT Retro).
 
   Utilities ▸ Customize (Agenda's) changes it at once and saves it in the person's preferences file (R41b). `--theme NAME` or `--mono` choose it for one session. The NO_COLOR environment variable selects mono unless `--theme` or the preferences name a theme.
 

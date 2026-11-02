@@ -12,7 +12,7 @@ defmodule Agendum.TUI.Terminal.Theme do
       monochrome terminals, screen readers and NO_COLOR: the control panel
       in reverse video like the title bar, the highlighted line in bold
     * `:modus_operandi`, `:modus_vivendi`, `:alabaster`, `:zenburn`,
-      `:ayu` and `:borland` take the colours of those terminal schemes (`docs/THEMES.md`),
+      `:ayu`, `:borland` and `:amber` take the colours of those terminal schemes (`docs/THEMES.md`),
       all laid out alike by `Agendum.TUI.Terminal.Theme.Palettes`: the screen in the
       scheme's colours, the control panel and menus in its selection
       colours, the highlight in its cursor colours, boxes on a tint
@@ -41,6 +41,7 @@ defmodule Agendum.TUI.Terminal.Theme do
           | :zenburn
           | :ayu
           | :borland
+          | :amber
   @type depth :: :ansi16 | :truecolor
   @type colour :: atom
   @type attribute :: :bold | :dim | :reverse
