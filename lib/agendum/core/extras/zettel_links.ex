@@ -109,13 +109,27 @@ defmodule Agendum.Core.Extras.ZettelLinks do
   @doc "The items that link to an item, in the file's order (\"Linked from\")."
   @spec linked_from(Database.t(), Database.id()) :: [Database.id()]
   def linked_from(db, item_id) do
-    case db.items[item_id].zettel do
+    case Zettels.zettel(db.items[item_id]) do
       nil ->
         []
 
-      _ ->
+      word ->
         used = Zettels.zettels(db)
-        Enum.filter(db.item_order, &(item_id in targets(db, &1, used)))
+
+        # Domain: a link to the item, `[[word]]` or the bare word, is in a
+        # text holding the word, in any case; looking for it first is cheap
+        # (one regex of the word alone, compiled once, matched with case
+        # ignored: the regex engine finds a literal fast), so only those few
+        # texts are scanned for links (the owner's file, 2,059 items: Item
+        # Properties went from a second to milliseconds)
+        named = Regex.compile!(Regex.escape(word), "i")
+
+        Enum.filter(db.item_order, fn id ->
+          item = db.items[id]
+
+          (Regex.match?(named, item.text) or Regex.match?(named, item.note)) and
+            item_id in targets(db, id, used)
+        end)
     end
   end
 

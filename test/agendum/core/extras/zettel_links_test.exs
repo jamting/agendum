@@ -61,6 +61,38 @@ defmodule Agendum.Core.Extras.ZettelLinksTest do
     assert Core.linked_from(db, ctx.notes) == []
   end
 
+  # Found in the owner's log (2026-11-02): Item Properties on an item with
+  # a Zettel id took a second in a file of 2,059 items, linked_from
+  # scanning every text with a regex. A text can only link to the item when
+  # it holds the id's word, in any case; the answer must not change.
+  test "linked_from finds the same items as scanning every text", ctx do
+    texts = [
+      {"See [[PIGAVONO]] soon", ""},
+      {"plain", "a note naming pigavono"},
+      {"xpigavono and pigavonos", ""},
+      {"PigaVono", "and [[bonalaku]]"},
+      {"nothing here", "nor here"}
+    ]
+
+    db =
+      Enum.reduce(texts, ctx.db, fn {text, note}, db ->
+        {db, id} = Core.add_item(db, text, today())
+        Core.set_note(db, id, note, today())
+      end)
+
+    used = Core.zettels(db)
+
+    every_text =
+      Enum.filter(db.item_order, fn id ->
+        item = db.items[id]
+        links = ZettelLinks.scan(item.text, used) ++ ZettelLinks.scan(item.note, used)
+        id != ctx.party and Enum.any?(links, &(&1.target == ctx.party))
+      end)
+
+    assert Core.linked_from(db, ctx.party) == every_text
+    assert length(every_text) == 3
+  end
+
   test "text matching ignores bracketed links" do
     db = Core.new_file()
     db = with_categories(db, [{"Bonalaku", [], []}])
