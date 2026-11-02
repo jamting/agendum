@@ -24,6 +24,13 @@ Decided (meeting 2026-11-02-2244, § 6):
 - **No automatic lists:** a child of Posts is no longer a feed by itself. The existing feeds (the owner's Devlog) are kept as lists when the file is opened, with their folders, so the site does not change.
 - **"Chosen by rule" comes free:** a category fills itself by Agenda's own conditions and Also match (R15, R15d), so a list can be filled by rule with nothing new built.
 
+Added by the owner after the meeting (2026-11-02, an addendum to § 6): an RSS feed is a special case of a list, so **a list's outputs are templates**:
+
+- **The RSS feed is a template,** `rss.xml`, as the pages are; Agendum ships a default word for word what it writes today (`Agendum.Core.Extras.Site`), so a site that does not change it sees no difference. Other outputs (Atom, an `.ics`, a CSV, `sitemap.xml`) become a template each, with nothing built for them.
+- **The JSON Feed stays built in code:** the templates escape for HTML, which is close to right for XML but wrong for JSON, and the template language gets no JSON escape for this.
+- **Every feed written is read back** with Agendum's own feed reader (`Agendum.Core.Extras.FeedParser`) before publishing; one that does not read stops publishing and says which, as a missing image does (step 2), since a broken feed fails silently in readers.
+- **Dates in RSS's form** (`Mon, 02 Nov 2026 22:44:00 +0000`) are a value of their own for templates, beside `date_iso`.
+
 Referred to this plan, to settle with the owner before step 3 is built (the `feature` skill's questions):
 
 - **What a template sees of a list's items:** beyond `title`, `content`, dates and `url`, an item's columns (Role, Email for co-workers; Sets, Reps, Weight for the gym), and what they are called in a template.
