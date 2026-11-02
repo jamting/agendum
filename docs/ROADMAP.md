@@ -12,8 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. The To-do lists starter (Towards parity with Agenda, below; meeting 2026-11-02-1043, § 5)
-2. The starter for the easily overwhelmed (Towards parity with Agenda, below)
+(empty: the owner picks the next. Starters are done for now, the owner, 2026-11-02: GTD and the Journal are built and in use; the two below are parked.)
 
 ### 1 Fixes and polish (performance and bugs)
 
@@ -53,8 +52,10 @@ The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each ite
 
 **Starter files are base features**, not extras (the owner, 2026-10-31): Agenda shipped its starter applications, so a new starter is content of the clone, made only of the clone's features. A starter that needs features outside the clone may be an extra instead, there only with the Extras switch on; a feature a starter would need goes to its own lane first.
 
-- [ ] A **To-do lists** starter (meeting 2026-11-02-1043, § 5; [`plans/STARTERS.md`](plans/STARTERS.md)): the simplest starter, opening on the lists with one line to type, done items hidden; a second view, Projects, with a section per project, a Due column and an example of prerequisites (Utilities ▸ Show ▸ Prereqs). No separate project-management starter
-- [ ] A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words, made with a filter and view names) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k). See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker). An Overdue that adapts (three at a time, more as they are cleared) is beyond the clone
+**Done for now** (the owner, 2026-11-02): the GTD and Journal starters are built; the owner uses them a while before more are made. The two starters below are parked until then; what the built ones decided, and the features they lacked, are in [`plans/STARTERS.md`](plans/STARTERS.md).
+
+- [ ] (parked) A **To-do lists** starter (meeting 2026-11-02-1043, § 5; [`plans/STARTERS.md`](plans/STARTERS.md)): the simplest starter, opening on the lists with one line to type, done items hidden; a second view, Projects, with a section per project, a Due column and an example of prerequisites (Utilities ▸ Show ▸ Prereqs). No separate project-management starter
+- [ ] (parked) A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words, made with a filter and view names) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k). See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker). An Overdue that adapts (three at a time, more as they are cleared) is beyond the clone
 - [ ] Optional, the clone's leftovers (from the parity plan, 2026-10-26):
 
   - ALT-F1 COMPOSE, Agenda's way of typing accented and special characters by two keys

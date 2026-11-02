@@ -1,6 +1,6 @@
 # Starter files: ideas
 
-**Status:** ideas, not a plan yet (meeting 2026-10-28-0048, §§ 5–8); the GTD starter is built (R60a, v0.76.0, 2026-11-02); the Journal starter is built (R60b, v0.77.0) and the To-do lists starter decided (meeting 2026-11-02-1043, §§ 5–7; ROADMAP, Towards parity). Nothing else here is decided for building except the date filter's "or not assigned" (ROADMAP, Beyond Agenda). The order of work and the open questions at the end are for a later meeting.
+**Status:** **done for now** (the owner, 2026-11-02): the GTD starter (R60a, v0.76.0–v0.76.2) and the Journal starter (R60b, v0.77.0) are built, and the owner will use them a while before more are made. The To-do lists starter (meeting 2026-11-02-1043, § 5) and the starter for the easily overwhelmed are decided but parked on the roadmap. The ideas below stay for when starters are picked up again; the date filter's "or not assigned" is on the roadmap (Beyond Agenda).
 
 Agenda shipped starter applications, ready-made files a person copied and filled in (Starter Applications manual); Agendum ships the Activities Planner (R60) and Getting Things Done (R60a), built from code (ADR 0028). This document collects ideas for more, from a brainstorm with lenses in the spirit of Old Mitch Lilypad, Old Stephen of the Seven (FranklinCovey), David the Squirrel, J.D. the Beaver, Ryder the Magpie, Little Marie-Who-Folds, Master Werner (Cultured Code, Things) and Dr. Russell (minutes: `docs/meetings/2026-10-28-0048/protokoll.md`).
 
@@ -56,11 +56,49 @@ None needs a new feature but a chart for the trackers, a later idea (a new kind 
 
 The trackers are where small daily wins live: each opens on a Today view with one line to type (J.D.), and shows off numeric columns, which few Agenda users found (Mitch).
 
+## The starters built
+
+What each starter decided, and why, for when they are changed or new ones are made (SPEC R60a, R60b; the code in `lib/agendum/starters/`).
+
+### Getting Things Done (`starters/gtd.agendum`, R60a)
+
+- **The Inbox is a family head, not a catch-all category.** Every item lives in the exclusive Inbox; filed ones are in one of its lists (Contexts, Waiting For, Someday/Maybe), and giving another list takes it out of the first. A catch-all made by a condition cannot work: an item typed under a category is assigned by hand, and conditions never break that (R15).
+- **The Inbox view filters the filed items out** (not in Contexts, Waiting For, Someday/Maybe or Agendas), so an item filed by its words ("Call Anna" in @Calls) or by hand leaves it by itself.
+- **Six contexts with words**: @Anywhere (read, think), @Calls (call, phone, ring), @Computer (email, online, website), @Errands (buy, shop, "pick up"), @Home and @Office. The family is called Contexts so the Inbox's column reads well: a standard column is headed by its category's name.
+- **Agendas beside the Inbox, as the Planner's People** (the owner's layout): not a context and not exclusive, so "Call Marie" is in @Calls and on Marie's agenda, and an item can be on several. An item on an agenda counts as filed. Next Actions shows them in an Agendas column.
+- **Projects beside the Inbox**: a project without a next action is an empty section of the Projects view, GTD's "project without a next action" made of Agenda's parts.
+- **The Weekly Review**: the Inbox, Waiting For entered a week ago or more, Someday/Maybe, and Done in the last seven days, each a filtered section.
+- **A welcome item** in the Inbox whose note explains the file; the person discards it.
+
+### The Journal (`starters/journal.agendum`, R60b)
+
+- **Collections of one exclusive Journal**: Dreams, Mood, Training, Gym and Health, each with what files a line there. Training's Sport, Gym's Exercises and Health's Symptoms are families under their collection, so a matched child ("Running") puts the line in the collection by subsumption (R7).
+- **People and Feelings beside the Journal**, filled by text matching, for dreams.
+- **The numbers are typed, never read from the text**, in the collection's view; the names say their units where the scale matters ("Mood 1-10"; Sleep in hours, Exercise in minutes).
+- **A datebook per collection on the Entry date**: Mood, Training and Gym this month by weeks, Dreams and Health this quarter by months; the week's or month's sums under each (Total, Average, Maximum, Count per column); empty weeks hidden, so a missed day shows nothing.
+- **The file's week runs Monday to Sunday**: a month's weeks follow the file's week, Monday to Friday by default, which lost every weekend line.
+- **Gym's Volume is typed by hand** (3 × 10 × 40 = 1200); Weight shows its weekly Maximum, as a total of weights means little.
+- **The explanation is the Journal category's note**, shown by ♪ on Today's head (F5): a welcome item would not show in a view of today's lines.
+
+## Missing features found while building them
+
+None was needed to build the two starters; each is a place where a starter had to work around what Agenda's parts cannot do. For when starters, or Agendum's features, are picked up again.
+
+- **Calculated columns**: a number worked out from others (Gym's Volume = Sets × Reps × Weight; a pace from Distance and Minutes). Agenda has no formulas; today the person works it out.
+- **Numbers read from the text**: "Ran 5 km" filing 5 into Distance. Agenda matches words to categories only.
+- **An "or" in filters**: a view of "today's lines, or a welcome item"; the date filter's "or not assigned" (on the roadmap, Beyond Agenda) is one case of it.
+- **A last-changed date**: GTD's review of items untouched for a while; Agenda keeps only the Entry date, so the Weekly Review reads "entered long ago".
+- **A title for a standard column**: only a note column can be headed by a title of its own (R56), so a column is named by its category ("Contexts", "Entry" where "Since" was meant).
+- **A longer datebook**: a quarter is the longest period, so a year of dreams or complaints month by month needs ALT-B.
+- **A week of the view's own for a month's weeks**: they follow the file's week, so the Journal changed the file's.
+- **A chart** for the trackers (open question 6).
+- **Getting a starter without the repository** (open question 4): a person with only the binary has none.
+
 ## Open questions
 
 For a later meeting (the chair, 2026-10-28):
 
-1. **Which to build first.** No order yet (§ 5).
+1. ~~**Which to build first.**~~ GTD (v0.76.0), then the Journal (v0.77.0), then done for now (the owner, 2026-11-02).
 2. ~~**The merges** (§ 7)~~ Decided (meeting 2026-11-02-1043): to-do lists and project management are one starter, **To-do lists**, opening on the lists, with a Projects view (Due, an example of prerequisites); the dream, mood and training trackers are one **Journal** starter of collections, each cut to its core columns, with a **Gym** collection added (Sets, Reps, Weight, Volume typed by hand) and, after the meeting, a **Health** collection (headaches, colds and such: Symptoms by words, Severity 1–5).
 3. **Expenses alone**, or only in the Planner?
 4. **How a person gets a starter.** Today a starter is copied from the repository (`starters/planner.agendum`, README); a person with only the binary has none. Built into the binary, offered when making a new file, or a command-line flag?
