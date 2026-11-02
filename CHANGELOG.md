@@ -6,6 +6,18 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.80.0 — 2026-11-02
+
+- **A post's title can differ from its line in the view.** Start the note with `# The real title`: the post gets that title on its page and in the feeds, while the item keeps its short text. The heading stays at the top of the post too.
+- **A post with a When in the future waits for its day.** Publish leaves it out and says "1 post waits for its day"; the first time you publish on or after that day, it goes out.
+- **Updated posts say so.** When you publish a post you changed since it was last published, its page shows "Updated" with the day, and the JSON Feed carries it.
+- **Choose your posts' addresses: Publish ▸ Site ▸ Address.** `posts/{zettel}.html` stays the default; `{year}/{month}/{day}-{slug}.html` gives addresses like `2026/11/02-reverse-engineering-ag.html`, the slug made from the title. A post keeps the address it was first published at, whatever you change later, so no link to it breaks.
+- **File format 48:** the blog keeps each published post's address and fingerprint.
+
+### Facade
+
+- `site/2` takes the day, for the posts due then. Added `record_published/2` (keeps each post's address and whether it changed, once the person publishes), `blog_waiting/2`, `blog_post_count/2` and `blog_address_default/0`.
+
 ## 0.79.0 — 2026-11-02
 
 - **Extras ▸ Publish is a menu now: Publish, Site, Upload.** Publish goes straight to "what will change", with no box first (the very first time, it opens Site, and ENTER there goes on to publish, as before). Site holds the blog's settings, kept in the file: its posts and drafts, title, author, base address. Upload holds where the site is written and how it is uploaded.

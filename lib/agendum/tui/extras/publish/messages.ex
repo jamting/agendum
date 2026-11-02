@@ -18,6 +18,10 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
 
   def text(:zettels_full), do: "Every Zettel id is in use; the posts cannot all have one"
   def text(:bad_categories), do: "The posts and drafts categories must differ, and be categories"
+
+  def text(:bad_address),
+    do: "The address needs {zettel} or {slug}, must end in .html and stay in the site's folder"
+
   def text(:nothing_published), do: "Nothing was published"
   def text(:publishing), do: "Publishing …"
 
@@ -52,6 +56,9 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
     do: "Published#{if uploaded?, do: " and uploaded", else: ""}: #{summary}"
 
   def text(:password, user, host), do: "Password of #{user}@#{host} (not kept):"
+
+  def text(:waiting, 1, day), do: "1 post waits for its day (#{day})"
+  def text(:waiting, n, day), do: "#{n} posts wait for their day (the first #{day})"
 
   @doc "The site published without a Base address: the feeds' links are not whole."
   @spec text(atom, boolean, String.t(), :needs_base_url) :: String.t()

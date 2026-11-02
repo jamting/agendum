@@ -73,9 +73,25 @@ defmodule Agendum.Extras.PublishTest do
     ssh =
       "ssh -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3"
 
-    assert Publish.rsync_args("me@host:www", "site", ["index.html"]) ==
+    assert Publish.rsync_args("me@host:www", "site", ["index.html", "posts/a.html"]) ==
              ["-rtzc", "--delete", "-e", ssh] ++
-               ~w(--include=/posts/ --include=/fonts/ --include=/index.html --exclude=* -- site/ me@host:www)
+               ~w(--include=/posts/ --include=/index.html --include=/posts/a.html --exclude=* -- site/ me@host:www)
+  end
+
+  # a page's address may lie in folders of its own (R74: `2026/11/…`):
+  # rsync looks into a folder only when it is included itself
+  test "rsync includes every folder a page lies in, parents first" do
+    args = Publish.rsync_args("me@host:www", "site", ["2026/11/02-hello.html"])
+    includes = for "--include=" <> path <- args, do: path
+    assert includes == ~w(/2026/ /2026/11/ /2026/11/02-hello.html)
+  end
+
+  @tag :tmp_dir
+  test "writing makes the folders a page lies in", %{tmp_dir: dir} do
+    files = [{"2026/11/02-hello.html", "Hello"}]
+    changes = %{added: ["2026/11/02-hello.html"], changed: [], removed: []}
+    assert :ok = Publish.write(dir, files, changes)
+    assert File.read!(Path.join(dir, "2026/11/02-hello.html")) == "Hello"
   end
 
   # Found writing the threat model (docs/SECURITY.md, door 4; 2026-11-01): a

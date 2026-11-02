@@ -28,6 +28,7 @@ Each door: what could go wrong, how badly (**high**: the file's text leaks or th
 
 - **Risk:** a crafted file runs code, hangs Agendum, or crashes it and loses unsaved work. **Medium.**
 - **Guarded:** an `.agendum` file is read with Erlang's safe decoding (no new atoms), must be a `Database` of a known version, and its text is made valid UTF-8; then every value's kind (through the JSON reading) and the parts' agreement (the invariants) are checked, and a damaged file is refused (R82d, ADR 0052; v0.73.15). JSON import checks types and references (R44). The `.AG` reader is tested with a collection of hostile files (R72). Text from a file is data: nothing in it runs (R82c), terminal escape codes are shown, not obeyed, and a macro runs only when the person plays it. A crash writes the unsaved changes to a recovery file (R82b).
+- **Guarded too:** a blog's address pattern and every post's stored address must stay inside the site's folder and hold only plain characters, or the file is refused as damaged; the site builder checks them again before writing (v0.80.0).
 - **Known and accepted:** a shared file's blog settings (its title, address, posts) are used as written; where it is uploaded is not in the file since format 47, but an older file's upload settings move into the person's preferences when it is opened (once, and only when they have none for that file), within door 4's guards. A damaged file of the person's own cannot be opened either; getting its contents out is a tool for later.
 
 ### 3. Feeds and calendars from the network

@@ -52,7 +52,9 @@ defmodule Agendum.Store do
   `Database.trash`, the trash (R24a); 47 moves the blog's folder and
   upload settings out of the file, into the person's preferences
   (`Agendum.Core.Extras.Upload`; loading an older file keeps them in
-  `Blog.moved_upload`, never written, for the program to move).
+  `Blog.moved_upload`, never written, for the program to move); 48 adds
+  `Blog.address`, the address pattern, and `Blog.published`, what
+  publishing remembers of each post (`Agendum.Core.Extras.PostRecord`).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -63,7 +65,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 47
+  @format_version 48
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -366,13 +368,18 @@ defmodule Agendum.Store do
     moved = Agendum.Core.Extras.Upload.from_old_blog(old_blog)
     db = %{db | blog: %{blog | moved_upload: moved}}
 
+    # before 48 no records: the posts already out keep posts/<zettel id>.html
+    # (after the rest is upgraded, as finding the posts reads the links)
+    seed? = not Map.has_key?(old_blog, :published)
+
     db = %{
       db
       | date_settings: struct(Agendum.Core.DateSettings, Map.from_struct(db.date_settings))
     }
 
     # the calendars where this version keeps them, in Calendars (R75a)
-    db |> upgrade_db(when_assign) |> Agendum.Core.Facade.Extras.Calendars.name_family()
+    db = db |> upgrade_db(when_assign) |> Agendum.Core.Facade.Extras.Calendars.name_family()
+    if seed?, do: Agendum.Core.Extras.Blog.seed_records(db), else: db
   end
 
   defp upgrade_db(db, when_assign) do

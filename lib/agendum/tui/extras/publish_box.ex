@@ -37,6 +37,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
    Author         : [author           ]   Language : [language        ]
    Base address   : [base_url                                         ]
    rel="me" links : [me                                               ]
+   Address        : [address                                          ]
   """
 
   @help %{
@@ -50,10 +51,12 @@ defmodule Agendum.TUI.Extras.PublishBox do
       "Where the site is on the web (https://example.com/blog/): the feeds and your name's link need it. Type it.",
     me:
       "Addresses of your other profiles (a Mastodon account), for rel=\"me\" links; " <>
-        "spaces between. Type them."
+        "spaces between. Type them.",
+    address:
+      "Where a post's page goes, made once: {zettel} {slug} {year} {month} {day}, ending .html. Type it."
   }
 
-  @text_fields ~w(posts drafts title description author language base_url me)a
+  @text_fields ~w(posts drafts title description author language base_url me address)a
 
   @doc """
   Publish ▸ Publish: the site made and the folder read, for the preview;
@@ -137,7 +140,8 @@ defmodule Agendum.TUI.Extras.PublishBox do
     %{
       posts: &set_setting(&1, :posts, "Posts"),
       drafts: &set_setting(&1, :drafts, ""),
-      title: &set_setting(&1, :title, default_title(state))
+      title: &set_setting(&1, :title, default_title(state)),
+      address: &set_setting(&1, :address, Agendum.Core.blog_address_default())
     }
   end
 
@@ -247,7 +251,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   # when the shell has read it (`Publish.Results.publish_scanned/4`)
   defp scan(state) do
     upload = Agendum.Preferences.upload(state.prefs, state.path)
-    files = Agendum.Core.site(state.db)
+    files = Agendum.Core.site(state.db, state.today)
 
     state
     |> State.info(Messages.text(:reading, upload.folder))
@@ -258,6 +262,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
   defp error_text(:ambiguous), do: Messages.text(:ambiguous)
   defp error_text(:ingested), do: Messages.text(:ingested)
   defp error_text(:zettels_full), do: Messages.text(:zettels_full)
+  defp error_text(:bad_address), do: Messages.text(:bad_address)
   defp error_text(_reason), do: Messages.text(:bad_categories)
 
   # the category the box opened with, by its id, unless the person typed
@@ -324,9 +329,15 @@ defmodule Agendum.TUI.Extras.PublishBox do
     Site holds what the blog is made from, kept in the file: the items
     of the posts category, each a post (its text the title, its note the
     content, written in Markdown), newest first by When date (else the
-    Entry date). Posts also in the drafts category are left out. The
-    title, description, author and language go on every page and in the
-    feeds; the base address makes the feeds' links whole.
+    Entry date). A note that starts with "# A title" gives the post that
+    title instead. A post whose When is still to come waits for its day.
+    Posts also in the drafts category are left out. The title,
+    description, author and language go on every page and in the feeds;
+    the base address makes the feeds' links whole.
+
+    Address is where a post's page goes: posts/{zettel}.html, or say
+    {year}/{month}/{day}-{slug}.html. A post keeps the address it was
+    first published at, so changing it moves only new posts.
 
     The site is plain HTML: an index, a page per post at its Zettel id
     (posts/bonalaku.html), an RSS feed and a JSON Feed, and a stylesheet

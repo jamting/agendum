@@ -35,7 +35,7 @@ defmodule Agendum.Core.JSONFile do
     View
   }
 
-  alias Agendum.Core.Extras.{Blog, Calendar, Feed}
+  alias Agendum.Core.Extras.{Address, Blog, Calendar, Feed, PostRecord}
 
   alias Agendum.Core.View.{Column, ItemColumn, Section, SortKey}
   alias Agendum.Core.Facade.Extras.Zettels
@@ -139,9 +139,14 @@ defmodule Agendum.Core.JSONFile do
       author: :string,
       language: :string,
       base_url: :string,
-      me: :string
+      me: :string,
+      address: :string,
+      published: {:records, PostRecord}
     ]
   end
+
+  # what publishing remembers of a post (R74), by its item's id
+  defp spec(PostRecord), do: [path: :string, print: :int, modified: {:nullable, :date}]
 
   defp spec(Search),
     do: [text: :string, on: {:enum, [:item, :note, :both]}, ignore_case: :bool]
@@ -457,6 +462,17 @@ defmodule Agendum.Core.JSONFile do
   defp value(v, {:list, type}), do: Enum.map(v, &value(&1, type))
   defp value(v, {:nullable, type}), do: value(v, type)
   defp value(v, :time), do: time(v)
+  defp value(v, :date), do: date(v)
+
+  # a map of id => struct, as a list of objects in id order, each with
+  # its "item" first
+  defp value(v, {:records, _module}) when is_map(v) do
+    for {id, record} <- Enum.sort(v) do
+      {:obj, fields} = struct_obj(record)
+      {:obj, [{"item", id} | fields]}
+    end
+  end
+
   defp value(v, _type), do: v
 
   defp date(nil), do: nil
@@ -594,7 +610,7 @@ defmodule Agendum.Core.JSONFile do
       feeds: Map.new(feeds, &{&1.id, &1}),
       macros: Map.new(macros, &{&1.id, &1}),
       macro_order: Enum.map(macros, & &1.id),
-      blog: read_struct(doc, "blog", Blog, "blog")
+      blog: doc |> read_struct("blog", Blog, "blog") |> checked_blog()
     }
     |> put_item_relations(items)
     |> read_settings(settings)
@@ -1060,6 +1076,20 @@ defmodule Agendum.Core.JSONFile do
   defp tab_size(size) when size in 1..16, do: size
   defp tab_size(size), do: bad("settings.tab_size", "a tab size from 1 to 16, not #{size}")
 
+  # Domain: a post's address is written as a file name, so one from a file
+  # must stay inside the site's folder (SECURITY.md, door 2); the pattern
+  # must be one the Site box would take (`Agendum.Core.Extras.Address`)
+  defp checked_blog(blog) do
+    unless Address.valid?(blog.address),
+      do: bad("blog.address", "not an address pattern: #{inspect(blog.address)}")
+
+    for {id, record} <- blog.published,
+        not Address.safe?(record.path),
+        do: bad("blog.published", "item #{id}: not a safe address: #{inspect(record.path)}")
+
+    blog
+  end
+
   defp opt(map, key, type, default, path) do
     case Map.fetch(map, key) do
       {:ok, value} -> convert(value, type, "#{path}.#{key}")
@@ -1092,6 +1122,16 @@ defmodule Agendum.Core.JSONFile do
       {:ok, v} -> v
       nil -> bad(path, "unexpected value #{inspect(value)}")
     end
+  end
+
+  defp convert(value, {:records, module}, path) when is_list(value) do
+    value
+    |> Enum.with_index()
+    |> Map.new(fn {object, i} ->
+      at = "#{path}[#{i}]"
+      unless is_map(object), do: bad(at, "should be an object")
+      {req(object, "item", :int, at), read_struct(%{"r" => object}, "r", module, at)}
+    end)
   end
 
   defp convert(value, {:list, type}, path) when is_list(value),

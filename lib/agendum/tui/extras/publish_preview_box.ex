@@ -107,7 +107,11 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   """
   @spec publish(State.t(), map, String.t() | nil) :: State.t()
   def publish(state, mode, password) do
+    # each post's record (its address, whether it changed) is kept now, as
+    # the site was built, not before: ESC on the preview records nothing.
+    # Again on a password's second try, which changes nothing then.
     state
+    |> State.run({:record_published})
     |> mark_publishing(true)
     |> State.info(Messages.text(:publishing))
     |> State.effect({:publish, mode.folder, mode.files, mode.changes, password})
@@ -149,13 +153,11 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
         :sftp -> "Written to #{mode.folder}, then uploaded by SFTP to #{upload.target}."
       end
 
-    posts = Enum.count(mode.files, &String.starts_with?(elem(&1, 0), "posts/"))
+    # the posts the site has today (a When still to come waits, R74)
+    posts = Agendum.Core.blog_post_count(state.db, state.today)
 
-    head = [
-      "#{Draw.count(posts, "post")} · #{summary(c)}",
-      where,
-      ""
-    ]
+    head =
+      ["#{Draw.count(posts, "post")} · #{summary(c)}", where] ++ waiting(state) ++ [""]
 
     list =
       if nothing?(c),
@@ -165,6 +167,18 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
             Enum.map(c.changed, &("  ~ " <> &1)) ++ Enum.map(c.removed, &("  − " <> &1))
 
     head ++ list
+  end
+
+  # posts whose When is still to come wait for their day (R74)
+  defp waiting(state) do
+    case Agendum.Core.blog_waiting(state.db, state.today) do
+      [] ->
+        []
+
+      [{_first, date} | _] = waiting ->
+        day = Agendum.Core.DateFormat.date(date, state.db.date_format)
+        [Messages.text(:waiting, length(waiting), day)]
+    end
   end
 
   @impl Box

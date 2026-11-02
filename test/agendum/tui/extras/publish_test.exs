@@ -74,6 +74,43 @@ defmodule Agendum.TUI.Extras.PublishTest do
     refute scan_effect()
   end
 
+  test "Site's Address takes a pattern; one that cannot work is refused, and says why", %{
+    state: state
+  } do
+    site = press(state, [{:f, 10}, "e", "p", "s"])
+    assert screen(site) =~ ~r/Address\s*: posts\/\{zettel\}\.html/
+
+    kept = site |> to_setting("Address") |> press({:f, 2}) |> press({:ctrl, "u"})
+    kept = kept |> type("{year}/{slug}.html") |> press(:enter)
+    assert kept.db.blog.address == "{year}/{slug}.html"
+
+    refused = site |> to_setting("Address") |> press({:f, 2}) |> press({:ctrl, "u"})
+    refused = refused |> type("posts/{year}.html") |> press(:enter)
+    assert refused.db.blog.address == "posts/{zettel}.html"
+    assert screen(refused) =~ "needs {zettel} or {slug}"
+  end
+
+  test "the preview says when a post waits for its day", %{state: state} do
+    {db, _} =
+      Core.add_item(state.db, "Soon", ~D[2026-10-01],
+        section: hd(Database.find_categories(state.db, "Posts"))
+      )
+
+    soon = Enum.max(Map.keys(db.items))
+    db = Core.set_date(db, soon, db.special.when, Date.add(state.today, 3))
+    state = %{state | db: db} |> open() |> press(:enter)
+    {:publish_scan, folder, files} = scan_effect()
+
+    state =
+      Agendum.TUI.Extras.Publish.Results.publish_scanned(state, folder, files, {
+        :ok,
+        %{existing: %{}, published: []}
+      })
+
+    assert screen(state) =~ "1 post waits for its day"
+    refute Enum.any?(files, &(elem(&1, 1) =~ "Soon"))
+  end
+
   describe "the preview" do
     setup %{state: state} do
       state = state |> open() |> press(:enter)

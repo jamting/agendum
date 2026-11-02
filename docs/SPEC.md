@@ -1980,6 +1980,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - Both complete a category's name as it is typed, as the clone's category fields (R32: ENTER takes the match shown, F5 or INS exactly what was typed, made under MAIN when the box is done, F2 edits the name as it is), SPACE or F3 lists the categories, DEL leaves Drafts empty (UI guidelines).
   - Both are the person's own categories, never a feed's or a calendar's (R75a: refused, "The posts and drafts are your own categories …", and neither completed nor listed there; a typed name is looked up among the person's categories only).
   - The site's title, description, author, language, **base address** (for the feeds' whole links), `rel="me"` links to the person's other profiles.
+  - The **Address**: where a post's page goes, a pattern with `{zettel}` (its Zettel id), `{slug}` (its title in lowercase a–z, 0–9 and `-`, accents and Swedish letters folded, `ö` → `o`, at most 60 characters), `{year}`, `{month}` and `{day}` (its date). `posts/{zettel}.html` by default; `{year}/{month}/{day}-{slug}.html` and the like. A pattern without `{zettel}` or `{slug}`, not ending in `.html`, or leading out of the site's folder is refused ("The address needs {zettel} or {slug} …").
 
   ENTER keeps them (one undo step), "Kept the site settings"; ESC closes the box and changes nothing.
 
@@ -1994,14 +1995,23 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   In both boxes a letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts).
 
-  A post is the item's text as its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first.
+  A post is its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first. A note whose first line is a `# Heading` gives the post that title (`##`, or a heading further down, does not), and the heading stays in the body too (the owner's choice, 2026-11-02); else the item's text is the title.
+
+  A post whose When is still to come waits: it is left out of the site until a Publish on or after its day, and the preview says so ("1 post waits for its day (11/05/26)"). There is no publishing on a schedule: it goes out the first time the person publishes then.
 
   Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length).
 
-  **Publishing** gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site:
+  **Publishing** gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site. Each post due has a record (kept in the file, `Agendum.Core.Extras.PostRecord`), kept when ENTER on the preview publishes (one undo step), never before, so ESC there records nothing:
+
+  - The first time, its address, made from the Address pattern and kept for good, so a new title or a new pattern never moves a published post. Two posts with one address: the second gets `-2`. None takes the site's own files' names, and one in the site's `fonts` folder goes to `fonts-2`.
+  - Later, the day a publish finds its title, note or date changed: its modified date.
+  - A file from before format 48 has no records: each post with a Zettel id gets one at `posts/<zettel id>.html` when it is opened, where it is out already.
+  - A stored address or pattern that leads out of the site's folder, or holds a character other than a–z, A–Z, 0–9, `.`, `_`, `~`, `-` and `/`, makes the file damaged (R82d).
+
+  The site:
 
   - `index.html` with every post in full.
-  - A page per post at `posts/<zettel id>.html` (an address that never changes).
+  - A page per post at its address (`posts/<zettel id>.html` by default), in the folders the address names; a post found changed says "Updated" and the day on its page, and the JSON Feed gives its `date_modified` (meeting 2026-11-02-1255, § 6; the owner's choices, 2026-11-02).
   - `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1).
   - `style.css` with its fonts in `fonts/`.
 

@@ -55,13 +55,28 @@ defmodule Agendum.Extras.Publish do
   def write(folder, files, changes) do
     contents = Map.new(files)
 
-    with :ok <- mkdir(Path.join(folder, "posts")),
-         :ok <- mkdir(Path.join(folder, "fonts")),
+    # the folders a page's address names (R74: `2026/11/…`) are made first
+    with :ok <- each(folders(Map.keys(contents)), &mkdir(Path.join(folder, &1))),
          :ok <- each(changes.added ++ changes.changed, &put(folder, &1, contents[&1])),
          :ok <- each(changes.removed, &remove(folder, &1)) do
       manifest = Enum.map_join(files, "\n", &elem(&1, 0))
       put(folder, @manifest, manifest <> "\n")
     end
+  end
+
+  @doc """
+  The folders `paths` lie in, each with the folders above it, parents
+  first: `["2026/11/a.html"]` gives `["2026", "2026/11"]`.
+  """
+  @spec folders([String.t()]) :: [String.t()]
+  def folders(paths) do
+    paths
+    |> Enum.flat_map(fn path ->
+      parts = path |> Path.dirname() |> Path.split() |> Enum.reject(&(&1 == "."))
+      for n <- 1..length(parts)//1, do: Path.join(Enum.take(parts, n))
+    end)
+    |> Enum.uniq()
+    |> Enum.sort_by(&{length(Path.split(&1)), &1})
   end
 
   defp mkdir(dir) do
@@ -123,7 +138,10 @@ defmodule Agendum.Extras.Publish do
   """
   @spec rsync_args(String.t(), String.t(), [String.t()]) :: [String.t()]
   def rsync_args(target, folder, paths) do
-    includes = Enum.map(Enum.uniq(["posts/", "fonts/" | paths]), &"--include=/#{&1}")
+    # rsync looks into a folder only when it is included itself: every
+    # folder a page lies in, then the pages
+    dirs = Enum.map(folders(paths), &(&1 <> "/"))
+    includes = Enum.map(Enum.uniq(dirs ++ paths), &"--include=/#{&1}")
     # the folder ends in "/": its contents are sent, not the folder itself
     source = String.trim_trailing(folder, "/") <> "/"
     # ssh never asks (a password or a new host key would wait on the screen)
@@ -227,9 +245,11 @@ defmodule Agendum.Extras.Publish do
 
   defp send_all(channel, dir, folder, files, changes) do
     remote = fn path -> if dir == "", do: path, else: Path.join(dir, path) end
-    _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("posts")), @timeout)
-    _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.("fonts")), @timeout)
     {sent, removed} = sftp_plan(folder, files, changes)
+
+    # every folder a page lies in, parents first; one already there is fine
+    for dir <- folders(sent),
+        do: _ = :ssh_sftp.make_dir(channel, String.to_charlist(remote.(dir)), @timeout)
 
     # Domain: the removals wait in the folder until an upload has made
     # them; a failed one leaves them for the next (code review 2026-10-26)

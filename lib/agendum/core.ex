@@ -158,10 +158,14 @@ defmodule Agendum.Core do
   # the micro-blog (R74)
   defdelegate set_blog(db, changes), to: Publishing
   defdelegate prepare_publish(db, changes), to: Publishing
+  defdelegate record_published(db, clock), to: Publishing
+  defdelegate blog_post_count(db, today), to: Publishing
+  defdelegate blog_waiting(db, today), to: Publishing
+  defdelegate blog_address_default(), to: Publishing
   defdelegate moved_upload(db), to: Publishing
   defdelegate upload_methods(), to: Publishing
   defdelegate blog_posts(db), to: Publishing
-  defdelegate site(db), to: Publishing
+  defdelegate site(db, today), to: Publishing
   defdelegate blog_needs_base_url?(db), to: Publishing
   defdelegate site_changes(files, existing, published), to: Publishing
 

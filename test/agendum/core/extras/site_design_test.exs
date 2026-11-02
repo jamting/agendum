@@ -17,7 +17,7 @@ defmodule Agendum.Core.Extras.SiteDesignTest do
     {db, _} = Core.add_item(db, "Hello from the Wood", ~D[2026-10-26], section: posts)
     {:ok, db} = Core.set_blog(db, %{posts: posts, title: "Owl"})
     {:ok, db, _} = Core.prepare_publish(db, %{})
-    Core.site(db)
+    Core.site(db, ~D[2026-11-02])
   end
 
   test "the stylesheet is The Proportional Web's, credited, with its fonts self-hosted" do

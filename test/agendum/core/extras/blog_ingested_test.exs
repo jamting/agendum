@@ -19,7 +19,9 @@ defmodule Agendum.Core.Extras.BlogIngestedTest do
   test "an ingested category is refused as posts or drafts", %{db: db, news: news} do
     assert {:error, :ingested} = Core.prepare_publish(db, %{posts: news})
     {:ok, db, mine} = Core.add_category(db, db.main_id, "Posts")
-    assert {:error, :ingested} = Core.prepare_publish(db, %{posts: mine, drafts: news})
+
+    assert {:error, :ingested} =
+             Core.prepare_publish(db, %{posts: mine, drafts: news})
   end
 
   test "a name is looked up among the person's categories only", %{db: db} do

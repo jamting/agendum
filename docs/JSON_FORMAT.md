@@ -167,6 +167,8 @@ The micro-blog's settings (R74); left out, none: no posts category.
 | `title`, `description`, `author`, `language` | What the pages and feeds say about the blog; `language` such as `"en"` or `"sv"`. |
 | `base_url` | Where the site is on the web (`"https://example.com/blog/"`), for the feeds' links. |
 | `me` | Addresses of the person's other profiles, for `rel="me"` links, separated by spaces. |
+| `address` | Where a post's page goes, a pattern: `"posts/{zettel}.html"` by default, or with `{slug}`, `{year}`, `{month}`, `{day}`. |
+| `published` | What publishing remembers of each post, in item order: `item` (its id), `path` (its page's address, made once), `print` (a fingerprint of its title, note and date, an integer) and `modified` (the day a publish found it changed, or `null`). |
 
 Where the site is written and how it is uploaded are the person's, kept in their preferences, not in the file (format 47): an older export's `folder`, `upload`, `target`, `user` and `remote_dir` are ignored. No password is ever in the file.
 

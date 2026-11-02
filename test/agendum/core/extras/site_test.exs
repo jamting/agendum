@@ -66,7 +66,7 @@ defmodule Agendum.Core.Extras.SiteTest do
     setup ctx do
       {:ok, db, _} = Core.prepare_publish(ctx.db, %{})
       db = Core.set_note(db, ctx.party, "After [[pigavono]]; not [[kitolido]].", today())
-      %{db: db, files: Core.site(db)}
+      %{db: db, files: Core.site(db, ~D[2026-11-02])}
     end
 
     test "its files: index, feeds, stylesheet, fonts and a page per post", %{files: files} do
@@ -97,7 +97,10 @@ defmodule Agendum.Core.Extras.SiteTest do
     test "a post's page: content as HTML, links to other posts, the tasks", %{files: files} do
       party = file(files, "posts/bonalaku.html")
       assert party =~ ~s(<link rel="stylesheet" href="../style.css">)
-      assert party =~ ~s(After <a href="pigavono.html">Hello, Wood</a>; not [[kitolido]].)
+
+      assert party =~
+               ~s(After <a href="../posts/pigavono.html">Hello, Wood</a>; not [[kitolido]].)
+
       assert party =~ ~s(<time class="dt-published" datetime="2026-10-03">)
       assert party =~ ~s(href="https://owl.example/posts/bonalaku.html">permalink</a>)
 
@@ -127,14 +130,14 @@ defmodule Agendum.Core.Extras.SiteTest do
     end
 
     test "building twice gives the same files", %{db: db, files: files} do
-      assert Core.site(db) == files
+      assert Core.site(db, ~D[2026-11-02]) == files
     end
 
     # without a Base address there is nowhere to link the author to, and a
     # post's own page links to itself by its file name
     test "without a Base address: the author unlinked, the permalink relative", %{db: db} do
       {:ok, db} = Core.set_blog(db, %{base_url: ""})
-      files = Core.site(db)
+      files = Core.site(db, ~D[2026-11-02])
       index = file(files, "index.html")
       party = file(files, "posts/bonalaku.html")
 

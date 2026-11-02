@@ -25,7 +25,7 @@ defmodule Agendum.Core.Extras.Site do
   """
 
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.Core.Extras.{Blog, Markdown, ZettelLinks}
+  alias Agendum.Core.Extras.{Address, Blog, Markdown, ZettelLinks}
   alias Agendum.Core.Facade.Extras.Zettels
 
   @typedoc "A file of the site: its path in the site's folder, and its content."
@@ -55,13 +55,18 @@ defmodule Agendum.Core.Extras.Site do
   def stylesheet, do: @stylesheet
 
   @doc """
-  Every file of the site. A post without a Zettel id is left out: Publish
-  gives each post one first (R73).
+  Every file of the site on `today`: the posts due then (a When still to
+  come waits). A post without a Zettel id is left out: Publish gives each
+  post one first (R73).
   """
-  @spec build(Database.t()) :: [file]
-  def build(%Database{blog: blog} = db) do
+  @spec build(Database.t(), Date.t()) :: [file]
+  def build(%Database{} = db, today) do
+    # the addresses and modified days publishing would record now: shown in
+    # the preview, kept only once the person publishes (`record/2`)
+    db = Blog.record_posts(db, today, own())
+    blog = db.blog
     used = Zettels.zettels(db)
-    posts = db |> Blog.posts() |> Enum.filter(& &1.zettel)
+    posts = db |> Blog.posts(today) |> Enum.filter(& &1.zettel)
     published = MapSet.new(posts, & &1.id)
     site = %{db: db, blog: blog, used: used, published: published, posts: posts}
 
@@ -70,12 +75,44 @@ defmodule Agendum.Core.Extras.Site do
       {"rss.xml", rss(site)},
       {"feed.json", json_feed(site)},
       {@stylesheet, default_stylesheet()}
-    ] ++ Enum.map(posts, &{post_path(&1), post_page(site, &1)}) ++ @font_files
+    ] ++ Enum.map(posts, &{post_path(db, &1), post_page(site, &1)}) ++ @font_files
   end
 
-  @doc "Where a post's page is: `posts/bonalaku.html`."
-  @spec post_path(Agendum.Core.Item.t()) :: String.t()
-  def post_path(item), do: "posts/#{Zettels.zettel(item)}.html"
+  @doc """
+  The site's own files and folders, which a post's page never takes
+  (`Agendum.Core.Extras.Address.path/6`).
+  """
+  @spec own() :: {[String.t()], [String.t()]}
+  def own do
+    files = ["index.html", "rss.xml", "feed.json", @stylesheet]
+    folders = @font_files |> Enum.map(&(&1 |> elem(0) |> Path.dirname())) |> Enum.uniq()
+    {files, folders}
+  end
+
+  @doc """
+  Publishing on `today`, the part in the file: each post's record kept
+  (`Agendum.Core.Extras.Blog.record_posts/3`), as the site was built.
+  """
+  @spec record(Database.t(), Date.t()) :: Database.t()
+  def record(db, today), do: Blog.record_posts(db, today, own())
+
+  @doc """
+  Where a post's page is: the address publishing made for it the first
+  time (`Agendum.Core.Extras.PostRecord`), else `posts/bonalaku.html`. A
+  stored address that is not a safe one (a crafted file) is not used.
+  """
+  @spec post_path(Database.t(), Agendum.Core.Item.t()) :: String.t()
+  def post_path(db, item) do
+    case Blog.record(db, item.id) do
+      %{path: path} -> if Address.safe?(path), do: path, else: default_path(item)
+      nil -> default_path(item)
+    end
+  end
+
+  defp default_path(item), do: "posts/#{Zettels.zettel(item)}.html"
+
+  # from a page at `path` back to the site's root: "../" for each folder
+  defp root(path), do: String.duplicate("../", length(String.split(path, "/")) - 1)
 
   @typedoc "What publishing would do to a folder: the paths in each list."
   @type changes :: %{added: [String.t()], changed: [String.t()], removed: [String.t()]}
@@ -115,7 +152,7 @@ defmodule Agendum.Core.Extras.Site do
   # --- pages -------------------------------------------------------------------
 
   defp index(site) do
-    articles = Enum.map_join(site.posts, "\n", &article(site, &1, "posts/", :index))
+    articles = Enum.map_join(site.posts, "\n", &article(site, &1, "", :index))
     empty = if site.posts == [], do: "<p>No posts yet.</p>", else: ""
 
     page(site, "", site.blog.title, """
@@ -126,10 +163,12 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   defp post_page(site, item) do
-    page(site, "../", "#{title_text(site, item)} · #{site.blog.title}", """
+    root = root(post_path(site.db, item))
+
+    page(site, root, "#{title_text(site, item)} · #{site.blog.title}", """
     <main>
-    #{article(site, item, "", :page)}
-    <p class="back"><a href="../index.html">← #{esc(site.blog.title)}</a></p>
+    #{article(site, item, root, :page)}
+    <p class="back"><a href="#{root}index.html">← #{esc(site.blog.title)}</a></p>
     </main>
     """)
   end
@@ -138,15 +177,17 @@ defmodule Agendum.Core.Extras.Site do
   defp description(site), do: ~s(<p class="p-summary">#{esc(site.blog.description)}</p>\n)
 
   # One post as an h-entry: its title (a link to its page on the index),
-  # its date, its author and its note as HTML.
-  defp article(site, item, prefix, where) do
+  # its date, its author and its note as HTML. `root` leads from the page
+  # it is on back to the site's root, for links to other posts.
+  defp article(site, item, root, where) do
     word = Zettels.zettel(item)
-    title = title_html(site, item, prefix)
+    title = title_html(site, item, root)
 
     heading =
       case where do
         :index ->
-          ~s(<h2 class="p-name"><a class="u-url" href="#{prefix}#{word}.html">#{title}</a></h2>)
+          href = attr(post_path(site.db, item))
+          ~s(<h2 class="p-name"><a class="u-url" href="#{href}">#{title}</a></h2>)
 
         :page ->
           ~s(<h1 class="p-name">#{title}</h1>)
@@ -155,9 +196,9 @@ defmodule Agendum.Core.Extras.Site do
     """
     <article class="h-entry" id="#{word}">
     #{heading}
-    <p class="meta">#{time_tag(site, item)}#{author_tag(site)}#{permalink(site, item, where)}</p>
+    <p class="meta">#{time_tag(site, item)}#{updated_tag(site, item, where)}#{author_tag(site)}#{permalink(site, item, where)}</p>
     <div class="e-content">
-    #{Markdown.to_html(item.note, site.used, link_fun(site, prefix))}
+    #{Markdown.to_html(item.note, site.used, link_fun(site, root))}
     </div>
     </article>
     """
@@ -174,6 +215,29 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
+  # the day a publish found the post changed (R74), or nil
+  defp modified(site, item) do
+    case Blog.record(site.db, item.id) do
+      %{modified: %Date{} = date} -> date
+      _ -> nil
+    end
+  end
+
+  # on its own page, the day it was found changed
+  defp updated_tag(site, item, :page) do
+    case modified(site, item) do
+      nil ->
+        ""
+
+      date ->
+        shown = DateFormat.date(date, site.db.date_format)
+
+        ~s( · Updated <time class="dt-updated" datetime="#{Date.to_iso8601(date)}">#{esc(shown)}</time>)
+    end
+  end
+
+  defp updated_tag(_site, _item, :index), do: ""
+
   defp author_tag(%{blog: %{author: ""}}), do: ""
 
   # without a Base address there is no home page to link the author to,
@@ -188,15 +252,17 @@ defmodule Agendum.Core.Extras.Site do
   # without a Base address, by its file name, as the page is in posts/
   defp permalink(_site, _item, :index), do: ""
 
-  defp permalink(%{blog: %{base_url: ""}}, item, :page),
-    do: ~s( · <a class="u-url" href="#{attr(Path.basename(post_path(item)))}">permalink</a>)
+  defp permalink(%{blog: %{base_url: ""}} = site, item, :page),
+    do:
+      ~s( · <a class="u-url" href="#{attr(Path.basename(post_path(site.db, item)))}">permalink</a>)
 
   defp permalink(site, item, :page),
-    do: ~s( · <a class="u-url" href="#{attr(absolute(site, post_path(item)))}">permalink</a>)
+    do:
+      ~s( · <a class="u-url" href="#{attr(absolute(site, post_path(site.db, item)))}">permalink</a>)
 
   # A Zettel link in a post: to the target's page when it is published,
   # else the target's text; a broken link stays as it was written.
-  defp link_fun(site, prefix) do
+  defp link_fun(site, root) do
     fn
       nil, word ->
         Markdown.escape("[[#{word}]]")
@@ -206,28 +272,31 @@ defmodule Agendum.Core.Extras.Site do
         text = Markdown.escape(plain_title(site, item))
 
         if MapSet.member?(site.published, target),
-          do: ~s(<a href="#{prefix}#{Zettels.zettel(item)}.html">#{text}</a>),
+          do: ~s(<a href="#{attr(root <> post_path(site.db, item))}">#{text}</a>),
           else: text
     end
   end
 
-  # A title is the item's text; links in it become links too, without
+  # A title is the post's (a note's first-line `# Heading`, else the
+  # item's text, `Blog.title/1`); links in it become links too, without
   # becoming a title of their own
-  defp title_html(site, item, prefix),
-    do: inline_title(site, item.text, link_fun(site, prefix))
+  defp title_html(site, item, root),
+    do: inline_title(site, Blog.title(item), link_fun(site, root))
 
   defp title_text(site, item), do: plain_title(site, item)
 
   defp plain_title(site, item) do
-    item.text
+    title = Blog.title(item)
+
+    title
     |> ZettelLinks.scan(site.used)
     |> Enum.reverse()
-    |> Enum.reduce(item.text, fn link, text ->
+    |> Enum.reduce(title, fn link, text ->
       replacement =
         case link.target do
           nil -> link.word
           id when id == item.id -> link.word
-          id -> site.db.items[id].text
+          id -> Blog.title(site.db.items[id])
         end
 
       String.slice(text, 0, link.at) <>
@@ -294,7 +363,7 @@ defmodule Agendum.Core.Extras.Site do
 
     items =
       Enum.map_join(site.posts, "", fn item ->
-        url = absolute(site, post_path(item))
+        url = absolute(site, post_path(site.db, item))
 
         """
         <item>
@@ -344,8 +413,9 @@ defmodule Agendum.Core.Extras.Site do
 
     items =
       Enum.map(site.posts, fn item ->
-        url = absolute(site, post_path(item))
+        url = absolute(site, post_path(site.db, item))
         date = Blog.date(item)
+        modified = modified(site, item)
 
         Enum.reject(
           [
@@ -353,7 +423,8 @@ defmodule Agendum.Core.Extras.Site do
             {"url", url},
             {"title", title_text(site, item)},
             {"content_html", content_html(site, item)},
-            {"date_published", date && Date.to_iso8601(date) <> "T00:00:00Z"}
+            {"date_published", date && Date.to_iso8601(date) <> "T00:00:00Z"},
+            {"date_modified", modified && Date.to_iso8601(modified) <> "T00:00:00Z"}
           ],
           &(elem(&1, 1) == nil)
         )
@@ -392,9 +463,8 @@ defmodule Agendum.Core.Extras.Site do
     fn target, word ->
       html = relative.(target, word)
 
-      String.replace(html, ~s(<a href="), ~s(<a href="#{attr(absolute(site, "posts/"))}),
-        global: false
-      )
+      # the link is from the site's root: the base address goes before it
+      String.replace(html, ~s(<a href="), ~s(<a href="#{attr(absolute(site, ""))}), global: false)
     end
   end
 

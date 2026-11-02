@@ -287,10 +287,21 @@ defmodule Agendum.Starters.Golden do
         author: "Owl",
         language: "sv",
         base_url: "https://owl.example/",
-        me: "https://mastodon.example/@owl"
+        me: "https://mastodon.example/@owl",
+        address: "{year}/{month}/{day}-{slug}.html"
       })
 
-    db
+    # a post published, then changed and published again: its record has
+    # an address, a fingerprint and a modified date (format 48)
+    {db, post} = Core.add_item(db, "On spelling", @today, section: db.blog.posts)
+    db = Core.set_note(db, post, "# On spelling Wol\nIt is a matter of taste.", @today)
+    {:ok, db, _} = Core.prepare_publish(db, %{})
+    db = Core.record_published(db, @today)
+
+    db =
+      Core.set_note(db, post, "# On spelling Wol\nIt is a matter of taste, and of ink.", @today)
+
+    Core.record_published(db, Date.add(@today, 1))
   end
 
   # The facade's functions answer in a few shapes; here only the file

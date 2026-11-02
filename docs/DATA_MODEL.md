@@ -167,6 +167,8 @@ erDiagram
         string language
         string base_url
         string me "rel=me links"
+        string address "a post's page address pattern, posts/{zettel}.html by default"
+        map published "item id => PostRecord: address made once, fingerprint, modified day"
         map moved_upload "an older file's upload settings, on their way to the preferences; never written"
     }
     MACRO {
@@ -392,6 +394,8 @@ classDiagram
         +drafts : id or nil
         +title, description, author, language : String
         +base_url, me : String
+        +address : String
+        +published : Map~id, PostRecord~
         +moved_upload : Upload or nil, never written
     }
     class Macro {
@@ -444,6 +448,7 @@ classDiagram
 | `Calendar`                            | `lib/agendum/core/extras/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
 | `Feed`                                | `lib/agendum/core/extras/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
 | `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address (R74). |
+| `PostRecord`                          | `lib/agendum/core/extras/post_record.ex`   | What publishing remembers of a post, in `Blog.published`: its page's address (made once), a fingerprint of its title, note and date, and the day a publish found it changed (R74, format 48). |
 | `Upload`                              | `lib/agendum/core/extras/upload.ex`        | Where the blog is written and how it is uploaded: the person's, kept in their preferences by the file's path, never in the file (R74, format 47). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
 | `Search`                              | `lib/agendum/core/search.ex`        | A text search, kept in the Show View's `match` (R37).                                                |
@@ -681,6 +686,7 @@ Format versions:
 | 45 | A feed entry that faded or was discarded keeps only `%{item: nil, published}`, not its title, note and link (`Feed.forget/1`); `upgrade/1` trims older files' (meeting 2026-10-26-1524, § 5) |
 | 46 | A live feed entry keeps `title_print` and `note_print`, fingerprints of what it filed, instead of `title`, `note` and `link`; a calendar event `summary_print` and `description_print` instead of `summary` and `description` (`Agendum.Core.Extras.Fingerprint`); `upgrade/1` converts older files (ADR 0048; meeting 2026-10-26-1732, § 5) |
 | 47 | `Blog` loses `folder`, `upload`, `target`, `user` and `remote_dir`: where the site is written and uploaded is the person's (`Agendum.Core.Extras.Upload`, in their preferences); `upgrade/1` lifts an older file's into `Blog.moved_upload`, never written, and opening the file moves them to the preferences (meeting 2026-11-02-1255, § 10) |
+| 48 | `Blog` gains `address`, the address pattern of a post's page, and `published`, what publishing remembers of each post by its item's id (`Agendum.Core.Extras.PostRecord`: its address, made once, a fingerprint, the day it was found changed; meeting 2026-11-02-1255, § 6) |
 
 ## UI state around the database
 
