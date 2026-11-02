@@ -100,7 +100,7 @@ The panel advises; it never votes. I decide.
 | `mix escript.build && ./agendum FILE`                  | the real program                                                        |
 | `AGENDUM_LOG=1 ./agendum FILE`                         | with a debug log (`~/.local/state/agendum/logs`); give it to Claude on a crash or lag |
 | `mix docs --open`                                      | API docs, design documents, guide and manual in the browser             |
-| `mix agendum.starters`, `mix agendum.golden`           | rebuild the Planner starter; write the golden file of a new format version |
+| `mix agendum.starters`, `mix agendum.golden`           | rebuild the starter files (Planner, GTD, Journal; their tests fail when one is out of date); write the golden file of a new format version |
 | `tools/review/slice.sh a` (`--list`, `--files d`, `--clean`) | a slice of the code for `/code-review ultra review/a-base`: two local branches in the worktree `../agendum-review` (`docs/CODE_REVIEW_SLICES.md`) |
 | `mix agendum.fuzz` | the long fuzz run (3000 runs), its output kept in a dated file in `tmp/fuzz/`, the last 30                                                     |
 | `PARSER_RUNS=3000 mix test test/agendum/parsers_property_test.exs` | a longer search of the parsers of outside input (Markdown, iCal, feeds, `.AG`, JSON, dates) with random and broken input; 40 runs each in `mix test` |
