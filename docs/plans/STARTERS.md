@@ -1,6 +1,6 @@
 # Starter files: ideas
 
-**Status:** ideas, not a plan yet (meeting 2026-10-28-0048, §§ 5–8); the GTD starter is built (R60a, v0.76.0, 2026-11-02). Nothing else here is decided for building except the date filter's "or not assigned" (ROADMAP, Beyond Agenda). The order of work and the open questions at the end are for a later meeting.
+**Status:** ideas, not a plan yet (meeting 2026-10-28-0048, §§ 5–8); the GTD starter is built (R60a, v0.76.0, 2026-11-02); the Journal and To-do lists starters are decided (meeting 2026-11-02-1043, §§ 5–7; ROADMAP, Towards parity). Nothing else here is decided for building except the date filter's "or not assigned" (ROADMAP, Beyond Agenda). The order of work and the open questions at the end are for a later meeting.
 
 Agenda shipped starter applications, ready-made files a person copied and filled in (Starter Applications manual); Agendum ships the Activities Planner (R60) and Getting Things Done (R60a), built from code (ADR 0028). This document collects ideas for more, from a brainstorm with lenses in the spirit of Old Mitch Lilypad, Old Stephen of the Seven (FranklinCovey), David the Squirrel, J.D. the Beaver, Ryder the Magpie, Little Marie-Who-Folds, Master Werner (Cultured Code, Things) and Dr. Russell (minutes: `docs/meetings/2026-10-28-0048/protokoll.md`).
 
@@ -61,7 +61,7 @@ The trackers are where small daily wins live: each opens on a Today view with on
 For a later meeting (the chair, 2026-10-28):
 
 1. **Which to build first.** No order yet (§ 5).
-2. **The merges** (§ 7): to-do lists and project management as one starter with two views (Marie)? The dream, mood and training trackers as one Journal starter, as Bullet Journal collections (Ryder), or three?
+2. ~~**The merges** (§ 7)~~ Decided (meeting 2026-11-02-1043): to-do lists and project management are one starter, **To-do lists**, opening on the lists, with a Projects view (Due, an example of prerequisites); the dream, mood and training trackers are one **Journal** starter of collections, each cut to its core columns, with a **Gym** collection added (Sets, Reps, Weight, Volume typed by hand).
 3. **Expenses alone**, or only in the Planner?
 4. **How a person gets a starter.** Today a starter is copied from the repository (`starters/planner.agendum`, README); a person with only the binary has none. Built into the binary, offered when making a new file, or a command-line flag?
 5. **Agenda's other three starters** (Account Manager, People Manager, Information Sifter; Starter Applications chapters 2–4): rebuilt from code as the Planner was, without the macros Agendum cannot run? Their `.AG` files are test fixtures only (`test/fixtures/ag/`).

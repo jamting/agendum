@@ -12,7 +12,9 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. The starter for the easily overwhelmed (Towards parity with Agenda, below; the owner may reorder)
+1. The Journal starter (Towards parity with Agenda, below; meeting 2026-11-02-1043, § 6, § 7)
+2. The To-do lists starter (Towards parity with Agenda, below; meeting 2026-11-02-1043, § 5)
+3. The starter for the easily overwhelmed (Towards parity with Agenda, below)
 
 ### 1 Fixes and polish (performance and bugs)
 
@@ -52,6 +54,8 @@ The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each ite
 
 **Starter files are base features**, not extras (the owner, 2026-10-31): Agenda shipped its starter applications, so a new starter is content of the clone, made only of the clone's features. A starter that needs features outside the clone may be an extra instead, there only with the Extras switch on; a feature a starter would need goes to its own lane first.
 
+- [ ] A **Journal** starter (meeting 2026-11-02-1043, §§ 6–7; [`plans/STARTERS.md`](plans/STARTERS.md)): Dreams, Mood, Training and Gym as collections of one file, each with its own view and only its core columns (Dreams: Vividness, People, Feelings; Mood: Mood, Sleep, Exercise; Training: Distance, Minutes, Sport; Gym: one item per exercise, an Exercise family, Sets and Reps with a weekly Total, Weight with its Maximum, Volume typed by hand with a Total). It opens on Today with one line to type; an Index view lists the collections; words file a line into its collection; a missed day shows nothing
+- [ ] A **To-do lists** starter (meeting 2026-11-02-1043, § 5; [`plans/STARTERS.md`](plans/STARTERS.md)): the simplest starter, opening on the lists with one line to type, done items hidden; a second view, Projects, with a section per project, a Due column and an example of prerequisites (Utilities ▸ Show ▸ Prereqs). No separate project-management starter
 - [ ] A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words, made with a filter and view names) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k). See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker). An Overdue that adapts (three at a time, more as they are cleared) is beyond the clone
 - [ ] Optional, the clone's leftovers (from the parity plan, 2026-10-26):
 
