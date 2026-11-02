@@ -31,11 +31,14 @@ Find or add the behaviour in `docs/SPEC.md` (rules are numbered, e.g. `R7`); whe
 - Core rules → `test/agendum/core/*_test.exs` (use `Agendum.Fixtures`).
 - UI behaviour → `test/agendum/tui/*_test.exs`: drive keys with `Agendum.TUIHelpers.press/2` and assert on `screen/1` text.
 - In a box, reach a setting by its label, not by counting ↓ presses: `Agendum.TUIHelpers.to_setting(state, "Also match")`; layouts and keys change, labels rarely do.
-- **Four questions** (the code reviews of 2026-10-26: almost all 30 findings were one of these). For each "yes", a test of that case too:
+- **Seven questions** (the code reviews of 2026-10-26: almost all 30 findings were one of the first four; the publisher's reviews of 2026-11-02, about 70 findings, added the last three, meeting 2026-11-02-1954, § 11). For each "yes", a test of that case too, written before the code:
   1. Does it read **input from outside** (a feed, a calendar, an `.AG` or JSON file, Markdown, a typed address)? Then a broken, hostile and huge one, which must give an error, never a crash or a hang; add the file to the hostile collection.
   2. Does it **wait on the network or run in the background**? Then a result that never comes, or comes late, and the program going on meanwhile.
   3. Can the text have an **odd encoding** (Latin-1, control characters, invalid UTF-8)?
   4. Can things happen **in another order** (a result after another file was opened, two at once, a key in between)?
+  5. Does it change **what is stored**? Then a file saved by an older version, opened and saved again: nothing it held is lost (moved, seeded or kept), and a file from someone else, crafted, is refused or harmless.
+  6. Can **settings collide or nest** (two of one name, one inside another, one taken by another)? Then each such case, and what the person is told.
+  7. Is there a **guard that can be reached around** (the Extras switch, a core rule, a second way in such as the command line or a mix task)? Then the guard holds on each way in.
 
 Run it and see it fail for the right reason before writing the code.
 

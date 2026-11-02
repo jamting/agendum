@@ -61,3 +61,7 @@ CLAUDE.local.md
 
 # direnv: personal environment variables for this checkout
 .envrc
+
+# the devlog's templates: written by publishing, kept out of git for now
+# (meeting 2026-11-02-1954, § 12); the site leaves them out anyway
+pages/devlog/templates/
