@@ -124,6 +124,12 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R73a | A Zettel id column | 5e |
 | R73b | Links between zettels | 5e |
 | R74 | The micro-blog | 5e |
+| R74a | The blog's Site and Upload settings | 5e |
+| R74b | Post addresses and records | 5e |
+| R74c | Templates and assets | 5e |
+| R74d | Pages | 5e |
+| R74e | The blog's own feeds | 5e |
+| R74f | Publishing without the screen | 5e |
 | R75 | Feeds: a plain RSS reader | 5b |
 | R75a | Ingested categories | 5b |
 | R76 | Agenda's sounds | 5 |
@@ -1977,12 +1983,49 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - CTRL-G follows.
   - CTRL-R shows Linked from.
   - CTRL-L inserts a link in a note.
-- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). Extras ▸ Publish writes a blog from the file as a static website. Its submenu (meeting 2026-11-02-1255, § 10):
+- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). Extras ▸ Publish writes a blog from the file as a static website. Its parts are rules of their own: the settings (R74a), post addresses and records (R74b), templates and assets (R74c), pages (R74d), the blog's own feeds (R74e) and publishing without the screen (R74f). Its submenu (meeting 2026-11-02-1255, § 10):
 
   - **Publish** makes the site and shows what it would change (below). Before the blog has settings (no posts category), it opens Site first, whose ENTER then goes on to publish (the owner's choice, 2026-11-02).
-  - **Site**: the blog's settings, kept in the file.
-  - **Feeds**: the blog's own feeds (below).
-  - **Upload**: where the site is written and how it is uploaded, the person's, kept in their preferences for this file.
+  - **Site**: the blog's settings, kept in the file (R74a).
+  - **Feeds**: the blog's own feeds (R74e).
+  - **Upload**: where the site is written and how it is uploaded, the person's, kept in their preferences for this file (R74a).
+
+  A post is its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first. A note whose first line is a `# Heading` gives the post that title (`##`, or a heading further down, does not), and the heading stays in the body too (the owner's choice, 2026-11-02); else the item's text is the title.
+
+  A post whose When is still to come waits: it is left out of the site until a Publish on or after its day, and the preview says so ("1 post waits for its day (11/05/26)"). There is no publishing on a schedule: it goes out the first time the person publishes then.
+
+  Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length).
+
+  The site:
+
+  - `index.html` with every post in full.
+  - A page per post at its address (`posts/<zettel id>.html` by default), in the folders the address names; a post found changed says "Updated" and the day on its page, and the JSON Feed gives its `date_modified` (meeting 2026-11-02-1255, § 6; the owner's choices, 2026-11-02).
+  - `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1).
+  - `style.css` with its fonts in `fonts/`.
+
+  The design is [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, credited in the stylesheet): Alegreya for text, Alegreya SC for headings, Courier Prime for code, all written into the site with their licence (`fonts/OFL.txt`), so no reader's browser asks Google or anyone else for them; dark when the reader's system is (`prefers-color-scheme`).
+
+  `style.css` is written when the folder has none, or when it is still word for word the monospace stylesheet Agendum wrote before 0.69; one the person changed stays.
+
+  The pages are plain HTML without JavaScript, readable without the stylesheet, with microformats (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, so micro.blog or a bridge such as Bridgy Fed can follow the blog from the fediverse.
+
+  **Without a base address** the site is still written, feeds included (our choice): the author's name is text, not a link (there is no home page to link it to); a post's permalink is its file name; and the message after publishing ends "The feeds need a Base address", as a feed reader cannot follow the feeds' relative links.
+
+  A Zettel link in a post (R73b) is a link to the target's page when it is a post, else the target's text; a broken one stays as written.
+
+  Having made the site (R74b), Agendum reads the folder and the **Publish: what will change** box lists the files it would add (+), change (~) and remove (−, a post that is no longer one), and where they then go. ENTER writes them and uploads, ESC writes nothing ("Nothing was published").
+
+  The box stays open while that runs, its last line "Publishing … · ESC closes this box; publishing goes on": ENTER then does nothing more, and ESC only closes it ("Publishing goes on; the message line says when it is done"), as a publish under way cannot be called back (our choice). When the result comes, the box closes, even under another box such as the help.
+
+  Only Agendum's own files are written, removed or uploaded (it keeps their list in `.agendum-site` in the folder); nothing else in the folder or on the server is touched. rsync sends only those paths (`--delete` limited to them by filters, `-c` comparing contents). The folder and the target come after `--`, so neither is read as an option, and a target that starts with `-`, or whose host or user does, is refused ("Not published: Upload to must not start with - (nor its host or user)"): rsync hands the host to ssh, which would read it as an option (our choice; `SECURITY.md`, door 4).
+
+  SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too. The upload runs in the background: when the server asks while the preview is closed, or while something else is being typed, nothing is published and Agendum says "Not published: the server asks for a password. Publish again", rather than take the typing over.
+
+  Afterwards the message line says "Published and uploaded: 2 added, 1 changed, 0 removed", or why not ("Not published: …").
+
+  Publishing runs in the background: Agendum goes on while the site is written and uploaded ("Publishing …"), one at a time; an upload never waits for ever (SFTP calls time out, rsync's ssh never asks for a password or a host key). An SFTP upload sends the whole site each time, and removals a failed upload did not make wait in the folder (`.agendum-unsent`) for the next one.
+
+- **R74a ✅ The blog's Site and Upload settings** (ours, an extra; part of the micro-blog, R74). Extras ▸ Publish ▸ Site and ▸ Upload open a box each.
 
   The **Publish: the site** box holds:
 
@@ -2007,11 +2050,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   In both boxes a letter on a text field types it, F2 edits it (SPACE too, but on Posts and Drafts).
 
-  A post is its title and its note, in Agendum's **Markdown** (paragraphs, `#` headings, `**strong**`, `*emphasis*`, `` `code` ``, code blocks, quotes, lists, `[links](https://…)`, `![images](https://…)`, bare addresses, a rule `---`, and the task boxes `- [ ]` to do, `- [x]` done and `- [-]` cancelled, struck through), its date the When date, else the Entry date. Posts come newest first. A note whose first line is a `# Heading` gives the post that title (`##`, or a heading further down, does not), and the heading stays in the body too (the owner's choice, 2026-11-02); else the item's text is the title.
+  The posts and drafts categories stay the ones they are unless another name is typed, and a name two categories have is refused.
 
-  A post whose When is still to come waits: it is left out of the site until a Publish on or after its day, and the preview says so ("1 post waits for its day (11/05/26)"). There is no publishing on a schedule: it goes out the first time the person publishes then.
-
-  Anything else is text: HTML in a note is escaped, never markup. A link's text, a code span or an emphasis is at most 500 characters long; a longer one is text (our choice: so that a post of any size becomes HTML in time proportional to its length).
+- **R74b ✅ Post addresses and records** (ours, an extra; part of the micro-blog, R74).
 
   **Publishing** gives each post without a Zettel id one (R73), in one change (one undo step), and makes the site. Each post due has a record (kept in the file, `Agendum.Core.Extras.PostRecord`), kept when ENTER on the preview publishes (one undo step), never before, so ESC there records nothing:
 
@@ -2020,16 +2061,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - A file from before format 48 has no records: each post with a Zettel id gets one at `posts/<zettel id>.html` when it is opened, where it is out already.
   - A stored address or pattern that leads out of the site's folder, or holds a character other than a–z, A–Z, 0–9, `.`, `_`, `~`, `-` and `/`, makes the file damaged (R82d).
 
-  The site:
-
-  - `index.html` with every post in full.
-  - A page per post at its address (`posts/<zettel id>.html` by default), in the folders the address names; a post found changed says "Updated" and the day on its page, and the JSON Feed gives its `date_modified` (meeting 2026-11-02-1255, § 6; the owner's choices, 2026-11-02).
-  - `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1).
-  - `style.css` with its fonts in `fonts/`.
-
-  The design is [The Proportional Web](https://owickstrom.github.io/the-proportional-web/) by Oskar Wickström (MIT, credited in the stylesheet): Alegreya for text, Alegreya SC for headings, Courier Prime for code, all written into the site with their licence (`fonts/OFL.txt`), so no reader's browser asks Google or anyone else for them; dark when the reader's system is (`prefers-color-scheme`).
-
-  `style.css` is written when the folder has none, or when it is still word for word the monospace stylesheet Agendum wrote before 0.69; one the person changed stays.
+- **R74c ✅ Templates and assets** (ours, an extra; part of the micro-blog, R74).
 
   **Templates** (meeting 2026-11-02-1255, § 7; the owner's choices, 2026-11-02): the pages are drawn from the site folder's `templates/`: `layout.html` (every page, the page's own part in it as `{{{content}}}`), `index.html`, `post.html`, `page.html` and `menu.html` (under the site's name on every page; Agendum's lists Home, then the pages A to Z, the page shown marked `aria-current`, and is empty while there are no pages). A `menu.html` still word for word the empty one Agendum 0.81 wrote is replaced by the new one; one the person changed stays. Agendum writes its own where one is missing, when the person publishes ("Writes templates/ for you to change: …" in the preview), and never overwrites one that is there: delete one to get Agendum's back. Agendum's give the site as before (only a `"` in the blog's or a post's title is now written `&quot;`, which a browser shows the same). Templates make the pages and are never uploaded; a post's address never lands in `templates/` or `assets/`.
 
@@ -2037,7 +2069,13 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - What a template sees: `site` (`title`, `description`, `author`, `language`, `home`, `base_url`, `me`, a list), `root` (from the page back to the site's root, `../` for each folder), `path` (the page's own address), `page` (`title`, `index`), `pages` (the menu's pages, each with `title`, `url` and `current`) and `has_pages`; `summary` (the index's description), `feeds` (on the main index, each with `title` and `url`) and `has_feeds`, `feed` (on a feed's index, its `title` and `slug`); on an index `posts`, on a post's page `post`, on a page `item`, each with `title`, `title_html`, `url`, `date` and `date_iso`, `updated` and `updated_iso`, `permalink`, `zettel`, `content`, and `first`.
   - A mistake stops publishing, saying where: "Not published: templates/post.html line 12: {{#post}} is not closed"; so does a `{{> name}}` with no such template, one that includes itself, templates included in one another more than 50 deep or more than 100,000 times in all, and a template that is a link, larger than 1 MB or unreadable. An included template's last newline is not part of it.
 
+  **Assets**: every file under the site folder's `assets/` (hidden files and links left out) is a file of the site as it is, at the same path, written and uploaded with the pages, and removed from the server when deleted from the folder; one whose name has a character other than a–z, A–Z, 0–9, `.`, `_`, `~`, `-` stops publishing, saying which; all of them together may be at most 50 MB.
+
+- **R74d ✅ Pages** (ours, an extra; part of the micro-blog, R74).
+
   **Pages**: each item of the Pages category (not in Drafts; a When still to come waits) is a page at `/<slug>.html`, its slug from its title (a note's first-line `# Heading` as for a post), made once and kept as a post's address is. It is drawn from `page.html`, and is not in the index or the feeds. An item in Posts and Pages both is a page only (the owner's choice, 2026-11-02). Agendum's `page.html` shows no date; `updated` and `updated_iso` are there for a template that wants them (the owner's choice).
+
+- **R74e ✅ The blog's own feeds** (ours, an extra; part of the micro-blog, R74; to become Lists, meeting 2026-11-02-2244, § 6).
 
   **Feeds** (meeting 2026-11-02-1255, §§ 9–10; the owner's choices, 2026-11-02): each category right under Posts is a feed of the blog's own (a category under it is part of it), with its own index page and its own RSS and JSON Feed in a folder of its own: `devlog/index.html`, `devlog/rss.xml`, `devlog/feed.json`. Its posts are those in it or under it. The site's main index and feeds keep every post, and the main index names the feeds under the blog's description ("Feeds: Devlog · Links"). A feed's index page is drawn from `index.html`, with the feed's title as its heading, its description, and links to its own feeds; its feeds' title is the blog's and the feed's ("Owl's Notes · Devlog").
 
@@ -2045,29 +2083,9 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - A feed's folder is made from its name at the first publish and kept, so renaming the category does not move it. Changed in its box, the feed moves at the next publish, its old folder's files removed (the owner's choice). A folder must be a–z, 0–9 and `-`, and neither the site's own (`fonts`, `templates`, `assets`) nor another feed's: "A feed's folder: a-z, 0-9 and -, one no other feed or the site has". A folder set (in the box, or kept by a publish) takes its place before one made from a name; two feeds whose names give one folder get `-2` (a folder is at most 60 characters, `-2` included). A post's address is never a feed's index or feeds, but may share its folder (a feed named Posts leaves `posts/<zettel id>.html` alone). A feed's box shows its folder empty while it is still to be made, with the folder it will get. A title that is the category's own name follows it when renamed. A discarded feed's settings go with its category.
   - An `index.html` still word for word the one Agendum 0.81 wrote is replaced by the new one (which knows feeds); one the person changed stays.
 
-  **Assets**: every file under the site folder's `assets/` (hidden files and links left out) is a file of the site as it is, at the same path, written and uploaded with the pages, and removed from the server when deleted from the folder; one whose name has a character other than a–z, A–Z, 0–9, `.`, `_`, `~`, `-` stops publishing, saying which; all of them together may be at most 50 MB.
-
-  The pages are plain HTML without JavaScript, readable without the stylesheet, with microformats (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, so micro.blog or a bridge such as Bridgy Fed can follow the blog from the fediverse.
-
-  **Without a base address** the site is still written, feeds included (our choice): the author's name is text, not a link (there is no home page to link it to); a post's permalink is its file name; and the message after publishing ends "The feeds need a Base address", as a feed reader cannot follow the feeds' relative links.
-
-  A Zettel link in a post (R73b) is a link to the target's page when it is a post, else the target's text; a broken one stays as written.
-
-  Agendum then reads the folder and the **Publish: what will change** box lists the files it would add (+), change (~) and remove (−, a post that is no longer one), and where they then go. ENTER writes them and uploads, ESC writes nothing ("Nothing was published").
-
-  The box stays open while that runs, its last line "Publishing … · ESC closes this box; publishing goes on": ENTER then does nothing more, and ESC only closes it ("Publishing goes on; the message line says when it is done"), as a publish under way cannot be called back (our choice). When the result comes, the box closes, even under another box such as the help.
-
-  Only Agendum's own files are written, removed or uploaded (it keeps their list in `.agendum-site` in the folder); nothing else in the folder or on the server is touched. rsync sends only those paths (`--delete` limited to them by filters, `-c` comparing contents). The folder and the target come after `--`, so neither is read as an option, and a target that starts with `-`, or whose host or user does, is refused ("Not published: Upload to must not start with - (nor its host or user)"): rsync hands the host to ssh, which would read it as an option (our choice; `SECURITY.md`, door 4).
-
-  SFTP uses the person's ssh keys and `~/.ssh/known_hosts`; a server that refuses them makes Agendum ask "Password of user@host (not kept):", the typing shown as stars, kept out of the debug log, never stored; a `~/.netrc` password is used too. The upload runs in the background: when the server asks while the preview is closed, or while something else is being typed, nothing is published and Agendum says "Not published: the server asks for a password. Publish again", rather than take the typing over.
-
-  Afterwards the message line says "Published and uploaded: 2 added, 1 changed, 0 removed", or why not ("Not published: …").
+- **R74f ✅ Publishing without the screen** (ours, an extra; part of the micro-blog, R74).
 
   **Without the screen** (the publisher's step 7; the owner's choice, 2026-11-02): `agendum --publish FILE` (and `mix agendum.publish FILE`) does what Publish and ENTER on its preview do, with the person's Upload settings for the file, and prints the preview's lines and the result; `--preview` prints only what would change, writing nothing. The site is written, then the file saved (only when publishing kept something new: Zettel ids, addresses, a feed's folder; never over a file changed meanwhile, R71), then uploaded, so a failed upload leaves file and folder agreeing. An older file's upload settings move to the person's preferences, as opening it in Agendum moves them. With the extras off it refuses ("Publishing is one of the extras …"), as do a file with a password and an SFTP server that asks for one (the screen is where a password is asked); a mistyped flag, `--preview` without `--publish`, or a second file are refused too. Not yet: comments, tag pages, images uploaded from the file, publishing on a schedule.
-
-  Publishing runs in the background: Agendum goes on while the site is written and uploaded ("Publishing …"), one at a time; an upload never waits for ever (SFTP calls time out, rsync's ssh never asks for a password or a host key). An SFTP upload sends the whole site each time, and removals a failed upload did not make wait in the folder (`.agendum-unsent`) for the next one.
-
-  The posts and drafts categories stay the ones they are unless another name is typed, and a name two categories have is refused.
 ## 6. Out of scope for now
 
 The macro command language (Working with Macros, chapters 2–3; Learn-mode keystroke macros are built, R50), printing to a printer and print preview, TXT2STF definition files, networking/file reservations, application protection, the Metro accessories.

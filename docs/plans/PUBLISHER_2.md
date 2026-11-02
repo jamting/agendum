@@ -1,12 +1,12 @@
 # The publisher, round 2
 
-**Status:** planned (meetings 2026-11-02-1954 and 2026-11-02-2244); step 1 next. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
+**Status:** under way (meetings 2026-11-02-1954 and 2026-11-02-2244); step 1 done 2026-11-03, step 2 next. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
 
 The owner asked the panel to evaluate round 1 (omissions, improvements, what went well) and to formulate a round 2. A second meeting (2026-11-02-2244) replaced the blog's feeds with Lists and set the order below.
 
 ## The steps
 
-1. [ ] **Split R74 into sub-rules** (meeting 2026-11-02-1954, § 9): R74 the blog and publishing, R74a Site and Upload, R74b addresses and a post's metadata, R74c templates and assets, R74d pages and the menu, R74e feeds (named so it can become Lists in step 3; meeting 2026-11-02-2244, § 7), R74f publishing without the screen; each in SPEC's rule index; the meaning unchanged. Docs only.
+1. [x] **Split R74 into sub-rules** (meeting 2026-11-02-1954, § 9): R74 the blog and publishing, R74a Site and Upload, R74b addresses and a post's metadata, R74c templates and assets, R74d pages and the menu, R74e feeds (named so it can become Lists in step 3; meeting 2026-11-02-2244, § 7), R74f publishing without the screen; each in SPEC's rule index; the meaning unchanged. Docs only. Done 2026-11-03 (R74a is the Site and Upload settings, R74b post addresses and records, R74d pages).
 2. [ ] **Images from `assets/` in posts and pages** (meeting 2026-11-02-1954, § 6): `![alt](assets/me.jpg)` is shown, its address made right for each page (`../assets/…` from a post in a folder); an image naming an asset that is not there stops publishing and says which. Today an image needs a whole web address (`markdown.ex`).
 3. [ ] **Lists** (meeting 2026-11-02-2244, § 6): Publish ▸ Feeds becomes **Publish ▸ Lists**. Details below.
 4. [ ] **The newest N posts, and an archive** (meeting 2026-11-02-1954, § 7): the index, each list's index and the feeds carry the newest N items (a Site setting, 20 by default); `archive.html` (and a list's own) lists every item's title and date by month, its links never moving. Per list, after step 3 (meeting 2026-11-02-2244, § 7).
