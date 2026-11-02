@@ -57,7 +57,9 @@ defmodule Agendum.Starters.GTDTest do
       assert children(db, "Inbox") == ["Contexts", "Waiting For", "Someday/Maybe"]
 
       assert children(db, "Contexts") ==
-               ~w(@Anywhere @Calls @Computer @Errands @Home @Office)
+               ~w(@Anywhere @Calls @Computer @Errands @Home @Office Agendas)
+
+      assert children(db, "Agendas") == ["Sample Person"]
 
       assert children(db, "Projects") == ["Sample Project"]
 
@@ -68,10 +70,13 @@ defmodule Agendum.Starters.GTDTest do
 
     test "the views, in the order of the method", %{db: db} do
       assert Enum.map(Database.views(db), & &1.name) ==
-               ["Inbox", "Next Actions", "Projects", "Waiting For", "Someday/Maybe"] ++
-                 ["Weekly Review"]
+               ["Inbox", "Next Actions", "Agendas", "Projects", "Waiting For"] ++
+                 ["Someday/Maybe", "Weekly Review"]
 
-      assert sections(db, "Next Actions") == ~w(@Anywhere @Calls @Computer @Errands @Home @Office)
+      assert sections(db, "Next Actions") ==
+               ~w(@Anywhere @Calls @Computer @Errands @Home @Office Agendas)
+
+      assert sections(db, "Agendas") == ["Sample Person"]
       assert sections(db, "Weekly Review") == ["Inbox", "Waiting For", "Someday/Maybe", "Done"]
       assert columns(db, "Inbox") == [["Contexts", "Projects", "When"]]
       assert columns(db, "Waiting For") == [["Entry", "Projects"]]
@@ -126,6 +131,28 @@ defmodule Agendum.Starters.GTDTest do
       refute Database.member?(db, gate, cat(db, "@Home"))
       refute show(db, "Next Actions") =~ "Fix the gate"
       assert show(db, "Someday/Maybe") =~ "Fix the gate"
+    end
+
+    test "a person's name files an item in their agenda", %{db: db} do
+      {db, ask} = type_in_inbox(db, "Ask Sample Person about the shelves")
+      assert lists(db, ask) == ["Inbox", "Contexts", "Agendas"]
+      assert Database.member?(db, ask, cat(db, "Sample Person"))
+      refute show(db, "Inbox") =~ "Ask Sample Person"
+      assert show(db, "Agendas") =~ "Ask Sample Person about the shelves"
+      assert show(db, "Next Actions") =~ "Ask Sample Person about the shelves"
+
+      # a call is an action: @Calls, not the agenda (one context each)
+      {db, call} = type_in_inbox(db, "Call Sample Person about the shelves")
+      assert lists(db, call) == ["Inbox", "Contexts", "@Calls"]
+    end
+
+    test "a person added in the category manager is a section of Agendas (R42)", %{db: db} do
+      {:ok, db, _} = Core.insert_category(db, cat(db, "Agendas"), "Marie")
+      assert sections(db, "Agendas") == ["Sample Person", "Marie"]
+
+      {db, ask} = type_in_inbox(db, "Ask Marie about the shelves")
+      assert lists(db, ask) == ["Inbox", "Contexts", "Agendas"]
+      assert Database.member?(db, ask, cat(db, "Marie"))
     end
 
     test "a project without a next action shows as an empty section", %{db: db} do

@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.76.1 — 2026-11-02
+
+- **The GTD starter has Agendas:** what to bring up with each person. Add a person under Agendas in the category manager (F9, INS), and an item that names them ("Ask Marie about the shelves") goes to their agenda by itself; the Agendas view has a section per person, and Next Actions a section for them all. A call stays a call: "Call Marie" goes to @Calls.
+
 ## 0.76.0 — 2026-11-02
 
 - **A Getting Things Done starter file: `starters/gtd.agendum`.** Copy it and open the copy. Type everything into the Inbox; words file some items by themselves ("Call Anna" goes to @Calls, "Buy milk" to @Errands, "Waiting for Bob's reply" to Waiting For), and the rest you file by typing a context in the Contexts column. A filed item leaves the Inbox. Next Actions lists what you can do by context, Projects shows a project with nothing next as an empty section, and the Weekly Review gathers the Inbox, what has waited a week, Someday/Maybe and what got done. The first item explains the file; discard it once read.
