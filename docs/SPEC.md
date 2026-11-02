@@ -94,6 +94,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R59 | The note symbol and NOTE for what is highlighted | 4 |
 | R60 | The Activities Planner starter file | 4 |
 | R60a | The Getting Things Done starter file | 4 |
+| R60b | The Journal starter file | 4 |
 | R61 | Section Properties | 4 |
 | R62 | Moving a section | 4 |
 | R63 | Marking, copying, cutting and pasting in a note | 4 |
@@ -1096,6 +1097,26 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   One item, a welcome, whose note says how the file works.
 
   Our choices: the Inbox is the family's head, not a catch-all made by a condition, as an item typed under a category is assigned by hand and conditions never break that (R15); "untouched for a while" is read as entered long ago, as Agenda keeps no date of an item's last change.
+
+- **R60b ✅ The Journal starter file** (ours; ADR 0028, ADR 0049; meeting 2026-11-02-1043, §§ 6–7 and the addition; `plans/STARTERS.md`). A file shipped with Agendum, `starters/journal.agendum`: a journal in one file, made only of Agenda's own parts. Agenda shipped no such file.
+
+  Its categories:
+
+  - **Journal**, exclusive, holding the collections: **Dreams**, **Mood**, **Training** (with an exclusive Sport: Running, Swimming, Cycling, Walking), **Gym** (with an exclusive Exercises: Bench press, Squat, Deadlift, Pull-up, Shoulder press) and **Health** (with Symptoms, not exclusive: Headache, Cold, Fever, Stomach, Other).
+  - **People** (Sample Person) and **Feelings** (Happy, Calm, Sad, Afraid, Angry), for dreams.
+  - The numbers: Vividness, Mood 1-10, Sleep (hours), Exercise (minutes), Distance, Minutes, Sets, Reps, Weight, Volume, Severity.
+
+  A line typed in Today is filed into its collection by its words (R16): "Ran by the river" matches Running, so it is in Training as well (R7); "Bench press" goes to Gym, "Headache after lunch" to Health, "Dreamt of …" to Dreams, "Mood: calm" to Mood. Numbers are typed in their columns, never read from the text. A line no word files stays in the Journal itself.
+
+  Its views:
+
+  - **Today** (where it opens): the Journal section, the lines entered today (R28a), with a Journal column for the collection.
+  - **Index**: this month's lines, a section per collection, empty ones hidden.
+  - A **datebook** per collection on the Entry date (R47): Mood, Training and Gym this month by weeks; Dreams and Health this quarter by months; ALT-B browses (R47). Empty weeks and months are hidden. Under each: Mood 1-10 and Sleep their Average, Exercise its Total; Distance and Minutes their Total; Sets, Reps and Volume their Total, Weight its Maximum; Vividness its Average; Severity its Count and Average (R29).
+
+  How the file works is the Journal category's note, shown by ♪ on Today's section head (R59); there are no items.
+
+  Our choices: the file's week runs Monday to Sunday (R14e), as a journal is kept at weekends and a month's weeks follow it; Gym's Volume (sets × reps × weight) is typed by hand, as Agenda has no formulas.
 
 ## 5. User interface (Agenda 2.0 conventions)
 

@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Starters do
-  @shortdoc "Writes the starter files (starters/planner.agendum, starters/gtd.agendum)"
+  @shortdoc "Writes the starter files (starters/planner.agendum, gtd.agendum, journal.agendum)"
   @moduledoc """
   Writes the starter files: the Activities Planner (R60) from
-  `Agendum.Starters.Planner` and Getting Things Done (R60a) from
-  `Agendum.Starters.GTD`:
+  `Agendum.Starters.Planner`, Getting Things Done (R60a) from
+  `Agendum.Starters.GTD` and the Journal (R60b) from
+  `Agendum.Starters.Journal`:
 
-      mix agendum.starters                    # starters/planner.agendum and gtd.agendum
+      mix agendum.starters                    # starters/planner, gtd and journal.agendum
       mix agendum.starters --samples          # tmp/planner-samples.agendum
       mix agendum.starters --samples --today 2026-10-12
       mix agendum.starters --output PATH      # the Planner (or --samples, --clinic) somewhere else
@@ -49,6 +50,7 @@ defmodule Mix.Tasks.Agendum.Starters do
       true ->
         write(Planner.build(), "starters/planner.agendum")
         write(Agendum.Starters.GTD.build(), "starters/gtd.agendum")
+        write(Agendum.Starters.Journal.build(), "starters/journal.agendum")
     end
   end
 

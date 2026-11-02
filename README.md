@@ -58,7 +58,7 @@ To start from Agenda's Activities Planner (tasks, people, projects, priorities, 
 cp starters/planner.agendum ~/planner.agendum && ./agendum ~/planner.agendum
 ```
 
-For Getting Things Done (an Inbox, Next Actions by context, Agendas for each person, Projects, Waiting For, Someday/Maybe and a Weekly Review), copy `starters/gtd.agendum` the same way; its first item says how it works.
+For Getting Things Done (an Inbox, Next Actions by context, Agendas for each person, Projects, Waiting For, Someday/Maybe and a Weekly Review), copy `starters/gtd.agendum` the same way; its first item says how it works. For a journal of dreams, mood, training, the gym and health, copy `starters/journal.agendum`; the ♪ on its Journal head (F5) says how it works.
 
 ## Quick tour
 

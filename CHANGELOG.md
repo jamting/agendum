@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.77.0 — 2026-11-02
+
+- **A Journal starter file: `starters/journal.agendum`.** Dreams, Mood, Training, Gym and Health in one file. Type a line in Today and its words file it ("Ran by the river" to Training, "Bench press" to Gym, "Headache after lunch" to Health); type its numbers in the collection's view. Each collection shows this month week by week (Dreams and Health: the quarter by month) with the week's sums under it: Gym's total sets, reps and volume and its heaviest weight, Mood's average, Training's distance. A week with nothing logged is not shown, and ALT-B goes back. The ♪ on Today's Journal head (F5) explains the file.
+
 ## 0.76.2 — 2026-11-02
 
 - **In the GTD starter, Agendas sits beside the Inbox, as the Planner's People do** (the owner's layout). An item can now be in a context and on someone's agenda at once: "Call Marie about the shelves" is in @Calls and under Marie, and "Meet Kari and Hjalmar" is on both their agendas. An item on an agenda leaves the Inbox, and Next Actions shows who each action involves in an Agendas column.
