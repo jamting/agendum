@@ -127,7 +127,8 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **extra** · Descriptive key bar labels on a wide screen.
 - **extra** · The Extras menu (F10 E, R77): the extras' menu commands in one menu of their own, between Utilities and Quit, so Agenda's menus are the same with the extras on or off.
 - **quiet** · The `--clinic` Easter egg (reached only by a command-line flag).
-- **quiet** · The Getting Things Done starter file (R60a), a file of its own made of Agenda's parts, met only by someone who opens it (tag proposed by Claude, 2026-11-02, not yet confirmed by the owner).
+- **quiet** · The Getting Things Done starter file (R60a), a file of its own made of Agenda's parts, met only by someone who opens it (the owner confirmed the tag, 2026-11-02).
+- **quiet** · The Journal starter file (R60b), likewise (the owner confirmed the tag, 2026-11-02).
 - **extra** · ► before the current view in the view manager, and F5 to list the views by recently used (R68).
 - **extra** · A "While you were away" box for alarms that came due while the file was closed (R70). Agenda rings such alarms when the file is opened and shows `@`, with no box (checked in Agenda 2.0, 2026-10-22: an alarm due at 10:04pm, the file closed, opened at 10:05pm); the items are in Utilities ▸ Show Alarm's Past Alarms (R38).
 - **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
