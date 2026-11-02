@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.76.0 — 2026-11-02
+
+- **A Getting Things Done starter file: `starters/gtd.agendum`.** Copy it and open the copy. Type everything into the Inbox; words file some items by themselves ("Call Anna" goes to @Calls, "Buy milk" to @Errands, "Waiting for Bob's reply" to Waiting For), and the rest you file by typing a context in the Contexts column. A filed item leaves the Inbox. Next Actions lists what you can do by context, Projects shows a project with nothing next as an empty section, and the Weekly Review gathers the Inbox, what has waited a week, Someday/Maybe and what got done. The first item explains the file; discard it once read.
+
 ## 0.75.0 — 2026-11-02
 
 - **The extras have a menu of their own: F10 E, Extras.** Calendars, Feeds, Publish, Open link and Zettel (Attach, Follow, Linked) are there now, between Utilities and Quit, instead of in File ▸ Transfer and Item. So F10 F T C is now F10 E C, and F10 I Z A is F10 E Z A. Agenda's own menus stay exactly Agenda's, with the extras on or off; with them off, there is no Extras menu at all. The keys (CTRL-T, CTRL-V …) are unchanged.

@@ -1,14 +1,15 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Mix.Tasks.Agendum.Starters do
-  @shortdoc "Writes the starter files (starters/planner.agendum)"
+  @shortdoc "Writes the starter files (starters/planner.agendum, starters/gtd.agendum)"
   @moduledoc """
-  Writes the Activities Planner starter file (R60) from
-  `Agendum.Starters.Planner`:
+  Writes the starter files: the Activities Planner (R60) from
+  `Agendum.Starters.Planner` and Getting Things Done (R60a) from
+  `Agendum.Starters.GTD`:
 
-      mix agendum.starters                    # starters/planner.agendum
+      mix agendum.starters                    # starters/planner.agendum and gtd.agendum
       mix agendum.starters --samples          # tmp/planner-samples.agendum
       mix agendum.starters --samples --today 2026-10-12
-      mix agendum.starters --output PATH      # somewhere else
+      mix agendum.starters --output PATH      # the Planner (or --samples, --clinic) somewhere else
       mix agendum.starters --clinic           # tmp/hundred-acre-clinic.agendum
 
   `--clinic` writes Christopher Robin's clinic (`Agendum.Starters.Clinic`,
@@ -31,21 +32,27 @@ defmodule Mix.Tasks.Agendum.Starters do
         strict: [samples: :boolean, clinic: :boolean, today: :string, output: :string]
       )
 
-    {db, default} =
-      cond do
-        opts[:clinic] ->
-          {Agendum.Starters.Clinic.build(today(opts[:today])), "tmp/hundred-acre-clinic.agendum"}
+    cond do
+      opts[:clinic] ->
+        db = Agendum.Starters.Clinic.build(today(opts[:today]))
+        write(db, opts[:output] || "tmp/hundred-acre-clinic.agendum")
 
-        opts[:samples] ->
-          {Planner.with_samples(Planner.build(), today(opts[:today])),
-           "tmp/planner-samples.agendum"}
+      opts[:samples] ->
+        db = Planner.with_samples(Planner.build(), today(opts[:today]))
+        write(db, opts[:output] || "tmp/planner-samples.agendum")
 
-        true ->
-          {Planner.build(), "starters/planner.agendum"}
-      end
+      # the Planner somewhere else, as before there were two
+      opts[:output] ->
+        write(Planner.build(), opts[:output])
 
-    path = opts[:output] || default
+      # the committed starter files
+      true ->
+        write(Planner.build(), "starters/planner.agendum")
+        write(Agendum.Starters.GTD.build(), "starters/gtd.agendum")
+    end
+  end
 
+  defp write(db, path) do
     case Store.save(db, path) do
       :ok -> Mix.shell().info("Wrote #{path}")
       {:error, reason} -> Mix.raise("Could not write #{path}: #{inspect(reason)}")

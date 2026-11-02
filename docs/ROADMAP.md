@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. The GTD starter (Towards parity with Agenda, below)
+1. The starter for the easily overwhelmed (Towards parity with Agenda, below; the owner may reorder)
 
 ### 1 Fixes and polish (performance and bugs)
 
@@ -52,8 +52,7 @@ The list is chosen from the threat model, [`SECURITY.md`](SECURITY.md) (each ite
 
 **Starter files are base features**, not extras (the owner, 2026-10-31): Agenda shipped its starter applications, so a new starter is content of the clone, made only of the clone's features. A starter that needs features outside the clone may be an extra instead, there only with the Extras switch on; a feature a starter would need goes to its own lane first.
 
-- [ ] A GTD starter, like the Planner (R60, ADR 0028): Inbox, Next Actions by context, Projects, Waiting For, Someday/Maybe, and views for a weekly review (items untouched for a while, projects without a next action), so the rules show what they can do in a method many people know (expert review 2026-10-16). Its sketch, and six other systems', are in [`plans/STARTERS.md`](plans/STARTERS.md) (meeting 2026-10-28-0048)
-- [ ] After the GTD starter: a starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words, made with a filter and view names) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k). See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker). An Overdue that adapts (three at a time, more as they are cleared) is beyond the clone
+- [ ] A starter for the easily overwhelmed, with a gentler "Overdue" (fewer at a time, kinder words, made with a filter and view names) than the Planner's (`lib/agendum/starters/planner/views.ex:73`), which stays as Agenda's PLANNER (expert review 2026-10-21, § 17; meeting 2026-10-22-2130, § 5k). See [`plans/STARTERS.md`](plans/STARTERS.md) (the three-days-away test, the mood tracker). An Overdue that adapts (three at a time, more as they are cleared) is beyond the clone
 - [ ] Optional, the clone's leftovers (from the parity plan, 2026-10-26):
 
   - ALT-F1 COMPOSE, Agenda's way of typing accented and special characters by two keys

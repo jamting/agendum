@@ -93,6 +93,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R58 | Section separators | 4 |
 | R59 | The note symbol and NOTE for what is highlighted | 4 |
 | R60 | The Activities Planner starter file | 4 |
+| R60a | The Getting Things Done starter file | 4 |
 | R61 | Section Properties | 4 |
 | R62 | Moving a section | 4 |
 | R63 | Marking, copying, cutting and pasting in a note | 4 |
@@ -1071,6 +1072,29 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
   - The Contacts view, which Agenda's "Create/Update contact list" macro made, is in the file, and Sample Person's note has the phone number and company it shows.
 
   The macros that need the command language (Sort items in view, Create/Update contact list) are left out.
+
+- **R60a ✅ The Getting Things Done starter file** (ours; ADR 0028, ADR 0049; `plans/STARTERS.md`). A file shipped with Agendum, `starters/gtd.agendum`, for David Allen's method, made only of Agenda's own parts. Agenda shipped no such file.
+
+  Its categories:
+
+  - **Inbox**, exclusive, holding the lists: **Contexts** (exclusive: @Anywhere, @Calls, @Computer, @Errands, @Home, @Office), **Waiting For** and **Someday/Maybe**.
+  - **Projects** (Sample Project), beside the lists.
+
+  An item not filed yet is in the Inbox itself; a filed one is in one list, and giving it another takes it out of the first (R7a). Words file an item as it is typed (R16): call, phone, ring (@Calls); email, online, website (@Computer); buy, shop, "pick up" (@Errands); read, think (@Anywhere); "waiting for" (Waiting For, by its name); someday (Someday/Maybe).
+
+  Its views, in the method's order:
+
+  - **Inbox** (where it opens): the Inbox section filtered to the items in no list, so a filed item leaves it, by its words or by hand. Columns Contexts, Projects, When.
+  - **Next Actions**: a section per context.
+  - **Projects**: a section per project; a project without a next action is an empty section, and a new project becomes a section by itself (R42).
+  - **Waiting For**, with the Entry date; **Someday/Maybe**.
+  - **Weekly Review**: the Inbox, Waiting For entered 7 days ago or more, Someday/Maybe, and Done in the last 7 days, each section filtered, phrases read again each day (R28a).
+
+  Done items are hidden in every view but the Weekly Review's Done section.
+
+  One item, a welcome, whose note says how the file works.
+
+  Our choices: the Inbox is the family's head, not a catch-all made by a condition, as an item typed under a category is assigned by hand and conditions never break that (R15); "untouched for a while" is read as entered long ago, as Agenda keeps no date of an item's last change.
 
 ## 5. User interface (Agenda 2.0 conventions)
 
