@@ -105,6 +105,7 @@ Every rule, in number order, with the section it is in (rules were added where t
 | R64d | ESC in a note: Discard changes? | 4 |
 | R64e | The note editor's editing keys | 4 |
 | R64f | A note's connections: APPEND, GETITMS, the calendar | 4 |
+| R64g | Undo in a note | 4 |
 | R65 | Commands, keymaps and a count | 5 |
 | R65a | Commands that cannot run now | 5 |
 | R65b | The commands' longer texts | 5 |
@@ -930,6 +931,15 @@ All modification happens in the context of a view (patent claims 1, 3, 4, 6).
 
 ### Clock and alarms
 
+- **R64g ✅ Undo in a note** (ours: Agenda had no undo, R30; a *work* difference, ADR 0043). While a note (or a macro's keystrokes) is open, **CTRL-Z** undoes its last step and **CTRL-Y** redoes it, with the text and the cursor as they were:
+
+  - **Typing** is undone a word at a time: a word and the spaces (or the new line) after it are one step; "Buy milk today" goes back as "today", then "milk ", then "Buy ".
+  - **A run of deletions** (BACKSPACE, DEL) is one step. Moving the cursor ends a step, and anything else that changes the text (a paste, a cut, ALT-D, TAB, Import …) is a step of its own.
+  - **A command that changed the file** while the note was open (ALT-F7, ALT-F2, ALT-F9, ALT-F8, Clear, a replacement) is undone with the file: the item ALT-F7 made goes and its text comes back into the note. When the file has changed since in another way, CTRL-Z says so, and the step is undone in the view once the note is closed.
+  - Typing after an undo drops what could be redone. Undoing every step leaves the note unchanged, so ESC asks nothing.
+
+  The steps end with the note: once it is closed, CTRL-Z in the view puts the whole note back as it was opened, one step as before (R30; the owner's choices, 2026-11-02).
+
 - **R38 ✅ Clock and alarms** (User's Guide 10-16 to 10-20). The title bar shows the date and time, as Agenda's (checked in Agenda): the date, two spaces and the time right-aligned in seven columns, at the end of the line (`10/25/26   9:18pm`, `10/25/26  10:30am`; `2026-10-25    09:05` on a 24-hour clock).
 
   ALT-A (Item ▸ Alarm) opens Agenda's Set Alarm box (checked in Agenda):
@@ -1395,7 +1405,7 @@ Category manager navigation (from the manual): ↑/BACKSPACE, ↓/ENTER, HOME = 
 
 Extras that are not in the original (details in `KEYBOARD.md`):
 
-- **R30 ✅ Undo/redo** (CTRL-Z / CTRL-Y, menu Undo/Redo). Every action that changes the database is one undo step. Undo returns to the view and item where the change happened. It is available in views and in the category and view managers, but not while typing. Undoing back to the last save clears the "modified" marker. History holds 100 steps.
+- **R30 ✅ Undo/redo** (CTRL-Z / CTRL-Y, menu Undo/Redo). Every action that changes the database is one undo step. Undo returns to the view and item where the change happened. It is available in views and in the category and view managers, but not while typing; in a note, CTRL-Z and CTRL-Y undo the note's own steps (R64g). Undoing back to the last save clears the "modified" marker. History holds 100 steps.
 - **R31 ✅ Keyboard alternatives.** Function keys are required, as in Agenda: ESC+digit is not an F-key (ADR 0032). The Linux console's F1 to F5 (ESC [ [ A to E) are read as F-keys too; a key sequence Agendum does not know is ignored whole, never read as ESC and typed text. ALT-letters are ⌥-letters on a Mac with Option as Meta (the terminal sends ESC and the letter together; ESC then a letter typed by hand is ESC, then the letter). CTRL-N = INS, CTRL-E = F2, CTRL-K = F4, CTRL-D = discard, CTRL-S/O/P/Q = save/open/print/quit. ⌥↑/⌥↓ jump between sections. Text fields use Mac/emacs editing keys. ⌘ shortcuts are mapped onto these CTRL keys by the terminal.
 - **R65 ✅ Commands, keymaps and a count** (ours, after Emacs; ADR 0033). Since R65e the help's pages are reached as Agenda's: F1's text is the topic for where you are, and `a`, `c` and `d` below are F6 Keys and its two links, Commands you can run here and Describe a key.
 

@@ -137,6 +137,8 @@ defmodule Agendum.TUI.Commands do
     {:cut, "Cut", "Cut the marked text (or a word …)", :none},
     {:delete, "Delete", "Delete the marked text, not kept", :none},
     {:paste, "Paste", "Paste what was copied or cut last", :none},
+    {:undo, "Undo", "Undo the last word or change", :none},
+    {:redo, "Redo", "Redo what was undone", :none},
     {:search, "Search", "Search or replace in the note", :none},
     {:search_next, "Search again", "Find the next one (or replace it)", :none},
     {:insert_date, "Date", "Type today's date", :none},

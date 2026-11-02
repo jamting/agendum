@@ -115,7 +115,7 @@ Since 2026-10-23 the menus are captured from Agenda itself (`tools/agformat/capt
 
 What Agendum has that Agenda did not. The entries tagged **extra** are hidden while the Extras preference is off, as it is by default (R77, built 2026-10-23). Each entry carries its tag by ADR 0043's test, proposed by Claude and confirmed by the owner entry by entry in the tagging sitting of 2026-10-22 (meeting 2026-10-22-2130, § 5b): **machine**, **work** or **quiet** stay; **extra** is hidden behind the Extras preference; **change back** is a roadmap item of its own (ROADMAP, Towards parity).
 
-- **work** · Undo and redo of every change (CTRL-Z, CTRL-Y; R30), on their keys only since the menu took Agenda's shape (2026-10-24).
+- **work** · Undo and redo of every change (CTRL-Z, CTRL-Y; R30), on their keys only since the menu took Agenda's shape (2026-10-24); in a note too, a word at a time (R64g, 2026-11-02).
 - **machine** · JSON export and import (R44), a readable file format.
 - **extra** · Calendar subscriptions (iCal, R45) and time zones.
 - **quiet** · Date languages, Swedish among them (R41): English is the default.

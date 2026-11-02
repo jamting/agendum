@@ -157,6 +157,9 @@ defmodule Agendum.TUI.Keymap do
   # a note (F5): any key not here edits the text (`Typing.TextEdit`)
   @note %{
     {:ctrl, "l"} => :insert_link,
+    # ours (R64g): the view's undo keys, a word at a time in the note
+    {:ctrl, "z"} => :undo,
+    {:ctrl, "y"} => :redo,
     # Agenda's (R64f)
     {:alt_f, 9} => :append,
     {:alt_f, 8} => :get_items,

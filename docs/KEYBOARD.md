@@ -39,6 +39,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | Search this view; then next / previous match                                                    | ALT-F6; ALT-N / ALT-P         | —; ⌥n / ⌥p                                      |
 | In a note: search / replace; find the next occurrence (after a single replacement: replace it)  | ALT-F6; ALT-S                 | —; ⌥s                                            |
 | In a note: move by the rows shown (long lines wrap, R64); start / end of the row, again: of the line| ↑ ↓; HOME / END               | CTRL-A / CTRL-E                                                       |
+| In a note: undo / redo, a word at a time, file changes made from the note included (ours, R64g)     | —                             | **CTRL-Z** / **CTRL-Y**                                    |
 | In a note: insert today's date / the time                                                       | ALT-D / ALT-T                 | ⌥d / ⌥t                                                    |
 | In a note: the next / previous item's (or category's) note                                      | ALT-N / ALT-P                 | ⌥n / ⌥p                                                    |
 | In a note: save and go back; go back asking "Discard changes?" when it changed (R64d)           | F5; ESC                       | —                                                          |

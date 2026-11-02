@@ -6,6 +6,7 @@ KEYS          F5               Save and go back
               ESC              Go back, asking to keep changes
               F7               Mark text (F3 copy, F4 cut, F2 paste,
                                ALT-F4 delete)
+              CTRL-Z / CTRL-Y  Undo / redo, a word at a time
               ALT-F6           Search and replace
               ALT-N / ALT-P    The next / previous item's note
               ALT-D / ALT-T    Type today's date / the time

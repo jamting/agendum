@@ -157,7 +157,9 @@ defmodule Agendum.TUI.HelpScreenTest do
       text = screen(press(state, [:down, {:f, 5}, {:f, 1}, {:f, 6}, :enter]))
       assert text =~ "COMMANDS IN A NOTE"
       assert text =~ ~r/Cut +F4 +Cut the marked text/
-      refute text =~ "Undo"
+      # the note's own Undo (R64g), not the file's from every screen
+      assert text =~ ~r/Undo +CTRL-Z +Undo the last word or change/
+      refute text =~ "Retrieve"
     end
 
     test "ENTER runs a note command in the note", %{state: state} do
@@ -249,14 +251,14 @@ defmodule Agendum.TUI.HelpScreenTest do
       assert described(in_viewmgr, "w") =~ "w highlights the next view whose name starts"
     end
 
-    test "in a note: a command, a key that edits, and CTRL-Z, which is not undo there",
+    test "in a note: a command, a key that edits, and CTRL-Z, the note's own undo",
          %{state: state} do
       in_note = press(state, [:down, {:f, 5}])
       assert described(in_note, {:f, 4}) =~ "F4 runs Cut in a note."
       assert described(in_note, :left) =~ "← runs Left in the text."
       assert described(in_note, {:ctrl, "e"}) =~ "CTRL-E runs End in the text."
       assert described(in_note, "q") =~ "q is typed into the text."
-      refute described(in_note, {:ctrl, "z"}) =~ "Undo"
+      assert described(in_note, {:ctrl, "z"}) =~ "CTRL-Z runs Undo in a note."
     end
 
     test "ESC before a key goes back", %{state: state} do

@@ -13,6 +13,7 @@ Agenda 2.0 had no general undo, but a modern user expects one, and many operatio
 - A key that does two things the person would undo separately may end a step partway (`State.end_step/1`, added 2026-10-15): History then records the two parts as two steps, still by comparing databases, not by hand. The first replacement in a note uses it, so that the typing before it is not undone with it.
 - Undo and redo themselves, loading or starting a file, and the clock (alarms ringing) do not record steps.
 - Undo works in views and in the category and view managers, not while typing or inside a box that is about one particular item.
+- A note keeps steps of its own while it is open (added 2026-11-02, R64g): `Agendum.TUI.Typing.NoteUndo`, recorded in one place after every key as the file's are, a word of typing a step. A step that changed the file holds the file's snapshots it recorded and is undone with `History`, so the two never disagree. When the note closes its steps go, and the whole note is one file step as before.
 
 ## Consequences
 

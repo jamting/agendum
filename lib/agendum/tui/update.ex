@@ -88,6 +88,8 @@ defmodule Agendum.TUI.Update do
     state = BoxCancel.track(before, state)
     # a settings box that just closed is one undo step, or none (ADR 0030)
     state = BoxCancel.settle(before, state)
+    # and the note's own steps, while one is open (R64g)
+    state = Agendum.TUI.Typing.NoteUndo.track(before, key, state)
     changed? = state.db != before.db
     state = if changed?, do: State.follow_marks(before, state), else: state
     state = %{state | dirty: state.db != state.saved.db}

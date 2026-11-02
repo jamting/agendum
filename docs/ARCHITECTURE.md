@@ -188,6 +188,7 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.ImportReportBox`                  | ✔     | The report after a Lotus Agenda file was imported: what came over, what was left out, items filed differently (R72). |
 | `Agendum.TUI.Boxes.RunByName`                        | ✔     | CTRL-X: run a command by its name, the matches best first (R65d, ADR 0040). |
 | `Agendum.TUI.Typing.NoteSearch`                       | ✔     | The Search/Replace box in a note, ALT-S, and confirming each replacement (R39).                                                  |
+| `Agendum.TUI.Typing.NoteUndo`                         | ✔     | Undo and redo inside an open note, a word at a time, file changes from the note included (R64g).                                 |
 | `Agendum.TUI.Boxes.AwayBox`                          | ✔     | "While you were away": the alarms that came due while the file was closed, grouped (R70).                                        |
 | `Agendum.TUI.DevTools`                         | ✔     | The hidden developer screen (ESC ?): state for debugging, and a key tester.                                                      |
 | `Agendum.Starters.Planner`                     | ✔     | The Activities Planner starter file, built through `Agendum.Core` (R60, ADR 0028); `Planner.Views`, `Planner.Macros`, `Planner.Samples` (sample data). |

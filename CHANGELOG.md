@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.78.0 — 2026-11-02
+
+- **Undo while you write a note: CTRL-Z and CTRL-Y.** Typing goes back a word at a time ("Buy milk today": "today", then "milk ", then "Buy "), a run of BACKSPACEs as one step, and a paste or a date as one of its own. What a note command did to the file goes back too: CTRL-Z after ALT-F7 puts the text back into the note and removes the item it made. Once the note is closed, CTRL-Z in the view puts the whole note back as it was opened, as before.
+
 ## 0.77.0 — 2026-11-02
 
 - **A Journal starter file: `starters/journal.agendum`.** Dreams, Mood, Training, Gym and Health in one file. Type a line in Today and its words file it ("Ran by the river" to Training, "Bench press" to Gym, "Headache after lunch" to Health); type its numbers in the collection's view. Each collection shows this month week by week (Dreams and Health: the quarter by month) with the week's sums under it: Gym's total sets, reps and volume and its heaviest weight, Mood's average, Training's distance. A week with nothing logged is not shown, and ALT-B goes back. The ♪ on Today's Journal head (F5) explains the file.

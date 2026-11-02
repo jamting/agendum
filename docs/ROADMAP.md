@@ -23,7 +23,6 @@ Kept running well as today: the nightly fuzz run (10,000 walks and the parsers),
   - **A refused command still moves the screen on** (`State.run/2` drops the refusal): removing a column moves the highlight, ALT-Y says "Yanked back" over the error. Not reproduced (2026-10-31): after the TUI's own checks the core cannot refuse either command, so nothing was changed; fix it when a refusal becomes possible.
   - **Later, with the view cache** (below, when the evidence asks): a key in a column builds the view model up to four times (`Layout.current_column`, each `current_row` builds it again).
 - [ ] Optional (the owner, 2026-10-27): try v0.69.3's main fix by hand: open a second file while a feed is being read, and see its entries land only in the file that asked (the richer fuzz walks already check it)
-- [ ] Undo in the note editor: CTRL-Z / CTRL-Y while editing a note, for typing (in sensible chunks: a word or a line, not every key) and for Search/Replace's replacements, with the note's text and cursor restored in the editor; the steps join the file's history when the note closes (today undo works only after closing the note, ADR 0005)
 - [ ] A view cache, when the evidence asks for it: every key rebuilds the whole view (each item's cells, and every item's text wrapped for the screen, not only the rows shown), about three times per key.
 
   - **Measured** 2026-10-16, a cursor move: 300 items 6 ms in `Update` + 11 ms in `Render`; 3,000 items 61 + 45 ms; 10,000 items 205 + 231 ms.

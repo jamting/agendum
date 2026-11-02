@@ -27,6 +27,8 @@ defmodule Agendum.TUI.Update.Notes do
     copies it, F4 cuts it, ALT-F4 deletes it; F2 pastes what you copied or
     cut last. With nothing marked, they ask: the word, the line or all.
 
+    CTRL-Z undoes a word (or a change) at a time, CTRL-Y redoes it.
+
     ALT-F6 searches or replaces, ALT-S finds the next one. ALT-D and ALT-T
     type today's date and the time. ALT-F7 makes the marked text an item,
     ALT-F2 a category.
@@ -145,6 +147,10 @@ defmodule Agendum.TUI.Update.Notes do
   end
 
   defp command(state, _mode, :help), do: Agendum.TUI.HelpScreen.open(state)
+
+  # CTRL-Z / CTRL-Y while the note is open (R64g): its own steps
+  defp command(state, _mode, :undo), do: Agendum.TUI.Typing.NoteUndo.undo(state)
+  defp command(state, _mode, :redo), do: Agendum.TUI.Typing.NoteUndo.redo(state)
 
   defp command(state, mode, :mark),
     do: State.put_mode(state, %{mode | edit: TextEdit.toggle_mark(mode.edit)})
@@ -552,7 +558,10 @@ defmodule Agendum.TUI.Update.Notes do
       target: target,
       title: title,
       edit: TextEdit.new(text),
-      original: text
+      original: text,
+      # its own undo steps while it is open (R64g, `Typing.NoteUndo`)
+      undo: [],
+      redo: []
     })
   end
 
