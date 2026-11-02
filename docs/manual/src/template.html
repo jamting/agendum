@@ -60,7 +60,7 @@
   <p>Everything worth knowing about Wol's Agendum, the important things in depth and the
      rest in brief, as Owl explained it to Rabbit one afternoon. For the short
      version, see the <a href="../guide/index.html">User Guide</a>.</p>
-  <p class="written-for">Written for Agendum 0.72</p>
+  <p class="written-for">Written for Agendum 0.77</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -282,7 +282,8 @@ find it restful.</p>
 
 <h3>The menu</h3>
 <p><kbd>F10</kbd> or <kbd>/</kbd> opens the menu, Agenda's own: File, Item, Category,
-View, Print, Utilities, Quit. Choose with the arrow keys and <kbd>ENTER</kbd>, or simply
+View, Print, Utilities, Quit (with the <a href="#extras">extras</a> on, an Extras menu
+stands before Quit). Choose with the arrow keys and <kbd>ENTER</kbd>, or simply
 type the first letter of a command; <kbd>ESC</kbd> goes back a level. A box chosen from
 the menu goes back to the menu on <kbd>ESC</kbd>, so you can back out a step at a time.
 This manual writes menu paths like <strong>File ▸ Properties</strong>. Commands Agenda
@@ -382,8 +383,9 @@ highlight. <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) starts an empty new item the sa
 {{20-typing}}
 
 <p>While Rabbit types, <code>EDIT</code> stands where the time was, as in Agenda;
-<kbd>ENTER</kbd> finishes and <kbd>ESC</kbd> gives up. A line too long for its place
-scrolls as he types. The key bar shows Agenda's editing keys: <kbd>F7</kbd> marks text,
+<kbd>ENTER</kbd> finishes and <kbd>ESC</kbd> gives up. A long item wraps onto as many
+lines as it needs as he types, as in Agenda: <kbd>↑</kbd> and <kbd>↓</kbd> move between
+its lines, and only <kbd>ENTER</kbd> or <kbd>TAB</kbd> take the text. The key bar shows Agenda's editing keys: <kbd>F7</kbd> marks text,
 <kbd>F3</kbd> copies it, <kbd>F4</kbd> cuts it and <kbd>F2</kbd> pastes (with nothing
 marked, a small <em>What to copy</em> box asks whether he means the word, the line or
 all the text), and <kbd>F5</kbd> keeps the item and opens its note. When he presses
@@ -406,13 +408,14 @@ meant tomorrow, say “Tuesday”.</p>
 <h3>Changing, finishing and throwing away</h3>
 <table>
   <tr><th>To</th><th>Press</th></tr>
-  <tr><td>Change the text</td><td><kbd>F2</kbd> (or <kbd>CTRL-E</kbd>); <kbd>ENTER</kbd> keeps the change, <kbd>ESC</kbd> drops it</td></tr>
+  <tr><td>Change the text</td><td><kbd>F2</kbd> (or <kbd>CTRL-E</kbd>), which starts at the beginning of the text; <kbd>ENTER</kbd> keeps the change, <kbd>ESC</kbd> drops it</td></tr>
   <tr><td>Mark it done (shown <code>‼</code>); again to undo that</td><td><kbd>F4</kbd> (or <kbd>CTRL-K</kbd>)</td></tr>
   <tr><td>Take it out of <em>this section</em> only (after a question)</td><td><kbd>DEL</kbd> (<strong>Item ▸ BrkAssign</strong>)</td></tr>
   <tr><td>Discard it from the whole file, into the trash (after a question)</td><td><kbd>ALT-F4</kbd> (or <kbd>CTRL-D</kbd>; <strong>Item ▸ Discard</strong>)</td></tr>
   <tr><td>Bring discarded items back from the trash</td><td><strong>Item ▸ Undisc</strong></td></tr>
-  <tr><td>Move it to another section</td><td><kbd>ALT-F10</kbd>, then the arrow keys and <kbd>ENTER</kbd></td></tr>
-  <tr><td>Put it in another section <em>as well</em></td><td><kbd>ALT-F9</kbd>, then pick the section and <kbd>ENTER</kbd></td></tr>
+  <tr><td>Move it to another section, where it goes last</td><td><kbd>ALT-F10</kbd>: a small <em>Move</em> box lists the view's sections; pick one and <kbd>ENTER</kbd></td></tr>
+  <tr><td>Move it up or down its own section, to the top if you like</td><td><strong>Item ▸ Reposition</strong>, then <kbd>↑</kbd> <kbd>↓</kbd>; <kbd>ENTER</kbd> puts it down</td></tr>
+  <tr><td>Put it in another section <em>as well</em></td><td><kbd>ALT-F9</kbd>, then pick the section and <kbd>ENTER</kbd> (a view with one section has nowhere else, and says so)</td></tr>
   <tr><td>Bring back the item <kbd>DEL</kbd> last took out, into this section, below the highlight</td><td><kbd>ALT-Y</kbd></td></tr>
   <tr><td>Hop to the same item where it shows next: further down, or in the next view</td><td><kbd>ALT-H</kbd>; <kbd>ALT-F8</kbd> comes back</td></tr>
 </table>
@@ -1515,8 +1518,8 @@ shows <code>&amp;</code> until they are all done.</p>
   <tr><td>Start another file with this one's categories and views, but no items</td><td><strong>File ▸ Transfer ▸ Template</strong></td></tr>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd>, or <strong>Print</strong></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON or Lotus Agenda file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
-  <tr><td>Subscribe to a calendar on the web (an <a href="#extras">extra</a>)</td><td><strong>File ▸ Transfer ▸ Calendars</strong></td></tr>
-  <tr><td>Subscribe to news feeds / publish the blog (extras)</td><td><strong>File ▸ Transfer ▸ Feeds</strong> / <strong>Publish</strong></td></tr>
+  <tr><td>Subscribe to a calendar on the web (an <a href="#extras">extra</a>)</td><td><strong>Extras ▸ Calendars</strong></td></tr>
+  <tr><td>Subscribe to news feeds / publish the blog (extras)</td><td><strong>Extras ▸ Feeds</strong> / <strong>Publish</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
 
@@ -1619,13 +1622,15 @@ head.</p>
 <h3 id="extras">Extras</h3>
 <p>Agendum can do a few things Agenda never did. They are hidden until you set
 <strong>Utilities ▸ Customize ▸ Extras</strong> to <em>Yes</em>, so that someone who knew
-Agenda finds it as they left it. With the extras on you get calendars from the web
+Agenda finds it as they left it. With the extras on, the menu gets one more entry,
+<strong>Extras</strong>, between Utilities and Quit, and every extra's command is there:
+Agenda's own menus stay exactly Agenda's either way. You get calendars from the web
 (below), the <em>While you were away</em> box for alarms (<a href="#dates">chapter
 7</a>), <code>►</code> before the view you are in and <kbd>F5</kbd> to list the views by
 when you last used them in the view manager, the commands' longer names on the key bar
 of a wide screen, a reader for news feeds (below), Zettel ids and links between items
-(<strong>Item ▸ Zettel</strong>) and a small blog published from the file
-(<strong>File ▸ Transfer ▸ Publish</strong>, below). Turning them off hides them again;
+(<strong>Extras ▸ Zettel</strong>) and a small blog published from the file
+(<strong>Extras ▸ Publish</strong>, below). Turning them off hides them again;
 nothing in the file is lost.</p>
 
 <h3 id="calendars">Calendars from the web</h3>
@@ -1639,7 +1644,7 @@ On the web, he says. I never know when the next one is, and then everyone has go
 <p>A calendar published on the web, with an address ending in <code>.ics</code> or
 starting with <code>webcal://</code>, can be brought in as items, once the extras are
 on.
-<strong>File ▸ Transfer ▸ Calendars</strong> lists the file's subscriptions.
+<strong>Extras ▸ Calendars</strong> lists the file's subscriptions.
 <kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) asks for the address and reads the calendar at
 once; then it asks for a name, with the calendar's own name filled in. The name becomes
 the category the events go in, under a family called <em>Calendars</em>. A calendar
@@ -1690,7 +1695,7 @@ do you find the time?</p>
 nags me about the rest.</p>
 </div>
 
-<p><strong>File ▸ Transfer ▸ Feeds</strong> is a manager for news feeds (RSS and Atom),
+<p><strong>Extras ▸ Feeds</strong> is a manager for news feeds (RSS and Atom),
 with the same keys as Calendars: <kbd>INS</kbd> subscribes (the address, then the
 name, the feed's own title filled in), <kbd>ENTER</kbd> reads the highlighted feed now
 and <kbd>ALT-ENTER</kbd> all of them, <kbd>F2</kbd> renames, <kbd>F6</kbd> sets how
@@ -1702,14 +1707,14 @@ often it is read and how long its entries stay (7 days to for ever; 30 by defaul
       text, its summary and link the note, its publish date the <em>Entry</em> date.
       The first feed makes a <em>News</em> view, a section per feed, newest first.</li>
   <li>Nothing asks to be read: there are no unread counts. <kbd>F4</kbd> (done)
-      dismisses an entry, and <kbd>CTRL-V</kbd> (or <strong>Item ▸ Open link</strong>)
+      dismisses an entry, and <kbd>CTRL-V</kbd> (or <strong>Extras ▸ Open link</strong>)
       opens its link in the browser.</li>
   <li>Old entries fade away by themselves, unless Rabbit kept them: gave one a
       category by hand, changed its text or note, or gave it a Zettel id.</li>
 </ul>
 
 <div class="brief">
-<p><strong>A small blog.</strong> <strong>File ▸ Transfer ▸ Publish</strong> writes the
+<p><strong>A small blog.</strong> <strong>Extras ▸ Publish</strong> writes the
 items in a <em>Posts</em> category as a website: a page per post, the whole blog on its
 front page, and feeds for readers to follow. The note is the post, in a little
 Markdown (headings, <code>**strong**</code>, lists, links). The site is plain HTML in
@@ -1718,10 +1723,12 @@ reader's computer is, and can be uploaded by rsync or SFTP. Posts in a
 <em>Drafts</em> category wait until they are ready.</p>
 </div>
 
-<h3 id="planner">A ready-made planner</h3>
-<p>Agenda came with ready-made files to begin from, and Agendum comes with one: the
-<em>Activities Planner</em>, <code>starters/planner.agendum</code>. Copy it and open the
-copy; it has no items, only the setting-up done for you:</p>
+<h3 id="planner">Ready-made files</h3>
+<p>Agenda came with ready-made files to begin from, and Agendum comes with three, in the
+<code>starters</code> folder. Copy one and open the copy, so the original stays as it
+was. The first is Agenda's own <em>Activities Planner</em>,
+<code>starters/planner.agendum</code>; it has no items, only the setting-up done for
+you:</p>
 <ul>
   <li>Categories for <em>People</em>, <em>Projects</em>, <em>Tasks</em>,
       <em>Activity</em> (Calls, Meetings, Mail, Reading, Follow up, Issues, Ideas),
@@ -1744,6 +1751,52 @@ copy; it has no items, only the setting-up done for you:</p>
 to keep track of.</p>
 <p class="owl"><b>Owl.</b> Tell her to begin with the planner. It is easier to change a
 Method than to invent one.</p>
+</div>
+
+<p><strong>Getting Things Done</strong>, <code>starters/gtd.agendum</code>, is for
+people who follow David Allen's method:</p>
+<ul>
+  <li>Everything is typed into the <em>Inbox</em>. Some words file an item by
+      themselves: “Call Anna” goes to <em>@Calls</em>, “Buy milk” to
+      <em>@Errands</em>, “Waiting for Bob's reply” to <em>Waiting For</em>. The rest you
+      file by typing a context in the Contexts column. A filed item leaves the Inbox.</li>
+  <li>Six contexts, <em>@Anywhere</em>, <em>@Calls</em>, <em>@Computer</em>,
+      <em>@Errands</em>, <em>@Home</em> and <em>@Office</em>, besides <em>Waiting For</em>
+      and <em>Someday/Maybe</em>; each item is in one of them.</li>
+  <li><em>Agendas</em>, what to bring up with each person: an item naming someone you
+      have put under Agendas goes on their agenda as well, so “Call Kanga about Roo's
+      birthday” is a call and on Kanga's agenda.</li>
+  <li>Views: Inbox (where it opens), Next Actions by context, Agendas, Projects (a
+      project with nothing to do next shows as an empty section), Waiting For,
+      Someday/Maybe, and a Weekly Review of the Inbox, what has waited a week, the
+      Someday list and what got done.</li>
+  <li>Its first item says how the file works (<kbd>F5</kbd> opens its note); throw it
+      away once read.</li>
+</ul>
+
+<p><strong>The Journal</strong>, <code>starters/journal.agendum</code>, keeps dreams,
+mood, training, the gym and health in one book:</p>
+<ul>
+  <li>It opens on <em>Today</em>: type one line for each thing. Words file a line by
+      themselves: “Ran by the river” to Training, “Bench press” to Gym, “Headache after
+      lunch” to Health, “Dreamt of …” to Dreams, “Mood: calm” to Mood.</li>
+  <li>Each collection has a view showing this month week by week (Dreams and Health:
+      the quarter month by month), and under each week its sums: the gym's total sets,
+      reps and volume and its heaviest weight, the average mood and sleep, the distance
+      run. Numbers are typed in their columns there; a line's words never fill one in.
+      <kbd>ALT-B</kbd> goes back to earlier weeks.</li>
+  <li>A week with nothing in it is not shown, so a missed day leaves no gap to feel bad
+      about. The <em>Index</em> lists this month's lines by collection.</li>
+  <li>How it works is the note of its <em>Journal</em> heading: <code>♪</code> on Today's
+      head, and <kbd>F5</kbd> opens it.</li>
+</ul>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Tigger would want the gym one. He bounces forty times
+before breakfast and tells everybody.</p>
+<p class="owl"><b>Owl.</b> Then he may write “Bounces” as his exercise and type forty under
+Reps. By Friday the week's total will be under it, and he can tell everybody that
+instead.</p>
 </div>
 
 <h3 id="yours">Your settings, in every file</h3>
@@ -2013,12 +2066,13 @@ and the letter, with your terminal set to use Option as Meta.</p>
 <h3>The menu</h3>
 <table>
   <tr><th>Menu</th><th>Commands</th></tr>
-  <tr><td>File</td><td>Retrieve, Save, Abandon, Properties, Transfer (Import, Export, Template; with the extras, Calendars, Publish, Feeds), Maintenance (MakeCopy, Erase)</td></tr>
-  <tr><td>Item</td><td>Properties, MakeAssign, Discard, Undisc, BrkAssign, Reposition, Alarm (with the extras, Open link, Zettel)</td></tr>
+  <tr><td>File</td><td>Retrieve, Save, Abandon, Properties, Transfer (Import, Export, Template), Maintenance (MakeCopy, Erase)</td></tr>
+  <tr><td>Item</td><td>Properties, MakeAssign, Discard, Undisc, BrkAssign, Reposition, Alarm</td></tr>
   <tr><td>Category</td><td>Properties, Add, Discard</td></tr>
   <tr><td>View</td><td>Properties, Add, Browse, Discard, Column (Properties, Add, Remove, Move, Width), Section (Properties, Add, Remove, Move)</td></tr>
   <tr><td>Print</td><td>The view to a text file</td></tr>
   <tr><td>Utilities</td><td>Customize, Execute, Show (Match, Prereqs, Depends, ItemsDone, Circular, Alarm, Sched, Every), Questions, Trash</td></tr>
+  <tr><td>Extras</td><td>Only with the extras on: Calendars, Feeds, Publish, Open link, Zettel (Attach, Follow, Linked)</td></tr>
   <tr><td>Quit</td><td></td></tr>
 </table>
 

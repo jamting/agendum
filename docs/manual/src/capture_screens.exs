@@ -143,13 +143,13 @@ defmodule ManualScreens do
   defp calendars(state) do
     state = put_in(state.prefs.extras, true)
     address = String.graphemes("webcal://example.org/expotitions.ics")
-    s = press(state, [{:f, 10}, "f", "t", "c", :insert] ++ address ++ [:enter])
+    s = press(state, [{:f, 10}, "e", "c", :insert] ++ address ++ [:enter])
     # the shell reads the address first (webcal:// is read as https://); its
     # answer offers the calendar's own name
     url = "https://example.org/expotitions.ics"
 
     s =
-      Agendum.TUI.Update.Results.calendar_probed(
+      Agendum.TUI.Extras.Calendars.Results.calendar_probed(
         s,
         url,
         {:ok, %{title: "Expotitions", events: []}}
@@ -182,7 +182,7 @@ defmodule ManualScreens do
       }
     ]
 
-    s = Agendum.TUI.Update.Results.calendar_read(s, id, url, {:ok, events})
+    s = Agendum.TUI.Extras.Calendars.Results.calendar_read(s, id, url, {:ok, events})
     shot("45-calendars", s, :calendars)
   end
 
