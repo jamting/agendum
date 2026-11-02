@@ -50,11 +50,11 @@ defmodule Agendum.TUI.Extras.IngestedTest do
 
     assert renamed.db.feeds[feed].name == "Heffalump News"
     assert renamed.db.categories[renamed.db.feeds[feed].category_id].name == "Heffalump News"
-    assert screen(renamed) =~ "File ▸ Transfer ▸ Feeds"
+    assert screen(renamed) =~ "Extras ▸ Feeds"
   end
 
   test "F2 in the Feeds box renames the feed and its category", %{state: state, feed: feed} do
-    state = press(state, [{:f, 10}, "f", "t", "f"])
+    state = press(state, [{:f, 10}, "e", "f"])
     asked = press(state, {:f, 2})
     assert screen(asked) =~ "New name of the feed:"
     assert screen(asked) =~ "Heffalump News"
@@ -66,7 +66,7 @@ defmodule Agendum.TUI.Extras.IngestedTest do
   end
 
   test "F2 in the Calendars box renames the calendar and its category", %{state: state, cal: cal} do
-    state = press(state, [{:f, 10}, "f", "t", "c"])
+    state = press(state, [{:f, 10}, "e", "c"])
     renamed = press(state, [{:f, 2}, {:ctrl, "u"}] ++ String.graphemes("Office") ++ [:enter])
     assert renamed.db.calendars[cal].name == "Office"
     assert renamed.db.categories[renamed.db.calendars[cal].category_id].name == "Office"
@@ -79,7 +79,7 @@ defmodule Agendum.TUI.Extras.IngestedTest do
 
     refused = state |> to_row("Calendars") |> press({:f, 2})
     assert screen(refused) =~ "Calendars holds your calendars"
-    assert screen(refused) =~ "File ▸ Transfer ▸ Calendars"
+    assert screen(refused) =~ "Extras ▸ Calendars"
   end
 
   test "in a file with calendars and no feeds, Calendars is folded too" do

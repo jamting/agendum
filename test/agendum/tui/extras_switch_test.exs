@@ -33,6 +33,12 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
       item = state |> press([{:f, 10}, "i"]) |> screen()
       refute item =~ "Zettel"
       refute item =~ "Open link"
+
+      # no Extras menu: the top line is Agenda's own, and E chooses nothing
+      top = state |> press({:f, 10}) |> screen()
+      assert top =~ ~r/Utilities +Quit/
+      refute top =~ "Extras"
+      assert state |> press([{:f, 10}, "e"]) |> screen() == top
     end
 
     test "File ▸ Transfer says only what it holds", %{db: db} do
@@ -92,8 +98,17 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
   describe "on" do
     test "the menus, keys and lists have the extras", %{db: db} do
       state = start(db, extras: true, width: 160)
-      assert state |> press([{:f, 10}, "f", "t"]) |> screen() =~ "Feeds"
-      assert state |> press([{:f, 10}, "i"]) |> screen() =~ "Zettel"
+      assert state |> press({:f, 10}) |> screen() =~ ~r/Utilities +Extras +Quit/
+
+      assert state |> press([{:f, 10}, "e"]) |> screen() =~
+               ~r/Calendars +Feeds +Publish +Open link +Zettel/
+
+      assert state |> press([{:f, 10}, "e", "z"]) |> screen() =~ ~r/Attach +Follow +Linked/
+
+      # Agenda's menus stay Agenda's with the extras on too
+      transfer = state |> press([{:f, 10}, "f", "t"]) |> screen()
+      refute transfer =~ "Feeds"
+      refute state |> press([{:f, 10}, "i"]) |> screen() =~ "Zettel"
 
       assert state |> press([{:f, 1}, {:f, 6}, :enter | String.graphemes("attach")]) |> screen() =~
                "Attach Zettel id"
@@ -115,7 +130,7 @@ defmodule Agendum.TUI.ExtrasSwitchTest do
     state = press(state, " ")
     assert state.prefs.extras
     assert screen(state) =~ ~r/Extras +: Yes/
-    state = press(state, [:enter, {:f, 10}, "f", "t"])
+    state = press(state, [:enter, {:f, 10}, "e"])
     assert screen(state) =~ "Feeds"
   end
 

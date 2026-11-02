@@ -37,7 +37,7 @@ Examples:
     tools/smoke/smoke.py --size 100x30 --highlight DOWN DOWN F2
     tools/smoke/smoke.py --file my.agendum text:Call Bob ENTER snap ALT-Z
     tools/smoke/smoke.py --args "--rabbit --theme mono" F1
-    tools/smoke/smoke.py --extras --file feeds.agendum F10 text:f text:t text:f
+    tools/smoke/smoke.py --extras --file feeds.agendum F10 text:e text:f
     tools/smoke/smoke.py --log --file owl.agendum text:Hoot ENTER   # and its log
 
 Without --file or --args the demo file opens (--demo); with --args alone,

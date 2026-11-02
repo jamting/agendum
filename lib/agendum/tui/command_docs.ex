@@ -344,7 +344,7 @@ defmodule Agendum.TUI.CommandDocs do
   # the menu's entries, by their labels from the top (an entry that runs
   # a view's or a global command without one here has that command's text)
   @menu %{
-    ~w(Item Zettel) =>
+    ~w(Extras Zettel) =>
       "Zettel ids name items for good, so that items can link to each other: [[bonalaku]] " <>
         "in a text or note, or the id on its own, is a link.",
     ~w(File Maintenance MakeCopy) =>
@@ -364,7 +364,7 @@ defmodule Agendum.TUI.CommandDocs do
         "scripts, or for moving to another program.",
     ~w(File Transfer Import) =>
       "Opens a JSON file as a new, untitled file, so nothing open is overwritten.",
-    ~w(File Transfer Calendars) =>
+    ~w(Extras Calendars) =>
       "Subscribed calendars (iCal addresses) come in as items with When dates and are " <>
         "read again by themselves: appointments beside the things to do.",
     ~w(Category Add) =>

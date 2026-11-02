@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.CalendarsBox do
   @moduledoc """
-  The Calendars box (File ▸ Transfer ▸ Calendars; SPEC R45): the file's
+  The Calendars box (Extras ▸ Calendars; SPEC R45): the file's
   calendar subscriptions, each with its address, how often it is read, how
   far ahead, and when it was last read (or why that failed).
 

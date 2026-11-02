@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.ZettelsTest do
-  @moduledoc "Zettel ids in the view: Item ▸ Zettel ▸ Attach (R73)."
+  @moduledoc "Zettel ids in the view: Extras ▸ Zettel ▸ Attach (R73)."
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
@@ -12,7 +12,7 @@ defmodule Agendum.TUI.Extras.ZettelsTest do
   end
 
   # the menu: F10, Item, Zettel, Attach (first letters, as in Agenda)
-  defp attach(state), do: press(state, [{:f, 10}, "i", "z", "a"])
+  defp attach(state), do: press(state, [{:f, 10}, "e", "z", "a"])
   defp current(state), do: Layout.current_row(state).item
 
   test "Attach gives the highlighted item the next id and says which", %{state: state} do
@@ -47,7 +47,7 @@ defmodule Agendum.TUI.Extras.ZettelsTest do
     assert state.db.next_zettel == 1
   end
 
-  test "CTRL-T does what Item ▸ Zettel ▸ Attach does", %{state: state} do
+  test "CTRL-T does what Extras ▸ Zettel ▸ Attach does", %{state: state} do
     state = press(state, [:down, {:ctrl, "t"}])
     assert screen(state) =~ "bonalaku given"
   end

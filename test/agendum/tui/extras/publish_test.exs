@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishTest do
-  @moduledoc "File ▸ Transfer ▸ Publish: the micro-blog's boxes (R74)."
+  @moduledoc "Extras ▸ Publish: the micro-blog's boxes (R74)."
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
@@ -19,7 +19,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
     %{state: start(db, extras: true), hello: hello}
   end
 
-  defp open(state), do: press(state, [{:f, 10}, "f", "t", "p"])
+  defp open(state), do: press(state, [{:f, 10}, "e", "p"])
   defp type(state, text), do: press(state, String.graphemes(text) ++ [:enter])
 
   defp scan_effect do

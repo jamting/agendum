@@ -17,7 +17,7 @@ The entries are what `ITEM_LEVELS.md` calls *ingested items* (level 2). This fir
 | How long they stay | Entries older than the feed's **keep days** (30 by default; 7, 30, 90, 365, or for ever) are discarded at a refresh, unless **kept**: given a Zettel id, its text or note changed by the person, or a category given by hand. Done does not keep: it dismisses |
 | An entry's item | Its text the title; its note the summary as plain text (HTML turned into text, at most about 2,000 characters), then a line with the link |
 | Read or unread | Neither. F4 Done dismisses an entry: the News view hides done items |
-| Reading the article | **CTRL-V** opens the highlighted item's link in the browser (also Item ▸ Open link) |
+| Reading the article | **CTRL-V** opens the highlighted item's link in the browser (also Extras ▸ Open link) |
 | Feed lists | **OPML** import and export |
 | A view | Subscribing to the first feed makes a **News** view: a section per feed, newest first, done items hidden |
 | How often | Every hour while Agendum runs by default (or 6 hours, a day, only on request), and at start, as calendars |
@@ -31,7 +31,7 @@ The entries are what `ITEM_LEVELS.md` calls *ingested items* (level 2). This fir
 - **`Agendum.Core.Extras.FeedSync`**: like `CalendarSync`. New entries within the keep window become items (through the facade, so text matching and conditions file them; dates in a title are not read as When); entries the feed changed update their item where the person has not changed it; entries past the window fade unless kept. Returns how many new, changed and faded.
 - **Facade `Agendum.Core.Facade.Extras.Feeds`**: subscribe (makes Feeds ▸ name, and the News view the first time), unsubscribe (optionally discarding its items), sync, failed, cycle a setting, feeds due, OPML in and out (pure: text to feeds, feeds to text).
 - **Shell**: `Agendum.Extras.CalendarFetch`'s download made shared (`Agendum.Fetch`), reading feeds in the background as calendars are; `{:fetch_feed, id, url}` comes back through `Update.feed_read/3`. Opening a link is an effect, `{:open_url, url}`: `open` on a Mac, `xdg-open` elsewhere, only `http(s)` addresses.
-- **TUI**: File ▸ Transfer ▸ Feeds, a manager like Macros (v0.72.0): INS subscribes (address, a read, then the name with the feed's title), ENTER reads now, ALT-ENTER all, F6 its properties (how often, how long to keep), DEL unsubscribes, F7 imports OPML, F8 exports OPML. CTRL-V in a view (and Item ▸ Open link) opens the link in the item's note.
+- **TUI**: Extras ▸ Feeds, a manager like Macros (v0.72.0): INS subscribes (address, a read, then the name with the feed's title), ENTER reads now, ALT-ENTER all, F6 its properties (how often, how long to keep), DEL unsubscribes, F7 imports OPML, F8 exports OPML. CTRL-V in a view (and Extras ▸ Open link) opens the link in the item's note.
 - **Safety**: feed text is data, never instructions (Wol's principle 6 starts here): titles and summaries are stored as text, HTML is never shown as markup, and the reader runs no code from a feed.
 
 ## The steps

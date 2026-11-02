@@ -263,7 +263,7 @@ defmodule Agendum.TUI.Fuzz do
     %{walk | state: state, pending: walk.pending ++ asked(effects, walk.file)}
   end
 
-  # File ▸ Transfer ▸ Feeds, Calendars or Publish; `:preview` is Publish's
+  # Extras ▸ Feeds, Calendars or Publish; `:preview` is Publish's
   # ENTER too, which shows what publishing would change, and `:upload` the
   # preview's ENTER after it, so the upload is under way from the start
   # The boxes a walk may start in (expert review 2026-10-30, § 18.1): the

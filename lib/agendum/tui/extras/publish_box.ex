@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.PublishBox do
   @moduledoc """
-  The Publish box (File ▸ Transfer ▸ Publish, R74): the micro-blog's
+  The Publish box (Extras ▸ Publish, R74): the micro-blog's
   settings, kept in the file (`Agendum.Core.Extras.Blog`). The posts are the
   items of the Posts category not in the Drafts one. Posts and Drafts
   complete a category's name as it is typed (R32; F5 takes exactly what

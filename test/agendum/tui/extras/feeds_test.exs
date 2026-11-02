@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.FeedsTest do
-  @moduledoc "File ▸ Transfer ▸ Feeds, the News view and CTRL-V (R75)."
+  @moduledoc "Extras ▸ Feeds, the News view and CTRL-V (R75)."
   use ExUnit.Case, async: true
 
   import Agendum.TUIHelpers
@@ -12,7 +12,7 @@ defmodule Agendum.TUI.Extras.FeedsTest do
     %{state: start(Core.new_file(), extras: true)}
   end
 
-  defp open(state), do: press(state, [{:f, 10}, "f", "t", "f"])
+  defp open(state), do: press(state, [{:f, 10}, "e", "f"])
   defp type(state, text), do: press(state, String.graphemes(text) ++ [:enter])
   defp effect(kind), do: Enum.find(effects(), &(elem(&1, 0) == kind))
 

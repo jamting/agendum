@@ -142,16 +142,16 @@ defmodule Agendum.TUI.Messages do
     cond do
       calendars_parent ->
         "#{db.categories[id].name} holds your calendars: rename or remove one in " <>
-          "File ▸ Transfer ▸ Calendars"
+          "Extras ▸ Calendars"
 
       parent ->
-        "#{db.categories[id].name} holds your feeds: rename or remove one in File ▸ Transfer ▸ Feeds"
+        "#{db.categories[id].name} holds your feeds: rename or remove one in Extras ▸ Feeds"
 
       by_calendar ->
-        "#{name} filled by its calendar: rename or remove it in File ▸ Transfer ▸ Calendars"
+        "#{name} filled by its calendar: rename or remove it in Extras ▸ Calendars"
 
       true ->
-        "#{name} filled by a feed: rename or remove it in File ▸ Transfer ▸ Feeds"
+        "#{name} filled by a feed: rename or remove it in Extras ▸ Feeds"
     end
   end
 end

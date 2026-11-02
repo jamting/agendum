@@ -22,8 +22,7 @@ defmodule Agendum.TUI.Menu do
   A menu tree: `{label, description, children_or_action}`. The view's
   (`:main`, the default) or the note editor's (`:note`, R64b), whose
   actions are a note's commands, `{:note, id}`. The whole tree, extras
-  included (R77): `entries/1` leaves them out while they are off, and a
-  description that names them is `{without, with}` the extras.
+  included (R77): `entries/1` leaves them out while they are off.
   """
   @spec tree(:main | :note | :catmgr) :: [tuple]
   def tree(which \\ :main)
@@ -66,17 +65,11 @@ defmodule Agendum.TUI.Menu do
          {"Save", "Save the current file (CTRL-S)", :save},
          {"Abandon", "Discard current changes to the file.", :abandon},
          {"Properties", "How the file displays dates and times", :file_props},
-         {"Transfer",
-          {"Export or import the file",
-           "Export or import the file, calendars, feeds, publish the blog"},
+         {"Transfer", "Export or import the file",
           [
             {"Import", "Open a JSON file as a new, untitled file", :import_json},
             {"Export", "Write the whole file as a JSON file", :export_json},
-            {"Template", "Copy the current file structure.", :template},
-            {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
-            {"Publish", "Write the blog from the posts category as a website, and upload it",
-             :publish},
-            {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds}
+            {"Template", "Copy the current file structure.", :template}
           ]},
          {"Maintenance", "MakeCopy, Erase",
           [
@@ -93,14 +86,7 @@ defmodule Agendum.TUI.Menu do
          {"Undisc", "Recover item(s) from the trash", :undiscard},
          {"BrkAssign", "Remove the assignment for the current item (DEL)", :break_assign},
          {"Reposition", "Reposition the current item within this section", :reposition_item},
-         {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm},
-         {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
-         {"Zettel", "Zettel ids: give the item one, follow its links",
-          [
-            {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel},
-            {"Follow", "Show the items the item's links point at", :follow_link},
-            {"Linked", "Show the items that link to the item (Linked from)", :linked_from}
-          ]}
+         {"Alarm", "Set or cancel an alarm before the When time (ALT-A)", :alarm}
        ]},
       {"Category", "Work with categories",
        [
@@ -177,6 +163,24 @@ defmodule Agendum.TUI.Menu do
          {"Questions", "Confirm suggested assignments", :questions},
          {"Trash", "Clear all discarded items from the trash", :empty_trash}
        ]},
+      # Ours, not Agenda's (R77, ADR 0043): every extra's command in one
+      # menu, so Agenda's menus above stay as they were. With the extras off
+      # all its entries are left out, and so the empty menu is too
+      # (`shown/2`)
+      {"Extras", "Calendars, Feeds, Publish, Open link, Zettel",
+       [
+         {"Calendars", "Subscribe to calendars on the web (iCal); read them now", :calendars},
+         {"Feeds", "Subscribe to RSS and Atom feeds; read them now; OPML", :feeds},
+         {"Publish", "Write the blog from the posts category as a website, and upload it",
+          :publish},
+         {"Open link", "Open the item's web link in the browser (CTRL-V)", :open_link},
+         {"Zettel", "Zettel ids: give the item one, follow its links",
+          [
+            {"Attach", "Give the item, or the marked items, the next Zettel id", :attach_zettel},
+            {"Follow", "Show the items the item's links point at", :follow_link},
+            {"Linked", "Show the items that link to the item (Linked from)", :linked_from}
+          ]}
+       ]},
       {"Quit", "Leave Agendum (CTRL-Q)", :quit}
     ]
   end
@@ -200,30 +204,25 @@ defmodule Agendum.TUI.Menu do
 
   @doc """
   The tree as the person sees it (R77): without the extras unless
-  `extras?`, each description picked for it. The comparison with Agenda's
+  `extras?`. The comparison with Agenda's
   own menus reads it with the extras off.
   """
   @spec shown(:main | :note | :catmgr | [tuple], boolean) :: [tuple]
   def shown(which, extras?) when is_atom(which), do: shown(tree(which), extras?)
 
   # A level's entries as shown (R77): with the extras off, an entry that
-  # runs an extra goes, and so does a level left empty by it (Item ▸
-  # Zettel); a description `{without, with}` the extras is picked.
+  # runs an extra goes, and so does a level left empty by it (Extras).
   def shown(level, extras?) do
     # a generator over a one-element list binds `action` anew for the
     # filter after it: a sub-level is first cut down itself
     for {label, description, action} <- level,
         action <- [if(is_list(action), do: shown(action, extras?), else: action)],
         extras? or not extra?(action),
-        do: {label, description(description, extras?), action}
+        do: {label, description, action}
   end
 
   defp extra?([]), do: true
   defp extra?(action), do: action in Agendum.TUI.Commands.extra_actions()
-
-  defp description({without, _with}, false), do: without
-  defp description({_without, with}, true), do: with
-  defp description(text, _extras?), do: text
 
   @doc "The entries at the menu's current level."
   def entries(%{path: path} = mode) do

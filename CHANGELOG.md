@@ -6,6 +6,10 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.75.0 — 2026-11-02
+
+- **The extras have a menu of their own: F10 E, Extras.** Calendars, Feeds, Publish, Open link and Zettel (Attach, Follow, Linked) are there now, between Utilities and Quit, instead of in File ▸ Transfer and Item. So F10 F T C is now F10 E C, and F10 I Z A is F10 E Z A. Agenda's own menus stay exactly Agenda's, with the extras on or off; with them off, there is no Extras menu at all. The keys (CTRL-T, CTRL-V …) are unchanged.
+
 ## 0.74.3 — 2026-11-02
 
 - **Marked items move in the order you marked them**, as in Agenda: mark three items, press ALT-F10, and they arrive in the other section in that order. The order lasts for the session; items already marked when the file was opened come first.

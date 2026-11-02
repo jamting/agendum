@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.FeedsBox do
   @moduledoc """
-  The Feeds box (File ▸ Transfer ▸ Feeds, R75): the file's feed
+  The Feeds box (Extras ▸ Feeds, R75): the file's feed
   subscriptions, each with its address, how often it is read, how long
   its entries stay, and when it was last read (or why that failed). Like
   the Calendars box (R45).

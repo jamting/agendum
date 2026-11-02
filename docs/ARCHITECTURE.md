@@ -174,9 +174,9 @@ The folder keeps at its top what everything goes through (`State`, `Update`, `Re
 | `Agendum.TUI.Boxes.SelectFile`                       | ✔     | The Select File box: F3 in a file-name prompt lists a folder (read by `Store.list_dir/1`) to pick from (R51).                    |
 | `Agendum.TUI.Splash`                           | ✔     | The splash screen at start, until a key or three seconds; the startup prompt waits under it (R52).                               |
 | `Agendum.Sample`                                | ✔     | The built-in files: `--demo` (the patent's example, used by the tests) and `--rabbit` (Rabbit's file from the manual).            |
-| `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | File ▸ Transfer ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
-| `Agendum.TUI.Extras.FeedsBox`                         | ✔     | File ▸ Transfer ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
-| `Agendum.TUI.Extras.PublishBox`                       | ✔     | File ▸ Transfer ▸ Publish: the micro-blog's settings, kept in the file (R74). |
+| `Agendum.TUI.Extras.CalendarsBox`                     | ✔     | Extras ▸ Calendars: subscribe, read now, how often and how far ahead (R45).                                             |
+| `Agendum.TUI.Extras.FeedsBox`                         | ✔     | Extras ▸ Feeds: subscribe to a feed, how often it is read, how long its entries stay (R75). |
+| `Agendum.TUI.Extras.PublishBox`                       | ✔     | Extras ▸ Publish: the micro-blog's settings, kept in the file (R74). |
 | `Agendum.TUI.Extras.SubscriptionPropsBox`             | ✔     | F6 in the Feeds or Calendars manager: a feed's or a calendar's name and settings (R75, R45). |
 | `Agendum.TUI.Extras.Feeds.Messages`                   | ✔     | What the feeds say: prompts, questions, messages, kept beside the extra (UI guidelines rule 7.5). |
 | `Agendum.TUI.Extras.Calendars.Messages`               | ✔     | What the calendars say, kept beside the extra (rule 7.5). |

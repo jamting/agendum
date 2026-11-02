@@ -23,8 +23,8 @@ defmodule Agendum.TUI.Extras.ManagersTest do
     %{state: start(db, extras: true)}
   end
 
-  defp feeds(state), do: press(state, [{:f, 10}, "f", "t", "f"])
-  defp calendars(state), do: press(state, [{:f, 10}, "f", "t", "c"])
+  defp feeds(state), do: press(state, [{:f, 10}, "e", "f"])
+  defp calendars(state), do: press(state, [{:f, 10}, "e", "c"])
   defp fetched(kind), do: for(e <- effects(), elem(e, 0) == kind, do: elem(e, 2))
 
   test "ALT-ENTER reads every feed, ENTER the highlighted one", %{state: state} do

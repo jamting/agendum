@@ -83,9 +83,14 @@ defmodule Agendum.TUI.Update.Notes do
     words = Enum.map(marked, &Agendum.Core.zettel(state.db.items[&1]))
 
     cond do
-      marked == [] -> {:error, "Mark the items to link to with F7 first"}
-      nil in words -> {:error, "Give the marked items Zettel ids first (Item ▸ Zettel ▸ Attach)"}
-      true -> {:ok, Enum.map_join(words, " ", &"[[#{&1}]]")}
+      marked == [] ->
+        {:error, "Mark the items to link to with F7 first"}
+
+      nil in words ->
+        {:error, "Give the marked items Zettel ids first (Extras ▸ Zettel ▸ Attach)"}
+
+      true ->
+        {:ok, Enum.map_join(words, " ", &"[[#{&1}]]")}
     end
   end
 

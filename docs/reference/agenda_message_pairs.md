@@ -171,7 +171,7 @@ Agenda's texts from docs/reference/agenda_messages.json (AGENDA.RI); '|' line br
 | 46 | A feed needs a name | tui/update/prompts.ex:175 | feed without name | — | none found | keep: ours (feeds) |
 | 47 | A feed needs an https:// or feed:// address | tui/update/prompts.ex:172 | feed address wrong | — | none found | keep: ours (feeds) |
 | 49 | A link goes when the text that has it is changed | tui/boxes/item_properties.ex:158 | link (Zettel) in edited text | — | none found | keep: ours (Zettel links) |
-| 53 | A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed | tui/update/view_keys.ex:592 | type in a Zettel id column | — | none found | keep: ours (Zettel) |
+| 53 | A Zettel id is given by Extras ▸ Zettel ▸ Attach; it cannot be typed | tui/update/view_keys.ex:592 | type in a Zettel id column | — | none found | keep: ours (Zettel) |
 | 69 | Could not read the site's folder: #{reason} | tui/update.ex:797 | blog folder unreadable | — | none found | keep: ours (blog) |
 | 71 | Could not save your preferences: #{inspect(reason)} | tui/update.ex:586 | preferences not saved | — | none found | keep: ours (preferences) |
 | 74 | Count: #{count} | tui/update/view_keys.ex:118 | count (ALT-? tools) | — | none found | keep: ours |

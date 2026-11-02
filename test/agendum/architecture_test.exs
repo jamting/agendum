@@ -278,7 +278,7 @@ defmodule Agendum.ArchitectureTest do
   # these doors, each for a reason; every one of them is behind the Extras
   # preference (R77, ADR 0043), so with it off the extras cannot be reached.
   @extras_doors [
-    # the menu's extras actions (File ▸ Transfer ▸ Calendars, Publish,
+    # the menu's extras actions (Extras ▸ Calendars, Publish,
     # Feeds), which `Actions.perform/2` refuses while the extras are off
     {Agendum.TUI.Update.Actions, :do_perform, 3},
     # the shell runs the effects only the extras ask for: reading a feed

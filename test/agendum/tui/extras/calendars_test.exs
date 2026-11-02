@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 defmodule Agendum.TUI.Extras.CalendarsTest do
   @moduledoc """
-  File ▸ Transfer ▸ Calendars (R45): subscribing to a calendar on the web,
+  Extras ▸ Calendars (R45): subscribing to a calendar on the web,
   reading it now or on schedule, and what a refresh does to the view. The
   shell downloads; these tests check the effects and feed the results.
   """
@@ -33,7 +33,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
   # the state and the calendar's id
   defp subscribe(state) do
     {state, [{:probe_calendar, @url}]} =
-      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+      keys(state, [{:f, 10}, "e", "c", :insert] ++ typed(@url))
 
     state =
       Agendum.TUI.Extras.Calendars.Results.calendar_probed(
@@ -50,7 +50,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
   # the same race as the SFTP password's (nightly fuzz, 2026-11-01): the
   # read answers while another address is being typed
   test "a read answered while another address is typed: the typing is kept", %{state: state} do
-    {state, _} = keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+    {state, _} = keys(state, [{:f, 10}, "e", "c", :insert] ++ typed(@url))
     {state, _} = keys(state, [:insert, "h", "t"])
     typing = state.edit
 
@@ -76,7 +76,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     ]
 
   test "the Calendars box lists subscriptions, and says how to add one", %{state: state} do
-    state = press(state, [{:f, 10}, "f", "t", "c"])
+    state = press(state, [{:f, 10}, "e", "c"])
     assert %{type: :calendars} = State.mode(state)
     assert screen(state) =~ "No calendars yet · INS subscribes to one"
   end
@@ -85,7 +85,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
     state: state
   } do
     {state, [{:probe_calendar, @url}]} =
-      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+      keys(state, [{:f, 10}, "e", "c", :insert] ++ typed(@url))
 
     asked =
       Agendum.TUI.Extras.Calendars.Results.calendar_probed(
@@ -103,7 +103,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
   end
 
   test "a calendar that cannot be read is not subscribed", %{state: state} do
-    {state, _} = keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed(@url))
+    {state, _} = keys(state, [{:f, 10}, "e", "c", :insert] ++ typed(@url))
 
     state =
       Agendum.TUI.Extras.Calendars.Results.calendar_probed(
@@ -118,7 +118,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
 
   test "a bad address is refused", %{state: state} do
     {state, effects} =
-      keys(state, [{:f, 10}, "f", "t", "c", :insert] ++ typed("ftp://nope"))
+      keys(state, [{:f, 10}, "e", "c", :insert] ++ typed("ftp://nope"))
 
     assert effects == [{:sound, :error}]
     assert screen(state) =~ "needs an https:// or webcal:// address"
@@ -212,7 +212,7 @@ defmodule Agendum.TUI.Extras.CalendarsTest do
         db
       end)
 
-    box = press(%{state | db: db}, [{:f, 10}, "f", "t", "c"])
+    box = press(%{state | db: db}, [{:f, 10}, "e", "c"])
     assert screen(box) =~ ~r/▼ \d+ more below/
     assert press(box, List.duplicate(:down, 29)) |> screen() =~ "Cal 30"
   end

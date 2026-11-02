@@ -1577,7 +1577,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - ENTER or ESC closes it.
 
   The reading follows `docs/AGENDA_FILE_FORMAT.md` (`Agendum.Core.AgFile`, pure, through `Core.import_ag/2`). Not yet: macros, note files, the global date format, Agenda's own print settings.
-- **R45 ✅ Calendar subscriptions** (not in Agenda). File ▸ Transfer ▸ Calendars lists the file's subscriptions to calendars on the web (iCalendar `.ics`, `https://` or `webcal://`).
+- **R45 ✅ Calendar subscriptions** (not in Agenda). Extras ▸ Calendars lists the file's subscriptions to calendars on the web (iCalendar `.ics`, `https://` or `webcal://`).
 
   INS asks for the address. The calendar is read once ("Reading …"), then its name is asked, its own name filled in (`X-WR-CALNAME`, on one line, control characters left out, at most 60 characters; without one, the address's host), and a calendar that cannot be read is not subscribed ("Not subscribed: …"). An answer that comes once the box is closed, or for an address no longer waited for, is dropped; one that comes while another prompt is typed in (INS again) does not take that typing over: the calendar is not subscribed ("Not subscribed: the calendar was read while you typed. INS adds it").
 
@@ -1689,7 +1689,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   SPACE changes the highlighted setting, ENTER shows the items of that date in the Show View under the section head, ESC cancels. The date is a date filter on the Show View ("[When 2026-12-14..2026-12-14]"), so ALT-B browses it to other days (R48).
 
   The Show View starts afresh each time it is used, by a schedule, a search (R37) or a dependency list (R43): its section and filter are those of the last use.
-- **R75 ✅ Feeds: a plain RSS reader** (ours; `plans/RSS_READER.md`). File ▸ Transfer ▸ Feeds lists the file's feed subscriptions, as the Calendars box does calendars (R45): a manager, as the Macros manager is (UI guidelines):
+- **R75 ✅ Feeds: a plain RSS reader** (ours; `plans/RSS_READER.md`). Extras ▸ Feeds lists the file's feed subscriptions, as the Calendars box does calendars (R45): a manager, as the Macros manager is (UI guidelines):
 
   - INS subscribes (the feed's address, `https://` or `feed://`; the feed read once, then its name asked with the feed's own title filled in, as R45's calendars: an unreadable feed is not subscribed, and what was read is filed as it is subscribed; a read that answers while another prompt is typed in leaves the typing alone and does not subscribe, "INS adds it").
   - ENTER reads the highlighted one now, ALT-ENTER every feed (quietly, as a scheduled read).
@@ -1718,14 +1718,14 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
   Done does not keep it. An entry that faded or that the person discarded is never brought back: the file remembers only its id and publish date, not its text (format 45).
 
-  **CTRL-V** (or Item ▸ Open link) opens the first web address in the highlighted item's note, else its text, in the browser (`open` on a Mac, `xdg-open` elsewhere); only `http(s)` addresses.
+  **CTRL-V** (or Extras ▸ Open link) opens the first web address in the highlighted item's note, else its text, in the browser (`open` on a Mac, `xdg-open` elsewhere); only `http(s)` addresses.
 
   Feed text is data, never instructions: it is stored as text, never shown as markup, and nothing in it runs.
 - **R75a ✅ Ingested categories** (ours, an extra; ADR 0048). The categories a feed or a calendar files into, each feed's category under Feeds and each calendar's under Calendars, and the extras' families themselves, **Feeds** and **Calendars** under MAIN while each holds at least one subscription, are **ingested**: the extra names and fills them; the person reads them but does not change or fill them.
 
   They head sections, filter views and are read by conditions (a condition on the person's own category may test one).
 
-  Refused, with "Heffalump News is filled by a feed: rename or remove it in File ▸ Transfer ▸ Feeds" (or "… by its calendar … Calendars", "Feeds holds your feeds …"):
+  Refused, with "Heffalump News is filled by a feed: rename or remove it in Extras ▸ Feeds" (or "… by its calendar … Calendars", "Feeds holds your feeds …"):
 
   - Renaming, a note, Also match, conditions and actions, exclusive children, moving, sorting, discarding, a new child.
   - For a feed's or a calendar's own category, filing an item into it by hand, from a column, by typing in its section, or by another category's action.
@@ -1864,10 +1864,12 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   The check is in the shell (`Agendum.Store.save/3`), so the core stays pure; another writer changing the file in the instant between the look and the write is not caught. Save As over another existing file still writes without asking, as before.
 - **R77 ✅ The Extras preference** (ours; ADR 0043). Agendum's extras, the features Agenda did not have that fail ADR 0043's test of a truthful clone (`plans/AGENDA_PARITY.md`, tag *extra*), are hidden behind one preference, **Extras** in Utilities ▸ Customize (No, the default, or Yes; `extras = yes` in the preferences file, R54).
 
+  With it on, the menu has an **Extras** entry between Utilities and Quit (F10 E), and every extra's menu command is there and nowhere else: Calendars (R45), Feeds (R75), Publish (R74), Open link (R75) and Zettel ▸ Attach, Follow, Linked (R73, R73b). Our choice: Agenda's own menus stay as they are with the extras on or off, so nothing in them moves when the switch does (ADR 0043). The extras' keys (CTRL-T, CTRL-V …) are the same either way.
+
   With it off:
 
   - The extras' commands are tagged in `Agendum.TUI.Commands` and left out of F1's command list, CTRL-X and describe key, and their keys do nothing, as unbound keys (CTRL-T, CTRL-G, CTRL-R and CTRL-V in a view, CTRL-L in a note, F5 in the view manager).
-  - The menu leaves out File ▸ Transfer ▸ Calendars, Publish and Feeds, Item ▸ Open link and Item ▸ Zettel.
+  - The menu has no Extras entry; its top line is Agenda's own (File, Item, Category, View, Print, Utilities, Quit).
   - The view manager shows no ► (R68) and lists the views in the file's order.
   - The key bar keeps Agenda's short labels on a wide screen.
   - The F1 help lists none of the extras' topics (their boxes), its Keys chart none of their keys, and the clone's own topics do not name them; only Utilities ▸ Customize's Extras setting names what it turns on. `test/agendum/tui/extras_screen_test.exs` draws every menu level, place, box, F1 page and topic with Extras off and fails on any word of the extras.
@@ -1882,21 +1884,21 @@ Extras that are not in the original (details in `KEYBOARD.md`):
 
 - **R73 ✅ Zettel ids** (ours; ADR 0039). An item can have a Zettel id: eight pronounceable letters in four syllables, such as `bonalaku`, the Quadsyl-24 spelling of a number (`docs/QUADSYL.md`, `Agendum.Core.Extras.ZettelId`). An item with an id is a zettel.
 
-  Item ▸ Zettel ▸ Attach gives the highlighted item the next id; with items marked it asks, as other commands do, "Give a Zettel id to:" the marked items or the current one.
+  Extras ▸ Zettel ▸ Attach gives the highlighted item the next id; with items marked it asks, as other commands do, "Give a Zettel id to:" the marked items or the current one.
 
   The message line says which id was given ("bonalaku given"; "2 Zettel ids given: bonalaku, pigavono"); an item that has one keeps it ("The item already has its Zettel id, bonalaku").
 
   Ids are given in order from the file's own counter, from 1, skipping the 267 real words, which are reserved for special notes (not given out yet); an id is never given twice, not even after its item is discarded, and never changes. One undo takes the ids back.
 
   CTRL-T (our choice), the menu, or the command list.
-- **R73a ✅ A Zettel id column.** A standard column's Format (Column Add and Column Properties, R56) can be **Zettel id**: the column shows each item's id, whatever the column's head, under the head "Zettel id"; nine wide by default. Typing in it, or DEL, changes nothing and says "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed".
+- **R73a ✅ A Zettel id column.** A standard column's Format (Column Add and Column Properties, R56) can be **Zettel id**: the column shows each item's id, whatever the column's head, under the head "Zettel id"; nine wide by default. Typing in it, or DEL, changes nothing and says "A Zettel id is given by Extras ▸ Zettel ▸ Attach; it cannot be typed".
 - **R73b ✅ Links between zettels** (ours). In an item's text or note, `[[bonalaku]]` is a link to the item with that Zettel id, and so is the id written on its own (`bonalaku`) when an item has it; case does not matter, and an eight-letter word no item has stays plain text.
 
   Links show in the link colour of the theme, in the view and in the note editor; a bracketed link no item has is *broken* and shows in a colour of its own.
 
   With the cursor on a link, in a note or an item being edited, the control panel shows what it points at ("→ bonalaku: Owl's birthday", or "[[kitolido]]: no item has this Zettel id").
 
-  Item ▸ Zettel ▸ Follow shows the items the highlighted item links to (its text first, then its note, each once) in the Show View, and Item ▸ Zettel ▸ Linked shows the items that link to it, the way ALT-O lists dependencies; ALT-F8 goes back.
+  Extras ▸ Zettel ▸ Follow shows the items the highlighted item links to (its text first, then its note, each once) in the Show View, and Extras ▸ Zettel ▸ Linked shows the items that link to it, the way ALT-O lists dependencies; ALT-F8 goes back.
 
   Item Properties shows the item's id before its statistics and lists the items linking to it under **Linked from** (SPACE shows one).
 
@@ -1909,7 +1911,7 @@ Extras that are not in the original (details in `KEYBOARD.md`):
   - CTRL-G follows.
   - CTRL-R shows Linked from.
   - CTRL-L inserts a link in a note.
-- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). File ▸ Transfer ▸ Publish writes a blog from the file as a static website.
+- **R74 ✅ The micro-blog** (ours; the owner's own use, VISION group 1; ADR 0041). Extras ▸ Publish writes a blog from the file as a static website.
 
   The **Publish the blog** box holds its settings, kept in the file:
 

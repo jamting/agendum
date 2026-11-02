@@ -638,7 +638,7 @@ defmodule Agendum.TUI.Update.ViewKeys do
 
   # a Zettel id is given, never typed or taken away (R73a)
   defp zettel_column(state),
-    do: State.error(state, "A Zettel id is given by Item ▸ Zettel ▸ Attach; it cannot be typed")
+    do: State.error(state, "A Zettel id is given by Extras ▸ Zettel ▸ Attach; it cannot be typed")
 
   # ALT-H (User's Guide 13-9): the highlighted item's next occurrence,
   # further down this view, else in the next view that shows it (in the

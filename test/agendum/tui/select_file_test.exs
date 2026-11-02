@@ -117,7 +117,7 @@ defmodule Agendum.TUI.SelectFileTest do
 
     # F7 imports a feed list, F8 exports one: both prompts list the same kinds
     for key <- [{:f, 7}, {:f, 8}] do
-      state = press(state, [{:f, 10}, "f", "t", "f", key])
+      state = press(state, [{:f, 10}, "e", "f", key])
       assert panel(state) =~ "F3 lists files"
 
       state = state |> press({:f, 3}) |> serve()

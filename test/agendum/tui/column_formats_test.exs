@@ -101,7 +101,7 @@ defmodule Agendum.TUI.ColumnFormatsTest do
 
     typed = press(state, "x")
     assert typed.db == state.db
-    assert screen(typed) =~ "A Zettel id is given by Item ▸ Zettel ▸ Attach"
+    assert screen(typed) =~ "A Zettel id is given by Extras ▸ Zettel ▸ Attach"
     assert press(state, :delete).db == state.db
   end
 end

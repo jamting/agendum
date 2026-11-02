@@ -18,7 +18,7 @@ defmodule Agendum.TUI.Extras.PublishBoxFieldsTest do
     {:ok, db, drafts} = Core.add_category(db, db.main_id, "Drafts")
     {:ok, db, _} = Core.add_category(db, db.main_id, "Postcards")
     state = start(db, extras: true)
-    %{state: press(state, [{:f, 10}, "f", "t", "p"]), posts: posts, drafts: drafts}
+    %{state: press(state, [{:f, 10}, "e", "p"]), posts: posts, drafts: drafts}
   end
 
   defp settings(state), do: State.mode(state).settings

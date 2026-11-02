@@ -125,11 +125,12 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **quiet** · Help made from the commands and keymaps (R65): behind Agenda's help (R65e), F6 Keys lists every key and leads to **Commands you can run here** (those that cannot run now greyed, with the reason, R65a; each with a longer text saying why one would use it, R65b) and **Describe a key**.
 - **quiet** · The debug log and the developer tools (ALT-?).
 - **extra** · Descriptive key bar labels on a wide screen.
+- **extra** · The Extras menu (F10 E, R77): the extras' menu commands in one menu of their own, between Utilities and Quit, so Agenda's menus are the same with the extras on or off.
 - **quiet** · The `--clinic` Easter egg (reached only by a command-line flag).
 - **extra** · ► before the current view in the view manager, and F5 to list the views by recently used (R68).
 - **extra** · A "While you were away" box for alarms that came due while the file was closed (R70). Agenda rings such alarms when the file is opened and shows `@`, with no box (checked in Agenda 2.0, 2026-10-22: an alarm due at 10:04pm, the file closed, opened at 10:05pm); the items are in Utilities ▸ Show Alarm's Past Alarms (R38).
 - **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
-- **extra** · A micro-blog published from the file (File ▸ Transfer ▸ Publish, R74).
+- **extra** · A micro-blog published from the file (Extras ▸ Publish, R74).
 - **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
 - **extra** · Ingested categories: a feed's or calendar's categories are the extra's, not changed by hand, the Feeds family folded in the category manager; F2 in the Feeds and Calendars boxes renames (R75a, 2026-10-26).
 - **extra** · Completion offers the person's own categories before the ingested ones, an exact name still first (R32, R75a, 2026-10-30).

@@ -42,7 +42,7 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
 
   test "Follow shows the items an item links to in the Show View; ALT-F8 back",
        %{state: state, party: party} do
-    state = state |> press([:down, :down, :down]) |> press([{:f, 10}, "i", "z", "f"])
+    state = state |> press([:down, :down, :down]) |> press([{:f, 10}, "e", "z", "f"])
     assert State.view(state).name == "*Show View*"
     assert screen(state) =~ "1 linked item · ALT-F8 returns to the last view"
     assert screen(state) =~ "The party"
@@ -53,16 +53,16 @@ defmodule Agendum.TUI.Extras.ZettelLinksTest do
   end
 
   test "Linked from shows the items that link to the item", %{state: state} do
-    state = state |> press([:down, :down]) |> press([{:f, 10}, "i", "z", "l"])
+    state = state |> press([:down, :down]) |> press([{:f, 10}, "e", "z", "l"])
     assert screen(state) =~ "1 item linking here"
     assert screen(state) =~ "Plan: see pigavono"
   end
 
   test "Follow and Linked from say why when there is nothing to show", %{state: state} do
-    assert screen(state |> press(:down) |> press([{:f, 10}, "i", "z", "f"])) =~
+    assert screen(state |> press(:down) |> press([{:f, 10}, "e", "z", "f"])) =~
              "This item has no links to other items"
 
-    assert screen(state |> press([:down, :down, :down]) |> press([{:f, 10}, "i", "z", "l"])) =~
+    assert screen(state |> press([:down, :down, :down]) |> press([{:f, 10}, "e", "z", "l"])) =~
              "The item has no Zettel id, so nothing can link to it"
   end
 
