@@ -67,7 +67,7 @@ Each plan starts with its status.
 | [`plans/ITEM_LEVELS.md`](plans/ITEM_LEVELS.md)                         | Three levels of items: zettels, ingested items, the model's context items (vision) |
 | [`plans/RSS_READER.md`](plans/RSS_READER.md)                           | A plain RSS reader, like calendar subscriptions: the owner's decisions and the steps (R75) |
 | [`plans/WOL-IN-THE-MACHINE.md`](plans/WOL-IN-THE-MACHINE.md)           | An idea: a personal agent inside the file                                      |
-| [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md)                         | The publisher's round 2: R74 split, images, archive, 404, tag pages, publishing on its day (meeting 2026-11-02-1954) |
+| [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md)                         | The publisher's round 2: R74 split, images, Lists, archive, 404, tag pages, publishing on its day (meetings 2026-11-02-1954 and 2026-11-02-2244) |
 | [`plans/STARTERS.md`](plans/STARTERS.md)                               | Ideas for new starter files: principles, systems (GTD, Things …), sketches, open questions (meeting 2026-10-28-0048) |
 
 ## Archive

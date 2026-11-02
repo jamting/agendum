@@ -12,8 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. [ ] **The publisher's round 2** (meeting 2026-11-02-1954, § 13; [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md) § The steps), step 1: split R74 into sub-rules R74–R74f, meaning unchanged (docs only); then images from `assets/`, the newest N plus an archive, a 404 page, tag pages (after the meeting on views as feeds), and, optional, `--publish --quiet` for launchd or cron. Round 1 is done (v0.79.0–v0.85.0, [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)).
-2. [ ] **A meeting on publishing any view as a feed** (tabled, meeting 2026-11-02-1954, § 13): rather than only categories under Posts (the Journal's Gym log, for one), or a feed's posts chosen by an assignment rule; before round 2's tag pages
+1. [ ] **The publisher's round 2** (meetings 2026-11-02-1954, § 13, and 2026-11-02-2244, § 7; [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md) § The steps), step 1: split R74 into sub-rules R74–R74f, meaning unchanged, the feeds' sub-rule named for the coming Lists (docs only); then images from `assets/`, **Lists** (any of the person's own categories published as a list, replacing feeds; meeting 2026-11-02-2244, § 6), the newest N plus an archive per list, a 404 page, tag pages as a list made from a family, and, optional, `--publish --quiet` for launchd or cron. Round 1 is done (v0.79.0–v0.85.0, [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)).
 
 Starters are done for now (the owner, 2026-11-02): GTD and the Journal are built and in use; the two in lane 3 are parked.
 
@@ -161,6 +160,7 @@ Changes to how the program works at its heart, which cannot be a switch (ADR 004
 An idea moves up when the owner chooses it. Each names the group in `VISION.md` it serves (meeting 2026-10-16-2056, § 6).
 
 - _Group 1._ A post preview in Agendum: a key in a post's note shows it as the site would draw it, read-only (meeting 2026-11-02-1954, § 13; not in round 2)
+- _Group 1._ A view published as one web page: its sections, columns and sums drawn as the view looks, Agenda's Print current view on the web (the Journal's Gym log, for one; meeting 2026-11-02-2244, § 5)
 - _Group 1._ Sharing details for the blog: Open Graph and description meta tags, so a shared link shows a title and summary, and a `sitemap.xml` (meeting 2026-11-02-1954, § 13; not in round 2)
 - _Group 1._ The project's whole site from a public Agendum file, built in CI by `mix agendum.publish` (the publisher's step 7 as the meeting planned it): the front page drawn from the site's own templates and assets, the devlog a feed; the devlog's posts then written in that public file. Left for later (the owner, 2026-11-02): the headless publish is built, the devlog stays published from the owner's own file
 - _Group 1._ Export the blog's posts as Markdown with front matter (title, date, slug), for a third-party static site generator (Hugo, Zola, Eleventy) if one is ever wanted; parked, as Agendum keeps its own publisher (meeting 2026-11-02-1255, § 11)
