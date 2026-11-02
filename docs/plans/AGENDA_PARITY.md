@@ -133,7 +133,7 @@ What Agendum has that Agenda did not. The entries tagged **extra** are hidden wh
 - **extra** · A "While you were away" box for alarms that came due while the file was closed (R70). Agenda rings such alarms when the file is opened and shows `@`, with no box (checked in Agenda 2.0, 2026-10-22: an alarm due at 10:04pm, the file closed, opened at 10:05pm); the items are in Utilities ▸ Show Alarm's Past Alarms (R38).
 - **extra** · Zettel ids (Quadsyl-24, R73, ADR 0039), a Zettel id column (R73a) and links between items (R73b).
 - **extra** · Markdown in a note (R64h): lists continued on ENTER, CTRL-T ticks a task box, headings, markers and boxes coloured.
-- **extra** · A micro-blog published from the file (Extras ▸ Publish, R74).
+- **extra** · A micro-blog published from the file (Extras ▸ Publish ▸ Publish, Site, Feeds, Upload, R74): templates and assets, pages, several feeds, a post's title, address and modified date; also without the screen, `agendum --publish FILE`.
 - **extra** · Feeds: a plain RSS and Atom reader, the News view, OPML, CTRL-V to open a link (R75).
 - **extra** · Ingested categories: a feed's or calendar's categories are the extra's, not changed by hand, the Feeds family folded in the category manager; F2 in the Feeds and Calendars boxes renames (R75a, 2026-10-26).
 - **extra** · Completion offers the person's own categories before the ingested ones, an exact name still first (R32, R75a, 2026-10-30).
