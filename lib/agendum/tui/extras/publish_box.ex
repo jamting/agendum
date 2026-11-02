@@ -247,15 +247,15 @@ defmodule Agendum.TUI.Extras.PublishBox do
     end
   end
 
-  # the site made from the file, and the folder read: the preview comes
-  # when the shell has read it (`Publish.Results.publish_scanned/4`)
+  # the folder's templates and assets read, the site made from them and
+  # the folder read again for what it would change: the preview comes then
+  # (`Publish.Results.publish_read/3`, `publish_scanned/4`)
   defp scan(state) do
     upload = Agendum.Preferences.upload(state.prefs, state.path)
-    files = Agendum.Core.site(state.db, state.today)
 
     state
     |> State.info(Messages.text(:reading, upload.folder))
-    |> State.effect({:publish_scan, folder(state, upload.folder), files})
+    |> State.effect({:publish_read, folder(state, upload.folder)})
   end
 
   defp error_text(:no_posts_category), do: Messages.text(:no_posts_category)

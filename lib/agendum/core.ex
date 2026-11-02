@@ -166,6 +166,8 @@ defmodule Agendum.Core do
   defdelegate upload_methods(), to: Publishing
   defdelegate blog_posts(db), to: Publishing
   defdelegate site(db, today), to: Publishing
+  defdelegate site(db, today, inputs), to: Publishing
+  defdelegate site_default_templates(), to: Publishing
   defdelegate blog_needs_base_url?(db), to: Publishing
   defdelegate site_changes(files, existing, published), to: Publishing
 

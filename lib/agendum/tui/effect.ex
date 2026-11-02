@@ -31,7 +31,7 @@ defmodule Agendum.TUI.Effect do
   #   {:save_preferences, …}    the preferences file (R52)
   #   {:fetch_feed, …} {:fetch_calendar, …} {:open_url, …}  the network
   #   {:probe_feed, url} {:probe_calendar, url}  read once before subscribing
-  #   {:publish_scan, …} {:publish, …}  the micro-blog (R74)
+  #   {:publish_read, …} {:publish_scan, …} {:publish, …}  the micro-blog (R74)
   @typedoc "A side effect for the shell to carry out."
   @type t ::
           :quit
@@ -57,6 +57,7 @@ defmodule Agendum.TUI.Effect do
           | {:probe_feed, String.t()}
           | {:probe_calendar, String.t()}
           | {:open_url, String.t()}
+          | {:publish_read, String.t()}
           | {:publish_scan, String.t(), [{String.t(), String.t()}]}
           | {:publish, String.t(), [{String.t(), String.t()}], map, String.t() | nil}
 
@@ -107,6 +108,7 @@ defmodule Agendum.TUI.Effect do
 
   def known?({tag, url}) when tag in [:probe_feed, :probe_calendar], do: is_binary(url)
   def known?({:open_url, url}) when is_binary(url), do: true
+  def known?({:publish_read, folder}), do: is_binary(folder)
   def known?({:publish_scan, folder, files}) when is_list(files), do: is_binary(folder)
 
   def known?({:publish, folder, files, _changes, _password}) when is_list(files),

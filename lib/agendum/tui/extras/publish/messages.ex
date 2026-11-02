@@ -45,7 +45,31 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:cannot_read_folder, reason), do: "Could not read the site's folder: #{reason}"
   def text(:not_published, reason), do: "Not published: #{reason}"
   def text(:upload_kept, file), do: "Kept the upload settings for #{file}"
+
+  def text(:templates_written, names),
+    do: "Writes templates/ for you to change: #{names} (never uploaded)"
+
   def text(:upload_whose, file), do: "Yours, for #{file} on this computer; not kept in the file."
+
+  @doc "Why the site could not be made (`Agendum.Core.site/3`), in words."
+  @spec site_error(term) :: String.t()
+  def site_error({:asset_name, path}),
+    do: "#{path}: an asset's name may hold only a-z, A-Z, 0-9 and . _ ~ - /"
+
+  def site_error({:template, name, line, why}) do
+    where = if line, do: "templates/#{name}.html line #{line}", else: "templates/#{name}.html"
+    "#{where}: #{template_mistake(why)}"
+  end
+
+  defp template_mistake(:tag_not_closed), do: "a tag is not closed"
+  defp template_mistake({:not_closed, n}), do: "{{##{n}}} is not closed"
+  defp template_mistake({:closes_nothing, n}), do: "{{/#{n}}} closes nothing"
+  defp template_mistake({:closes, n, other}), do: "{{/#{n}}} closes {{##{other}}}"
+  defp template_mistake({:no_partial, n}), do: "{{> #{n}}}: there is no templates/#{n}.html"
+  defp template_mistake({:includes_itself, n}), do: "{{> #{n}}} includes itself"
+
+  defp template_mistake(:too_big),
+    do: "the templates include each other too many times over"
 
   @doc """
   The site published, uploaded or not, with what changed ("2 added, 1

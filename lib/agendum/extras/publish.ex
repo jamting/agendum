@@ -21,8 +21,115 @@ defmodule Agendum.Extras.Publish do
   # an SFTP call's longest wait, in milliseconds
   @timeout 60_000
 
-  @typedoc "What a folder holds of the site: contents by path, and the last publish's paths."
-  @type scan :: %{existing: %{optional(String.t()) => String.t()}, published: [String.t()]}
+  @typedoc """
+  What a folder holds of the site: contents by path, the last publish's
+  paths, and the templates Agendum would write as they are missing.
+  """
+  @type scan :: %{
+          existing: %{optional(String.t()) => String.t()},
+          published: [String.t()],
+          templates_missing: [String.t()]
+        }
+
+  # a template, and all the assets together, may be at most this big
+  @template_limit 1_000_000
+  @assets_limit 50_000_000
+
+  @doc """
+  What the site is made from in `folder` (R74): its templates
+  (`templates/*.html`, by name) and its assets (every file under
+  `assets/`, by path, hidden files and links left out). A folder without
+  them has none; assets over #{div(@assets_limit, 1_000_000)} MB together are refused.
+  """
+  @spec inputs(String.t()) :: {:ok, Site.inputs()} | {:error, String.t()}
+  def inputs(folder) do
+    with {:ok, templates} <- templates(folder),
+         {:ok, assets} <- assets(folder) do
+      {:ok, %{templates: templates, assets: assets}}
+    end
+  end
+
+  # each `templates/*.html`; one that is a link, too big or unreadable
+  # stops publishing, saying so, rather than Agendum's being used unseen
+  defp templates(folder) do
+    dir = Path.join(folder, "templates")
+
+    list(dir)
+    |> Enum.filter(&(Path.extname(&1) == ".html"))
+    |> Enum.sort()
+    |> Enum.reduce_while({:ok, %{}}, fn name, {:ok, acc} ->
+      case template(Path.join(dir, name)) do
+        {:ok, text} -> {:cont, {:ok, Map.put(acc, Path.rootname(name), text)}}
+        {:error, why} -> {:halt, {:error, "templates/#{name} #{why}"}}
+      end
+    end)
+  end
+
+  defp template(path) do
+    case File.lstat(path) do
+      {:ok, %{type: :regular, size: size}} when size <= @template_limit ->
+        case File.read(path) do
+          {:ok, text} -> {:ok, text}
+          {:error, reason} -> {:error, "cannot be read (#{:file.format_error(reason)})"}
+        end
+
+      {:ok, %{type: :regular}} ->
+        {:error, "is larger than #{div(@template_limit, 1_000_000)} MB"}
+
+      {:ok, %{type: :symlink}} ->
+        {:error, "is a link; put the template itself there"}
+
+      {:ok, _other} ->
+        {:error, "is not a file"}
+
+      {:error, reason} ->
+        {:error, "cannot be read (#{:file.format_error(reason)})"}
+    end
+  end
+
+  defp assets(folder) do
+    paths = files_under(folder, "assets")
+    total = paths |> Enum.map(&size(Path.join(folder, &1))) |> Enum.sum()
+
+    if total > @assets_limit do
+      {:error, "assets/ holds more than #{div(@assets_limit, 1_000_000)} MB"}
+    else
+      {:ok,
+       for(path <- paths, {:ok, bin} <- [File.read(Path.join(folder, path))], do: {path, bin})}
+    end
+  end
+
+  # the regular files under `rel` (a path inside `folder`), not hidden, no
+  # links followed, sorted so two reads give the same site
+  defp files_under(folder, rel) do
+    rel
+    |> then(&list(Path.join(folder, &1)))
+    |> Enum.reject(&String.starts_with?(&1, "."))
+    |> Enum.sort()
+    |> Enum.flat_map(fn name ->
+      path = Path.join(rel, name)
+
+      case File.lstat(Path.join(folder, path)) do
+        {:ok, %{type: :directory}} -> files_under(folder, path)
+        {:ok, %{type: :regular}} -> [path]
+        _ -> []
+      end
+    end)
+  end
+
+  defp list(dir) do
+    case File.ls(dir) do
+      {:ok, names} -> names
+      {:error, _} -> []
+    end
+  end
+
+  defp size(path) do
+    case File.stat(path) do
+      {:ok, %{size: size}} -> size
+      {:error, _} -> 0
+    end
+  end
 
   @doc """
   What `folder` holds of the site: the content of each file Agendum would
@@ -37,14 +144,42 @@ defmodule Agendum.Extras.Publish do
       end
 
     paths = Enum.uniq(Enum.map(files, &elem(&1, 0)) ++ published)
+    contents = Map.new(files)
 
+    # an asset was just read from this very file (`inputs/1`): it is
+    # there as it is, without reading it again
     existing =
       for path <- paths,
-          {:ok, content} <- [File.read(Path.join(folder, path))],
+          {:ok, content} <- [existing(folder, path, contents)],
           into: %{},
           do: {path, content}
 
-    {:ok, %{existing: existing, published: published}}
+    missing =
+      for {path, _} <- Site.default_templates(),
+          not File.exists?(Path.join(folder, path)),
+          do: path
+
+    {:ok, %{existing: existing, published: published, templates_missing: missing}}
+  end
+
+  defp existing(folder, "assets/" <> _ = path, contents) when is_map_key(contents, path) do
+    if File.exists?(Path.join(folder, path)), do: {:ok, contents[path]}, else: :error
+  end
+
+  defp existing(folder, path, _contents), do: File.read(Path.join(folder, path))
+
+  @doc """
+  Writes Agendum's templates into `folder`'s `templates/` where one is
+  missing (R74): one that is there is the person's and stays. They make
+  the pages and are never uploaded.
+  """
+  @spec write_templates(String.t(), [Site.file()]) :: :ok | {:error, String.t()}
+  def write_templates(folder, templates) do
+    missing = Enum.reject(templates, &File.exists?(Path.join(folder, elem(&1, 0))))
+
+    with :ok <- each(folders(Enum.map(missing, &elem(&1, 0))), &mkdir(Path.join(folder, &1))) do
+      each(missing, fn {path, text} -> put(folder, path, text) end)
+    end
   end
 
   @doc """

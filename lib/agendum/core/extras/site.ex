@@ -25,7 +25,7 @@ defmodule Agendum.Core.Extras.Site do
   """
 
   alias Agendum.Core.{Database, DateFormat}
-  alias Agendum.Core.Extras.{Address, Blog, Markdown, ZettelLinks}
+  alias Agendum.Core.Extras.{Address, Blog, Markdown, Template, ZettelLinks}
   alias Agendum.Core.Facade.Extras.Zettels
 
   @typedoc "A file of the site: its path in the site's folder, and its content."
@@ -50,17 +50,92 @@ defmodule Agendum.Core.Extras.Site do
   @legacy_stylesheet File.read!(Path.join(@assets, "legacy-style.css"))
   @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
+  # the templates a site's pages are drawn from (`Agendum.Core.Extras.Template`),
+  # written into its `templates/` folder when missing, then the person's
+  @template_names ~w(layout index post menu)
+  for name <- @template_names,
+      do: @external_resource(Path.join([@assets, "templates", name <> ".html"]))
+
+  @default_templates Map.new(@template_names, fn name ->
+                       {name, File.read!(Path.join([@assets, "templates", name <> ".html"]))}
+                     end)
+
   @doc "The stylesheet's path: written only when the folder has none."
   @spec stylesheet() :: String.t()
   def stylesheet, do: @stylesheet
 
+  @typedoc """
+  What the site's folder holds that the site is made from: its templates,
+  by name (`templates/post.html` is `"post"`), and its assets, by their path
+  in `assets/`, as the shell read them (`Agendum.Extras.Publish.inputs/1`).
+  """
+  @type inputs :: %{templates: %{optional(String.t()) => String.t()}, assets: [file]}
+
+  @doc """
+  The templates Agendum writes into a site's `templates/` folder when one
+  is missing, by their path there: then they are the person's to change.
+  """
+  @spec default_templates() :: [file]
+  def default_templates,
+    do: for({name, text} <- @default_templates, do: {"templates/#{name}.html", text})
+
   @doc """
   Every file of the site on `today`: the posts due then (a When still to
-  come waits). A post without a Zettel id is left out: Publish gives each
-  post one first (R73).
+  come waits; a post without a Zettel id is left out, as Publish gives
+  each one first, R73), its pages drawn from the folder's
+  templates (Agendum's own where one is missing) and its assets copied as
+  they are; or why not: a template's mistake, with where it is, or an
+  asset's name that cannot be on the web.
   """
+  @typedoc """
+  Why the site could not be made: a template's mistake (its name, the
+  line or nil, and what, `Agendum.Core.Extras.Template`), or an asset's
+  name that cannot be on the web.
+  """
+  @type error ::
+          {:template, String.t(), pos_integer | nil, Template.mistake() | Template.render_error()}
+          | {:asset_name, String.t()}
+
+  @spec build(Database.t(), Date.t(), inputs) :: {:ok, [file]} | {:error, error}
+  def build(db, today, inputs) do
+    with {:ok, templates} <- parse(Map.merge(@default_templates, inputs.templates)),
+         :ok <- assets_named_well(inputs.assets) do
+      # an included template's last newline is not part of it, so a
+      # partial can be a file ending in a newline and still sit in a line
+      partials = Map.new(templates, fn {n, tree} -> {n, drop_last_newline(tree)} end)
+      pages(db, today, %{whole: templates, partials: partials}, inputs.assets)
+    end
+  end
+
+  @doc "Every file of the site on `today`, with Agendum's own templates and no assets."
   @spec build(Database.t(), Date.t()) :: [file]
-  def build(%Database{} = db, today) do
+  def build(db, today) do
+    {:ok, files} = build(db, today, %{templates: %{}, assets: []})
+    files
+  end
+
+  # each template parsed, or the first mistake and where
+  defp parse(texts) do
+    Enum.reduce_while(texts, {:ok, %{}}, fn {name, text}, {:ok, parsed} ->
+      case Template.parse(text) do
+        {:ok, tree} ->
+          {:cont, {:ok, Map.put(parsed, name, tree)}}
+
+        {:error, {line, mistake}} ->
+          {:halt, {:error, {:template, name, line, mistake}}}
+      end
+    end)
+  end
+
+  # an asset's path goes into web addresses as it is: plain characters only
+  defp assets_named_well(assets) do
+    case Enum.find(assets, fn {path, _} -> not Address.plain?(path) end) do
+      nil -> :ok
+      {path, _} -> {:error, {:asset_name, path}}
+    end
+  end
+
+  defp pages(%Database{} = db, today, templates, assets) do
     # the addresses and modified days publishing would record now: shown in
     # the preview, kept only once the person publishes (`record/2`)
     db = Blog.record_posts(db, today, own())
@@ -69,13 +144,56 @@ defmodule Agendum.Core.Extras.Site do
     posts = db |> Blog.posts(today) |> Enum.filter(& &1.zettel)
     published = MapSet.new(posts, & &1.id)
     site = %{db: db, blog: blog, used: used, published: published, posts: posts}
+    draw = &draw(site, templates, &1, &2)
 
-    [
-      {"index.html", index(site)},
-      {"rss.xml", rss(site)},
-      {"feed.json", json_feed(site)},
-      {@stylesheet, default_stylesheet()}
-    ] ++ Enum.map(posts, &{post_path(db, &1), post_page(site, &1)}) ++ @font_files
+    with {:ok, index} <- draw.("index", index(site)),
+         {:ok, pages} <- post_pages(site, draw) do
+      {:ok,
+       [
+         {"index.html", index},
+         {"rss.xml", rss(site)},
+         {"feed.json", json_feed(site)},
+         {@stylesheet, default_stylesheet()}
+       ] ++ pages ++ @font_files ++ assets}
+    end
+  end
+
+  defp post_pages(site, draw) do
+    Enum.reduce_while(site.posts, {:ok, []}, fn item, {:ok, pages} ->
+      case draw.("post", post_page(site, item)) do
+        {:ok, page} -> {:cont, {:ok, [{post_path(site.db, item), page} | pages]}}
+        error -> {:halt, error}
+      end
+    end)
+    |> then(fn
+      {:ok, pages} -> {:ok, Enum.reverse(pages)}
+      error -> error
+    end)
+  end
+
+  # a page: its own template (`index`, `post`) filled in, then put in the
+  # layout as `content`; the templates are each other's partials, so
+  # `{{> menu}}` (or any template in the folder) can be included
+  defp draw(site, templates, name, context) do
+    context = Map.merge(site_context(site), context)
+
+    with {:ok, body} <- render(templates, name, context) do
+      render(templates, "layout", Map.put(context, "content", body))
+    end
+  end
+
+  defp render(templates, name, context) do
+    case Template.render(templates.whole[name], context, templates.partials, name) do
+      {:ok, text} -> {:ok, text}
+      {:error, error} -> {:error, {:template, name, nil, error}}
+    end
+  end
+
+  defp drop_last_newline(tree) do
+    case List.last(tree) do
+      {:text, text} -> List.replace_at(tree, -1, {:text, String.replace_suffix(text, "\n", "")})
+      _ -> tree
+    end
   end
 
   @doc """
@@ -85,8 +203,9 @@ defmodule Agendum.Core.Extras.Site do
   @spec own() :: {[String.t()], [String.t()]}
   def own do
     files = ["index.html", "rss.xml", "feed.json", @stylesheet]
-    folders = @font_files |> Enum.map(&(&1 |> elem(0) |> Path.dirname())) |> Enum.uniq()
-    {files, folders}
+    fonts = @font_files |> Enum.map(&(&1 |> elem(0) |> Path.dirname())) |> Enum.uniq()
+    # the person's templates and assets are never a post's page
+    {files, fonts ++ ["templates", "assets"]}
   end
 
   @doc """
@@ -139,81 +258,81 @@ defmodule Agendum.Core.Extras.Site do
           existing[path] != content,
           do: path
         ),
-      removed:
-        for(
-          path <- published,
-          not MapSet.member?(paths, path),
-          Map.has_key?(existing, path),
-          do: path
-        )
+      # a path written last time and not now goes, whether or not the
+      # folder still has it: an asset the person deleted is removed from
+      # the server too
+      removed: for(path <- published, not MapSet.member?(paths, path), do: path)
     }
   end
 
   # --- pages -------------------------------------------------------------------
+  #
+  # Domain: what the templates see, as maps with string keys (the names a
+  # template uses): `site` on every page, `root` (from the page back to the
+  # site's root), `page` (its title, whether it is the index), and `posts`
+  # (the index) or `post` (a post's page). Each post holds its parts ready
+  # to show: dates as the file shows them and as ISO, its title as HTML,
+  # its body as HTML (put in with `{{{…}}}`), its address from the page.
+
+  defp site_context(site) do
+    blog = site.blog
+
+    %{
+      "site" => %{
+        "title" => blog.title,
+        "description" => blog.description,
+        "author" => blog.author,
+        "language" => blog.language,
+        "home" => home(site),
+        "base_url" => blog.base_url,
+        "me" => String.split(blog.me)
+      }
+    }
+  end
 
   defp index(site) do
-    articles = Enum.map_join(site.posts, "\n", &article(site, &1, "", :index))
-    empty = if site.posts == [], do: "<p>No posts yet.</p>", else: ""
+    posts =
+      site.posts
+      |> Enum.with_index()
+      |> Enum.map(fn {item, i} ->
+        post_context(site, item, "", :index) |> Map.put("first", i == 0)
+      end)
 
-    page(site, "", site.blog.title, """
-    <main class="h-feed">
-    #{description(site)}#{articles}#{empty}
-    </main>
-    """)
+    %{"root" => "", "page" => %{"title" => site.blog.title, "index" => true}, "posts" => posts}
   end
 
   defp post_page(site, item) do
     root = root(post_path(site.db, item))
 
-    page(site, root, "#{title_text(site, item)} · #{site.blog.title}", """
-    <main>
-    #{article(site, item, root, :page)}
-    <p class="back"><a href="#{root}index.html">← #{esc(site.blog.title)}</a></p>
-    </main>
-    """)
+    %{
+      "root" => root,
+      "page" => %{"title" => "#{title_text(site, item)} · #{site.blog.title}", "index" => false},
+      "post" => post_context(site, item, root, :page)
+    }
   end
 
-  defp description(%{blog: %{description: ""}}), do: ""
-  defp description(site), do: ~s(<p class="p-summary">#{esc(site.blog.description)}</p>\n)
+  # One post, for the index (its address from there) or its own page
+  # (`root` leads back to the site's root, for links to other posts).
+  defp post_context(site, item, root, where) do
+    date = Blog.date(item)
+    modified = if where == :page, do: modified(site, item)
 
-  # One post as an h-entry: its title (a link to its page on the index),
-  # its date, its author and its note as HTML. `root` leads from the page
-  # it is on back to the site's root, for links to other posts.
-  defp article(site, item, root, where) do
-    word = Zettels.zettel(item)
-    title = title_html(site, item, root)
-
-    heading =
-      case where do
-        :index ->
-          href = attr(post_path(site.db, item))
-          ~s(<h2 class="p-name"><a class="u-url" href="#{href}">#{title}</a></h2>)
-
-        :page ->
-          ~s(<h1 class="p-name">#{title}</h1>)
-      end
-
-    """
-    <article class="h-entry" id="#{word}">
-    #{heading}
-    <p class="meta">#{time_tag(site, item)}#{updated_tag(site, item, where)}#{author_tag(site)}#{permalink(site, item, where)}</p>
-    <div class="e-content">
-    #{Markdown.to_html(item.note, site.used, link_fun(site, root))}
-    </div>
-    </article>
-    """
+    %{
+      "zettel" => Zettels.zettel(item),
+      "url" => post_path(site.db, item),
+      "title" => title_text(site, item),
+      "title_html" => title_html(site, item, root),
+      "date" => shown(site, date),
+      "date_iso" => date && Date.to_iso8601(date),
+      "updated" => shown(site, modified),
+      "updated_iso" => modified && Date.to_iso8601(modified),
+      "permalink" => permalink(site, item),
+      "content" => Markdown.to_html(item.note, site.used, link_fun(site, root))
+    }
   end
 
-  defp time_tag(site, item) do
-    case Blog.date(item) do
-      nil ->
-        ""
-
-      date ->
-        shown = DateFormat.date(date, site.db.date_format)
-        ~s(<time class="dt-published" datetime="#{Date.to_iso8601(date)}">#{esc(shown)}</time>)
-    end
-  end
+  defp shown(_site, nil), do: nil
+  defp shown(site, date), do: DateFormat.date(date, site.db.date_format)
 
   # the day a publish found the post changed (R74), or nil
   defp modified(site, item) do
@@ -223,42 +342,12 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
-  # on its own page, the day it was found changed
-  defp updated_tag(site, item, :page) do
-    case modified(site, item) do
-      nil ->
-        ""
-
-      date ->
-        shown = DateFormat.date(date, site.db.date_format)
-
-        ~s( · Updated <time class="dt-updated" datetime="#{Date.to_iso8601(date)}">#{esc(shown)}</time>)
-    end
-  end
-
-  defp updated_tag(_site, _item, :index), do: ""
-
-  defp author_tag(%{blog: %{author: ""}}), do: ""
-
-  # without a Base address there is no home page to link the author to,
-  # and an empty href="" would be a link to the page itself
-  defp author_tag(%{blog: %{base_url: ""}} = site),
-    do: ~s( · <span class="p-author h-card">#{esc(site.blog.author)}</span>)
-
-  defp author_tag(site),
-    do: ~s( · <a class="p-author h-card" href="#{attr(home(site))}">#{esc(site.blog.author)}</a>)
-
   # on its own page the post says where it is, for the u-url microformat;
-  # without a Base address, by its file name, as the page is in posts/
-  defp permalink(_site, _item, :index), do: ""
+  # without a Base address, by its file name, as the page is in its folder
+  defp permalink(%{blog: %{base_url: ""}} = site, item),
+    do: Path.basename(post_path(site.db, item))
 
-  defp permalink(%{blog: %{base_url: ""}} = site, item, :page),
-    do:
-      ~s( · <a class="u-url" href="#{attr(Path.basename(post_path(site.db, item)))}">permalink</a>)
-
-  defp permalink(site, item, :page),
-    do:
-      ~s( · <a class="u-url" href="#{attr(absolute(site, post_path(site.db, item)))}">permalink</a>)
+  defp permalink(site, item), do: absolute(site, post_path(site.db, item))
 
   # A Zettel link in a post: to the target's page when it is published,
   # else the target's text; a broken link stays as it was written.
@@ -305,56 +394,6 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   defp inline_title(site, text, link), do: Markdown.inline(text, site.used, link)
-
-  defp page(site, root, title, body) do
-    blog = site.blog
-
-    """
-    <!DOCTYPE html>
-    <html lang="#{attr(blog.language)}">
-    <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="Wol's Agendum">
-    <title>#{esc(title)}</title>
-    <link rel="stylesheet" href="#{root}#{@stylesheet}">
-    <link rel="alternate" type="application/rss+xml" title="#{attr(blog.title)}" href="#{root}rss.xml">
-    <link rel="alternate" type="application/feed+json" title="#{attr(blog.title)}" href="#{root}feed.json">
-    #{me_links(blog)}</head>
-    <body>
-    #{site_header(blog, root)}
-    #{body}<footer>
-    <p>#{footer_card(site)}<a href="#{root}rss.xml">RSS</a> · <a href="#{root}feed.json">JSON Feed</a> · made with Wol's Agendum</p>
-    </footer>
-    </body>
-    </html>
-    """
-  end
-
-  # on the index the blog's title is the page's heading; on a post's page
-  # the post's title is, and the blog's is a link home
-  defp site_header(blog, ""),
-    do: ~s(<header><h1 class="site"><a href="index.html">#{esc(blog.title)}</a></h1></header>)
-
-  defp site_header(blog, root),
-    do:
-      ~s(<header><p class="site"><a href="#{root}index.html">#{esc(blog.title)}</a></p></header>)
-
-  defp me_links(blog) do
-    blog.me
-    |> String.split()
-    |> Enum.map_join(&~s(<link rel="me" href="#{attr(&1)}">\n))
-  end
-
-  defp footer_card(%{blog: %{author: ""}}), do: ""
-
-  defp footer_card(%{blog: %{base_url: ""}} = site),
-    do: ~s(<span class="h-card"><span class="p-name">#{esc(site.blog.author)}</span></span> · )
-
-  defp footer_card(site) do
-    ~s(<span class="h-card"><a class="p-name u-url" rel="me" href="#{attr(home(site))}">) <>
-      "#{esc(site.blog.author)}</a></span> · "
-  end
 
   # --- feeds ---------------------------------------------------------------------
 
@@ -479,7 +518,6 @@ defmodule Agendum.Core.Extras.Site do
     if url == "" or String.ends_with?(url, "/"), do: url, else: url <> "/"
   end
 
-  defp esc(text), do: Markdown.escape(text)
   defp attr(text), do: Markdown.attribute(text)
 
   defp xml(text) do

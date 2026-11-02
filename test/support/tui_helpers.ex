@@ -40,9 +40,31 @@ defmodule Agendum.TUIHelpers do
   defp play([key | keys], state) do
     {state, effects} = Update.handle(state, key)
     assert_known_effects(effects, key)
+    {state, effects} = read_site_folder(state, effects)
     Process.put(:effects_seen, (Process.get(:effects_seen) || []) ++ effects)
     played = for {:play, played} <- effects, k <- played ++ [:macro_done], do: k
     play(played ++ keys, state)
+  end
+
+  @doc "What a site's folder of no templates or assets of its own holds (`Publish.inputs/1`)."
+  def empty_site_folder, do: %{templates: %{}, assets: []}
+
+  # Publish reads the site's folder first (`{:publish_read, folder}`): the
+  # shell's answer for a folder with no templates or assets of its own is
+  # given at once, so the site's files come next, as `{:publish_scan, …}`
+  defp read_site_folder(state, effects) do
+    Enum.reduce(effects, {state, effects}, fn
+      {:publish_read, folder}, {state, seen} ->
+        empty = {:ok, empty_site_folder()}
+
+        state =
+          Agendum.TUI.Extras.Publish.Results.publish_read(%{state | effects: []}, folder, empty)
+
+        {%{state | effects: []}, seen ++ state.effects}
+
+      _effect, acc ->
+        acc
+    end)
   end
 
   @doc """

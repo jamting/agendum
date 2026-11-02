@@ -14,6 +14,25 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   alias Agendum.TUI.Extras.PublishPreviewBox
 
   @doc """
+  The folder's templates and assets read (R74): the site is made from them
+  and the folder is read for what it would change; a template's mistake
+  stops it there, saying where.
+  """
+  @spec publish_read(State.t(), String.t(), {:ok, map} | {:error, String.t()}) :: State.t()
+  def publish_read(state, folder, {:ok, inputs}) do
+    case Core.site(state.db, state.today, inputs) do
+      {:ok, files} ->
+        State.effect(state, {:publish_scan, folder, files})
+
+      {:error, error} ->
+        State.error(state, Messages.text(:not_published, Messages.site_error(error)))
+    end
+  end
+
+  def publish_read(state, _folder, {:error, reason}),
+    do: State.error(state, Messages.text(:not_published, reason))
+
+  @doc """
   The site's folder read (R74): what publishing would change there is
   shown before anything is written.
   """
@@ -21,9 +40,11 @@ defmodule Agendum.TUI.Extras.Publish.Results do
   def publish_scanned(state, folder, files, {:ok, scan}) do
     changes = Core.site_changes(files, scan.existing, scan.published)
 
-    if PublishPreviewBox.nothing?(changes) and upload(state).method == :none,
+    missing = Map.get(scan, :templates_missing, [])
+
+    if PublishPreviewBox.nothing?(changes) and missing == [] and upload(state).method == :none,
       do: State.info(state, Messages.text(:up_to_date)),
-      else: PublishPreviewBox.open(state, folder, files, changes)
+      else: PublishPreviewBox.open(state, folder, files, changes, missing)
   end
 
   def publish_scanned(state, _folder, _files, {:error, reason}),

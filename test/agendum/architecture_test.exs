@@ -155,7 +155,7 @@ defmodule Agendum.ArchitectureTest do
     related_items relocation_conflicts reposition_refused section_calcs section_item_count shift_filters show_view subscription_name template view_statistics waiting?
     when_at when_text
     zettel zettels item_by_zettel zettel_links link_targets linked_from
-    blog_posts blog_waiting blog_post_count blog_address_default blog_needs_base_url? moved_upload upload_methods site site_changes feeds_due parse_feed export_opml
+    blog_posts blog_waiting blog_post_count blog_address_default blog_needs_base_url? moved_upload upload_methods site site_default_templates site_changes feeds_due parse_feed export_opml
   )a
 
   # Agendum.Core functions a command does: the ones a command calls by its
@@ -298,7 +298,10 @@ defmodule Agendum.ArchitectureTest do
     # a file opened: an older file's blog upload settings move to the
     # person's preferences (R74, format 47), extras on or off, so that the
     # file's next save does not lose them
-    {Agendum.TUI.Update, :arrive, 1}
+    {Agendum.TUI.Update, :arrive, 1},
+    # the tests' key presser answers Publish's read of the site's folder as
+    # the shell (`App`) would, for a folder of no templates of its own
+    {Agendum.TUIHelpers, :read_site_folder, 2}
   ]
 
   test "faithful code reaches the extras' boxes only through their doors (R77)", %{

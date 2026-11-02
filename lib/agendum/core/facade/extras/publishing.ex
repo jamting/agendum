@@ -180,6 +180,18 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   @spec site(db, Date.t()) :: [Site.file()]
   def site(db, today), do: Site.build(db, today)
 
+  @doc """
+  Every file of the site on `today`, made from what its folder holds: its
+  templates and assets (`Agendum.Core.Extras.Site.build/3`); or why not, a
+  template's mistake with where it is.
+  """
+  @spec site(db, Date.t(), Site.inputs()) :: {:ok, [Site.file()]} | {:error, Site.error()}
+  def site(db, today, inputs), do: Site.build(db, today, inputs)
+
+  @doc "The templates Agendum writes into a site's folder where one is missing (R74)."
+  @spec site_default_templates() :: [Site.file()]
+  def site_default_templates, do: Site.default_templates()
+
   @doc "What writing the site would change in a folder (`Agendum.Core.Extras.Site.changes/3`)."
   @spec site_changes([Site.file()], %{optional(String.t()) => String.t()}, [String.t()]) ::
           Site.changes()

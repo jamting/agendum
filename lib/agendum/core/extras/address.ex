@@ -44,14 +44,19 @@ defmodule Agendum.Core.Extras.Address do
   (SECURITY.md, door 2: a crafted file must not write outside the folder).
   """
   @spec safe?(term) :: boolean
-  def safe?(path) when is_binary(path) do
-    parts = String.split(path, "/")
-
-    String.ends_with?(path, ".html") and Regex.match?(~r{^[A-Za-z0-9._~/-]+$}, path) and
-      Enum.all?(parts, &(&1 not in ["", ".", ".."]))
-  end
-
+  def safe?(path) when is_binary(path), do: String.ends_with?(path, ".html") and plain?(path)
   def safe?(_path), do: false
+
+  @doc """
+  Whether `path` can be a file of the site as it is: relative, inside its
+  folder, and only a–z, A–Z, 0–9, `.`, `_`, `~`, `-` and `/` (an asset's
+  name too).
+  """
+  @spec plain?(String.t()) :: boolean
+  def plain?(path) do
+    Regex.match?(~r{^[A-Za-z0-9._~/-]+$}, path) and
+      Enum.all?(String.split(path, "/"), &(&1 not in ["", ".", ".."]))
+  end
 
   @doc """
   A post's address from `pattern`, its `title`, Zettel id `zettel` and

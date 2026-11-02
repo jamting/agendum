@@ -434,8 +434,16 @@ defmodule Agendum.TUI.App do
   defp perform(state, {:read_opml, path}),
     do: Agendum.TUI.Extras.Feeds.Results.opml_read(state, path, File.read(Path.expand(path)))
 
-  # the micro-blog (R74): what the folder holds, then writing and
-  # uploading it
+  # the micro-blog (R74): the folder's templates and assets, then what it
+  # holds of the site made from them, then writing and uploading it
+  defp perform(state, {:publish_read, folder}),
+    do:
+      Agendum.TUI.Extras.Publish.Results.publish_read(
+        state,
+        folder,
+        Publish.inputs(Path.expand(folder))
+      )
+
   defp perform(state, {:publish_scan, folder, files}),
     do:
       Agendum.TUI.Extras.Publish.Results.publish_scanned(
@@ -512,7 +520,9 @@ defmodule Agendum.TUI.App do
 
   # the site written into its folder, then uploaded, in the background task
   defp publish_site(upload, dir, files, changes, password) do
+    # Agendum's templates where one is missing: they are the person's then
     with :ok <- Publish.write(dir, files, changes),
+         :ok <- Publish.write_templates(dir, Agendum.Core.site_default_templates()),
          do: Publish.upload(upload, dir, files, changes, password)
   end
 

@@ -1,0 +1,12 @@
+<main class="h-feed">
+{{#site.description}}<p class="p-summary">{{site.description}}</p>
+{{/site.description}}{{#posts}}{{^first}}
+{{/first}}<article class="h-entry" id="{{zettel}}">
+<h2 class="p-name"><a class="u-url" href="{{url}}">{{{title_html}}}</a></h2>
+<p class="meta">{{#date}}<time class="dt-published" datetime="{{date_iso}}">{{date}}</time>{{/date}}{{#site.author}} · {{#site.home}}<a class="p-author h-card" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-author h-card">{{site.author}}</span>{{/site.home}}{{/site.author}}</p>
+<div class="e-content">
+{{{content}}}
+</div>
+</article>
+{{/posts}}{{^posts}}<p>No posts yet.</p>{{/posts}}
+</main>

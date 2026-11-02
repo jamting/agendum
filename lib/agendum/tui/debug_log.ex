@@ -355,6 +355,9 @@ defmodule Agendum.TUI.DebugLog do
     do: "effect save_preferences #{path} in #{ms} ms"
 
   # the site's files are counted, and a password never written (R74)
+  def effect_text({:publish_read, folder}, ms),
+    do: "effect publish_read #{folder} in #{ms} ms"
+
   def effect_text({:publish_scan, folder, files}, ms),
     do: "effect publish_scan #{folder} (#{length(files)} files) in #{ms} ms"
 

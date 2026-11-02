@@ -20,13 +20,18 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
   alias Agendum.TUI.State
   alias Agendum.TUI.Terminal.Draw
 
-  @doc "Opens the box for `files` (the site), and what they would change in `folder`."
-  @spec open(State.t(), String.t(), [Site.file()], Site.changes()) :: State.t()
-  def open(state, folder, files, changes) do
+  @doc """
+  Opens the box for `files` (the site), what they would change in
+  `folder`, and the `templates` Agendum would write there as they are
+  missing.
+  """
+  @spec open(State.t(), String.t(), [Site.file()], Site.changes(), [String.t()]) :: State.t()
+  def open(state, folder, files, changes, templates \\ []) do
     State.push(state, %Agendum.TUI.Modes.PublishPreview{
       folder: folder,
       files: files,
       changes: changes,
+      templates: templates,
       publishing: false,
       top: 0
     })
@@ -157,7 +162,8 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
     posts = Agendum.Core.blog_post_count(state.db, state.today)
 
     head =
-      ["#{Draw.count(posts, "post")} · #{summary(c)}", where] ++ waiting(state) ++ [""]
+      ["#{Draw.count(posts, "post")} · #{summary(c)}", where] ++
+        waiting(state) ++ templates(mode) ++ [""]
 
     list =
       if nothing?(c),
@@ -168,6 +174,12 @@ defmodule Agendum.TUI.Extras.PublishPreviewBox do
 
     head ++ list
   end
+
+  # Agendum's templates it writes as they are missing: yours to change then
+  defp templates(%{templates: [_ | _] = paths}),
+    do: [Messages.text(:templates_written, Enum.map_join(paths, ", ", &Path.basename/1))]
+
+  defp templates(_mode), do: []
 
   # posts whose When is still to come wait for their day (R74)
   defp waiting(state) do

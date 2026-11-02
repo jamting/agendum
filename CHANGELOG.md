@@ -6,6 +6,16 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.81.0 — 2026-11-02
+
+- **Change how your blog looks: templates.** The next time you publish, Agendum writes `templates/` into the site's folder: `layout.html`, `index.html`, `post.html` and `menu.html`. They make the pages as before (a `"` in a title is now written `&quot;`, which shows the same); change them, and your pages change. Agendum never overwrites a template that is there (delete one to get Agendum's back), and templates are never uploaded. They use `{{name}}` for a value, `{{#posts}}…{{/posts}}` to repeat, `{{> menu}}` to include another; nothing in them can run code. A mistake stops publishing and says where: "templates/post.html line 12: {{#post}} is not closed".
+- **A menu on every page:** write links in `templates/menu.html`; it is empty to begin with.
+- **Assets:** put images, fonts or extra stylesheets in the site's `assets/` folder; they go out with the pages, at the same path.
+
+### Facade
+
+- Added `site/3` (the site made from a folder's templates and assets, or why not) and `site_default_templates/0`.
+
 ## 0.80.0 — 2026-11-02
 
 - **A post's title can differ from its line in the view.** Start the note with `# The real title`: the post gets that title on its page and in the feeds, while the item keeps its short text. The heading stays at the top of the post too.

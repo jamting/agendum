@@ -1,6 +1,6 @@
 # The publisher: a roadmap
 
-**Status:** under way (meeting 2026-11-02-1255): steps 1 and 2 done (v0.79.0, v0.80.0); step 3 next. The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
+**Status:** under way (meeting 2026-11-02-1255): steps 1–3 done (v0.79.0, v0.80.0, v0.81.0); step 4 next. The publisher today is R74 (the micro-blog, ADR 0041), an extra behind the Extras switch (ADR 0043); every step here stays one, built in the clone's patterns (ADR 0049).
 
 The owner asked for an idea meeting to give the publisher a roadmap. The meeting decided what each part should be and in what order; the details of each step are settled when it is built (the `feature` skill), and the decisions below are the starting point, not a specification.
 
@@ -54,7 +54,7 @@ One step per release, each tried by the owner before the next.
 
 1. [x] The settings split: the Publish submenu, the Site box, Upload in the preferences (a format change: the upload leaves the file); v0.79.0, format 47. Feeds joins the submenu with step 5
 2. [x] A post's metadata: the `# Heading` title, a future When waits, the modified date stamped at publish, the slug made once and the address pattern; v0.80.0, format 48. The owner chose to keep the heading in the body too
-3. [ ] Templates and assets: the Mustache-style reader, the default templates, `assets/`
+3. [x] Templates and assets: the Mustache-style reader, the default templates, `assets/`; v0.81.0. The owner chose: in the site folder, written when missing, the page template with step 4, a mistake refuses
 4. [ ] Pages: the Pages category, the menu partial
 5. [ ] Several feeds: Posts' children as feeds, the Feeds list and each feed's box
 6. [ ] The note editor for Markdown: highlighting, list continuation, the task-box toggle

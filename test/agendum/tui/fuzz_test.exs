@@ -352,6 +352,14 @@ defmodule Agendum.TUI.Fuzz do
   # for the upload (`{:publish, …}`), whose answer comes back later.
   defp scanned(state, effects) do
     Enum.reduce(effects, {state, []}, fn
+      # the folder's templates and assets: none of its own, so the site's
+      # files come next and are read in turn
+      {:publish_read, folder}, {state, more} ->
+        empty = {:ok, Agendum.TUIHelpers.empty_site_folder()}
+        state = Agendum.TUI.Extras.Publish.Results.publish_read(state, folder, empty)
+        {state, more2} = scanned(%{state | effects: []}, state.effects)
+        {%{state | effects: []}, more ++ more2}
+
       {:publish_scan, folder, files}, {state, more} ->
         state =
           Agendum.TUI.Extras.Publish.Results.publish_scanned(
@@ -368,7 +376,7 @@ defmodule Agendum.TUI.Fuzz do
     end)
   end
 
-  defp empty_folder, do: %{existing: %{}, published: []}
+  defp empty_folder, do: %{existing: %{}, published: [], templates_missing: []}
 
   defp request({:fetch_feed, id, url}), do: {:feed_read, id, url}
   defp request({:fetch_calendar, id, url}), do: {:calendar_read, id, url}
