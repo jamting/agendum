@@ -61,7 +61,7 @@
   <p>Everything worth knowing about Wol's Agendum, the important things in depth and the
      rest in brief, as Owl explained it to Rabbit one afternoon. For the short
      version, see the <a href="../guide/index.html">User Guide</a>.</p>
-  <p class="written-for">Written for Agendum 0.91</p>
+  <p class="written-for">Written for Agendum 0.92</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -2108,11 +2108,12 @@ lists, each with its folder, how many items it has, and what it publishes.
   <li><strong>Folder</strong>: where it goes on the site, made from its name at the
       first publish and kept (<code>/garden/</code>). Change it, and the list moves at
       the next publish.</li>
-  <li>Four switches (<kbd>SPACE</kbd> turns one over, <kbd>Y</kbd> and <kbd>N</kbd>
+  <li>Five switches (<kbd>SPACE</kbd> turns one over, <kbd>Y</kbd> and <kbd>N</kbd>
       set it): an <strong>Index page</strong> of its items; <strong>Feeds</strong> of
-      its own; <strong>Item pages</strong>, a page for each item; and
-      <strong>Notes</strong>, whether its items' notes are published. A new list has
-      only its index page.</li>
+      its own; <strong>Item pages</strong>, a page for each item;
+      <strong>Notes</strong>, whether its items' notes are published; and
+      <strong>Tag pages</strong>, a page for each category under the list's (below).
+      A new list has only its index page.</li>
   <li><strong>Newest</strong>: how many of its newest items its index and feeds show;
       empty, the Site's number; 0, all. Past them, it has an archive of its own.</li>
   <li><strong>Fields</strong>: the families whose values go out with each item, by
@@ -2121,6 +2122,13 @@ lists, each with its folder, how many items it has, and what it publishes.
   <li><strong>Item address</strong>: where its item pages go, as the posts' Address;
       empty, <code>garden/{zettel}.html</code>.</li>
 </ul>
+
+<p><strong>Tag pages.</strong> Make a family a list, say a <em>Tags</em> category with
+Elixir and Agenda under it, and turn on its Tag pages: each child with items gets a page
+of them, titles by month as the archive has them, at <code>tags/elixir.html</code>, and
+each post's own page says “Tags: Elixir · Agenda”, linked. An item in a child's child
+counts for the child. The page follows the category's name: rename it, and the page
+moves.</p>
 
 <p>A list's items are those in its category or under it, newest first. Drafts holds
 them back as it holds back posts, and an item in the Pages category is a page only.

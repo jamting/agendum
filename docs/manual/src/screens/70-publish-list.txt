@@ -7,7 +7,7 @@
  ││ Description    : For Pooh and Piglet, who said they would help             │
  └│ Folder         :                                                           │
  N│ Index page     : Yes       Feeds : No        Item pages : No               │
-  │ Notes          : No        Newest :                                        │
+  │ Notes          : No        Newest :            Tag pages : No              │
   │ Fields         : Priority                                                  │
   │ Item address   :                                                           │
   │                                                                            │

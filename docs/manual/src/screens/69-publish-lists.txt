@@ -2,7 +2,7 @@
  removes.
  Garden                                   When             Priority Friends
  ┌────────────────────────────── Publish: lists ──────────────────────────────┐
- │ Rabbit's Garden        /garden/        2 items    index                    │
+ │ Rabbit's Garden    /garden/       2 items   index                          │
  │                                                                            │
  │ ENTER properties · INS add · DEL remove                                    │
  └────────────────────────────────────────────────────────────────────────────┘
