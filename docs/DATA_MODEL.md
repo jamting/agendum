@@ -170,7 +170,7 @@ erDiagram
         string me "rel=me links"
         string address "a post's page address pattern, posts/{zettel}.html by default"
         map published "item id => PostRecord: address made once, fingerprint, modified day"
-        map feeds "category id => BlogFeed: title, description, folder"
+        map lists "category id => BlogList: title, description, folder, switches, fields, item address"
         map moved_upload "an older file's upload settings, on their way to the preferences; never written"
     }
     MACRO {
@@ -399,7 +399,7 @@ classDiagram
         +base_url, me : String
         +address : String
         +published : Map~id, PostRecord~
-        +feeds : Map~id, BlogFeed~
+        +lists : Map~id, BlogList~
         +moved_upload : Upload or nil, never written
     }
     class Macro {
@@ -452,7 +452,8 @@ classDiagram
 | `Calendar`                            | `lib/agendum/core/extras/calendar.ex`      | A calendar subscription: its address, its category, and the events it last read (R45).               |
 | `Feed`                                | `lib/agendum/core/extras/feed.ex`          | A feed subscription: its address, its category, how long entries stay, and the entries it last read (R75). |
 | `Blog`                                | `lib/agendum/core/extras/blog.ex`          | The micro-blog's settings: posts and drafts categories, the site's title and address (R74). |
-| `BlogFeed`                            | `lib/agendum/core/extras/blog_feed.ex`     | One of the blog's own feeds, in `Blog.feeds` by its category (a child of Posts): its title, description and folder (R74, format 50). |
+| `BlogList`                            | `lib/agendum/core/extras/blog_list.ex`     | One of the blog's lists, in `Blog.lists` by its category: its title, description and folder; its switches (index page, feeds, item pages, notes); its fields (category ids, in order); its item pages' address pattern (R74e, format 51). |
+| `BlogFeed`                            | `lib/agendum/core/extras/blog_feed.ex`     | One of the blog's feeds as format 50 kept it (`Blog.feeds`, each child of Posts): read only, to become a list on load (R74e). |
 | `PostRecord`                          | `lib/agendum/core/extras/post_record.ex`   | What publishing remembers of a post, in `Blog.published`: its page's address (made once), a fingerprint of its title, note and date, and the day a publish found it changed (R74, format 48). |
 | `Upload`                              | `lib/agendum/core/extras/upload.ex`        | Where the blog is written and how it is uploaded: the person's, kept in their preferences by the file's path, never in the file (R74, format 47). |
 | `View.SortKey`                        | `lib/agendum/core/view.ex`          | One way to order items: by text, by a category's children, or by a note line (R36).                  |
@@ -467,7 +468,7 @@ Items, categories and views draw ids from **one counter**, `next_id`, just as th
 
 **Feeds** (R75): `db.feeds` holds the feed subscriptions (`Agendum.Core.Extras.Feed`), each with the item every entry made, its publish date and fingerprints of the title and note it filed (`Feed.snapshot/2`, `Agendum.Core.Extras.Fingerprint`, format 46, ADR 0048), so a refresh changes only what the feed changed and keeps the person's edits, without a copy of the text; an entry that faded or was discarded keeps only its publish date (`Feed.forget/1`, format 45), enough never to bring it back. The entries' items are ordinary items in Feeds ▸ the feed's name; their publish date is their Entry date.
 
-**The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links. Where the site is written and how it is uploaded (none, rsync, SFTP, ADR 0041) are the person's, not the file's (`Agendum.Core.Extras.Upload`, kept in their preferences by the file's path; format 47, meeting 2026-11-02-1255, § 10): an older file's are lifted into `db.blog.moved_upload` on load, never written, and the program moves them to the preferences. No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
+**The blog** (R74): `db.blog` (`Agendum.Core.Extras.Blog`) holds the micro-blog's settings: its posts and drafts categories by id, its title, description, author, language, base address and `rel="me"` links; and its lists by category (`Agendum.Core.Extras.BlogList`, format 51, R74e), each with its switches, the fields (category ids) a template sees, and its item pages' address pattern. A list's items, like the posts, are computed (`Blog.lists/3`), never stored; an item page's address, once made, is kept with the posts' in `published`. Where the site is written and how it is uploaded (none, rsync, SFTP, ADR 0041) are the person's, not the file's (`Agendum.Core.Extras.Upload`, kept in their preferences by the file's path; format 47, meeting 2026-11-02-1255, § 10): an older file's are lifted into `db.blog.moved_upload` on load, never written, and the program moves them to the preferences. No password is ever stored. The posts themselves are the items of the posts category, computed (`Blog.posts/1`), and the site is made from them each time (`Agendum.Core.Extras.Site`); nothing of the site is stored in the file.
 
 **Zettel ids** (R73, ADR 0039) are a second, separate kind of id: the ids people say and link to, given only to the items made zettels. An item's `zettel` is a number, spelled as a word by `Agendum.Core.Extras.ZettelId` (`bonalaku` is 1); the file's own counter, `next_zettel`, starts at 1 and only goes up, skipping the reserved words, so a Zettel id is never given twice. The JSON writes the word.
 
@@ -694,6 +695,7 @@ Format versions:
 | 48 | `Blog` gains `address`, the address pattern of a post's page, and `published`, what publishing remembers of each post by its item's id (`Agendum.Core.Extras.PostRecord`: its address, made once, a fingerprint, the day it was found changed; meeting 2026-11-02-1255, § 6) |
 | 49 | `Blog` gains `pages`, the category whose items are the site's pages (About, Now), outside the index and the feeds (meeting 2026-11-02-1255, § 8) |
 | 50 | `Blog` gains `feeds`, the settings of the blog's own feeds (each child category of Posts) by category id: title, description, folder (`Agendum.Core.Extras.BlogFeed`; meeting 2026-11-02-1255, §§ 9–10) |
+| 51 | `Blog.feeds` becomes `Blog.lists`, the blog's lists by category id (`Agendum.Core.Extras.BlogList`: title, description, folder, the switches `index`, `feeds`, `item_pages` and `notes`, `fields`, `address`; meeting 2026-11-02-2244, § 6): `upgrade/1` makes each child of Posts a list with everything on, with its feed's settings, so the site does not change |
 
 ## UI state around the database
 

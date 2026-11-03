@@ -6,6 +6,19 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.89.0 — 2026-11-03
+
+- **Publish ▸ Lists replaces Publish ▸ Feeds:** any of your own categories can be published as a list, not only the categories under Posts. A list can have an index page, its own RSS and JSON Feed, and a page for each item, each switched on or off in its box; a new list starts with only its index page.
+- **Only what you name leaves the file.** A list's **Fields** (`Role, Email`) are the only values of an item a template sees, as `{{fields.role}}` or all together as `{{#columns}}`. Its items' notes are published only when its **Notes** is Yes. Drafts holds back a list's items as it holds back posts; only posts wait for their When.
+- **A list's own look:** templates in `templates/<folder>/` (`index.html`, `item.html`, `rss.xml`) draw that list, the shared ones the rest. Each list has its own **Item address** for its item pages.
+- **In Publish ▸ Lists**, INS (or CTRL-N) adds a list, its category first; DEL (or CTRL-D) removes one after asking, the category staying.
+- **Your feeds became lists with everything on,** so your site does not change. Agendum's `index.html` and `post.html` templates now show a list's fields; yours are replaced if they are still word for word the ones Agendum 0.87 wrote.
+- The file format is now 51; older files open as before.
+
+### Facade
+
+- `Agendum.Core.blog_feeds/2` and `set_blog_feed/3` are gone (nothing outside Agendum used them): `blog_lists/2`, `add_blog_list/2`, `remove_blog_list/2` and `set_blog_list/3` take their place.
+
 ## 0.88.0 — 2026-11-03
 
 - **The RSS feeds come from a template, `templates/rss.xml`,** as the pages do. Agendum writes its own there the next time you publish, and it gives the same feeds as before; change it to change every RSS feed of the site. `{{date_rss}}` gives a post's date as RSS writes it (`Sat, 03 Oct 2026 00:00:00 +0000`), in the pages' templates too.

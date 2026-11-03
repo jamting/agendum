@@ -292,14 +292,22 @@ defmodule Agendum.Starters.Golden do
         address: "{year}/{month}/{day}-{slug}.html"
       })
 
-    # one of the blog's own feeds, every setting set (format 50)
+    # one of the blog's lists, every setting away from its default (format
+    # 51), with a field
     {:ok, db, devlog} = Core.add_category(db, db.blog.posts, "Devlog")
+    {:ok, db, ^devlog} = Core.add_blog_list(db, devlog)
 
     {:ok, db} =
-      Core.set_blog_feed(db, devlog, %{
+      Core.set_blog_list(db, devlog, %{
         title: "Owl's devlog",
         description: "How the house was built",
-        slug: "devlog"
+        slug: "devlog",
+        index: false,
+        feeds: true,
+        item_pages: true,
+        notes: true,
+        fields: ["When"],
+        address: "devlog/{slug}.html"
       })
 
     # a post published, then changed and published again: its record has

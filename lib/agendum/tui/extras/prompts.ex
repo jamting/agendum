@@ -3,8 +3,8 @@ defmodule Agendum.TUI.Extras.Prompts do
   @moduledoc """
   The extras' answers to the control panel's prompts and questions:
   subscribing to a calendar (R45) or a feed (R75), renaming one, a feed
-  list (OPML) to import or export, the SFTP server's password (R74), and
-  unsubscribing. Kept beside the extras (the owner's modularity,
+  list (OPML) to import or export, the SFTP server's password (R74),
+  unsubscribing, and removing one of the blog's lists (R74e). Kept beside the extras (the owner's modularity,
   2026-10-27); `Agendum.TUI.Update.Prompts` hands them over. Pure.
   """
 
@@ -71,6 +71,19 @@ defmodule Agendum.TUI.Extras.Prompts do
       Agendum.TUI.Extras.Feeds.Messages.text(:unsubscribed, name)
     )
   end
+
+  # one of the blog's lists removed (R74e), when the answer is Yes
+  def confirmed(state, {:remove_blog_list, id}, true) do
+    title = Agendum.Core.blog_lists(state.db, state.today) |> Enum.find(&(&1.category == id))
+
+    State.run(
+      state,
+      {:remove_blog_list, id},
+      Agendum.TUI.Extras.Publish.Messages.text(:list_removed, (title && title.title) || "")
+    )
+  end
+
+  def confirmed(state, {:remove_blog_list, _id}, false), do: state
 
   def confirmed(state, {:unsubscribe_calendar, id}, discard) do
     name = state.db.calendars[id].name

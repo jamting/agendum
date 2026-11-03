@@ -19,8 +19,9 @@ defmodule Agendum.Core.Extras.Blog do
       links (a fediverse account, micro.blog), separated by spaces
     * `address`: where a post's page goes, a pattern such as
       `posts/{zettel}.html` (`Agendum.Core.Extras.Address`)
-    * `feeds`: each feed's settings, by its category's id (each child
-      category of Posts is a feed; `Agendum.Core.Extras.BlogFeed`; format 50)
+    * `lists`: the blog's lists, each one's settings by its category's id
+      (`Agendum.Core.Extras.BlogList`; format 51, which keeps format 50's
+      feeds, each child category of Posts, as lists)
     * `published`: what publishing remembers of each post, by the item's
       id: its address, a fingerprint, the day it was found changed
       (`Agendum.Core.Extras.PostRecord`; format 48)
@@ -30,7 +31,7 @@ defmodule Agendum.Core.Extras.Blog do
   """
 
   alias Agendum.Core.Database
-  alias Agendum.Core.Extras.{Address, BlogFeed, Fingerprint, PostRecord}
+  alias Agendum.Core.Extras.{Address, BlogList, Fingerprint, PostRecord}
 
   @type t :: %__MODULE__{
           posts: Database.id() | nil,
@@ -44,7 +45,7 @@ defmodule Agendum.Core.Extras.Blog do
           me: String.t(),
           address: String.t(),
           published: %{optional(Database.id()) => PostRecord.t()},
-          feeds: %{optional(Database.id()) => BlogFeed.t()},
+          lists: %{optional(Database.id()) => BlogList.t()},
           moved_upload: Agendum.Core.Extras.Upload.t() | nil
         }
 
@@ -59,7 +60,7 @@ defmodule Agendum.Core.Extras.Blog do
             me: "",
             address: "posts/{zettel}.html",
             published: %{},
-            feeds: %{},
+            lists: %{},
             moved_upload: nil
 
   @doc """
@@ -113,37 +114,47 @@ defmodule Agendum.Core.Extras.Blog do
     |> Enum.sort_by(&{alphabetical(title(&1), blog.language), &1.id})
   end
 
-  @typedoc "A feed as the site makes it: its category, settings, folder and posts."
-  @type feed :: %{
+  @typedoc """
+  A list as the site makes it (R74e): its category, settings, folder
+  (`made` while still to be kept), the address pattern of its item pages,
+  and its items.
+  """
+  @type blog_list :: %{
           category: Database.id(),
           title: String.t(),
           description: String.t(),
           slug: String.t(),
           made: boolean,
-          posts: [Agendum.Core.Item.t()]
+          index: boolean,
+          feeds: boolean,
+          item_pages: boolean,
+          notes: boolean,
+          fields: [Database.id()],
+          address: String.t(),
+          items: [Agendum.Core.Item.t()]
         }
 
   @doc """
-  The blog's own feeds (R74; meeting 2026-11-02-1255, § 9): one for each
-  child category of Posts, in the category manager's order, each with
-  its posts due on `today` (those in it or under it, newest first), its
+  The blog's lists (R74e; meeting 2026-11-02-2244, § 6), in the category
+  manager's order, each with its items on `today` (`list_items/3`), its
   title (the category's name unless one is set) and its folder: its slug,
   else one made from the name (`made`); a folder taken already (by
-  another feed, or by one of the site's own, `own_folders`) gets `-2`,
+  another list, or by one of the site's own, `own_folders`) gets `-2`,
   `-3` …. A folder set takes its place before one made from a name.
   """
-  @spec feeds(Database.t(), Date.t(), [String.t()]) :: [feed]
-  def feeds(%Database{blog: %__MODULE__{posts: nil}}, _today, _own_folders), do: []
+  @spec lists(Database.t(), Date.t(), [String.t()]) :: [blog_list]
+  def lists(%Database{blog: %__MODULE__{posts: nil}}, _today, _own_folders), do: []
 
-  def feeds(%Database{blog: blog} = db, today, own_folders) do
-    due = posts(db, today)
-    children = db.categories[blog.posts].children
+  def lists(%Database{blog: blog} = db, today, own_folders) do
+    # Domain: `subtree/2` walks the hierarchy in pre-order, the category
+    # manager's order, so the lists come as the person sees their categories
+    ids = db |> Database.subtree(db.main_id) |> Enum.filter(&Map.has_key?(blog.lists, &1))
     stored = &stored_slug(blog, &1)
 
     # Domain: a folder the person set (or a publish kept) is taken first,
     # in the categories' order, so one made from a name never takes it
     {set, taken} =
-      Enum.flat_map_reduce(children, MapSet.new(own_folders), fn id, taken ->
+      Enum.flat_map_reduce(ids, MapSet.new(own_folders), fn id, taken ->
         case stored.(id) do
           nil -> {[], taken}
           slug -> free_folder(slug, taken, 1) |> then(&{[{id, &1}], MapSet.put(taken, &1)})
@@ -151,11 +162,12 @@ defmodule Agendum.Core.Extras.Blog do
       end)
 
     set = Map.new(set)
+    due = MapSet.new(posts(db, today), & &1.id)
 
-    {feeds, _taken} =
-      Enum.map_reduce(children, taken, fn id, taken ->
+    {lists, _taken} =
+      Enum.map_reduce(ids, taken, fn id, taken ->
         name = db.categories[id].name
-        settings = Map.get(blog.feeds, id, %BlogFeed{})
+        settings = blog.lists[id]
 
         {slug, taken} =
           case set do
@@ -163,43 +175,93 @@ defmodule Agendum.Core.Extras.Blog do
               {slug, taken}
 
             _ ->
-              slug = free_folder(feed_slug(name, id), taken, 1)
+              slug = free_folder(list_slug(name, id), taken, 1)
               {slug, MapSet.put(taken, slug)}
           end
 
-        feed = %{
+        list = %{
           category: id,
           title: if(settings.title == "", do: name, else: settings.title),
           description: settings.description,
           slug: slug,
           made: stored.(id) == nil,
-          posts: Enum.filter(due, &Database.member?(db, &1.id, id))
+          index: settings.index,
+          feeds: settings.feeds,
+          item_pages: settings.item_pages,
+          notes: settings.notes,
+          # a field whose category is gone (a crafted file) is left out
+          fields: Enum.filter(settings.fields, &Map.has_key?(db.categories, &1)),
+          address: BlogList.address(settings, slug),
+          items: list_items(db, id, due)
         }
 
-        {feed, taken}
+        {list, taken}
       end)
 
-    feeds
+    lists
   end
 
-  # a feed's folder the person set or a publish kept, when it is a plain
+  # A list's items, newest first, as posts (the owner, 2026-11-03): those
+  # in its category or under it, not in Drafts, nor in Pages (an item there
+  # is a page only). Only a post waits for its day: an item in Posts is
+  # here when it is a post due (`due`, the ids); any other item whatever
+  # its When, as a follow-up date is no publishing date.
+  defp list_items(db, id, due) do
+    blog = db.blog
+
+    db
+    |> Database.items()
+    |> Enum.filter(&Database.member?(db, &1.id, id))
+    |> Enum.reject(&(in?(db, &1, blog.drafts) or in?(db, &1, blog.pages)))
+    |> Enum.filter(&(MapSet.member?(due, &1.id) or not in?(db, &1, blog.posts)))
+    |> Enum.sort_by(&{sortable(date(&1)), &1.id}, &>=/2)
+  end
+
+  @doc """
+  The items that get a page of their own from a list (R74e): each item of
+  a list with item pages, not a post (whose page is its post page) and
+  with a Zettel id, once, with the first of its lists (in their order);
+  each list's oldest first, so the first of two with one slug keeps it.
+  """
+  @spec item_pages(Database.t(), [blog_list]) :: [{Agendum.Core.Item.t(), blog_list}]
+  def item_pages(db, lists) do
+    posts = MapSet.new(posts(db), & &1.id)
+
+    # Domain: `for … reduce:` carries an accumulator through the loop, as
+    # `Enum.reduce/3` does; `seen` starts with the posts, which have a page
+    {pages, _seen} =
+      for list <- lists,
+          list.item_pages,
+          item <- Enum.reverse(list.items),
+          item.zettel,
+          reduce: {[], posts} do
+        {pages, seen} ->
+          if MapSet.member?(seen, item.id),
+            do: {pages, seen},
+            else: {[{item, list} | pages], MapSet.put(seen, item.id)}
+      end
+
+    Enum.reverse(pages)
+  end
+
+  # a list's folder the person set or a publish kept, when it is a plain
   # one (a crafted file's is not used)
   defp stored_slug(blog, id) do
-    case Map.get(blog.feeds, id) do
-      %BlogFeed{slug: slug} when slug != "" -> if BlogFeed.slug?(slug), do: slug
+    case Map.get(blog.lists, id) do
+      %BlogList{slug: slug} when slug != "" -> if BlogList.slug?(slug), do: slug
       _ -> nil
     end
   end
 
-  defp feed_slug(name, id) do
+  defp list_slug(name, id) do
     case Address.slug(name) do
-      "" -> "feed-#{id}"
+      "" -> "list-#{id}"
       slug -> slug
     end
   end
 
   # `-2`, `-3` … after a slug cut to leave room for them, so a folder is
-  # never longer than `BlogFeed.slug?/1` allows
+  # never longer than `BlogList.slug?/1` allows
   defp free_folder(slug, taken, n) do
     candidate =
       if n == 1,
@@ -211,22 +273,37 @@ defmodule Agendum.Core.Extras.Blog do
   end
 
   @doc """
-  Publishing: each feed whose slug was still to be made keeps the one it
+  Publishing: each list whose slug was still to be made keeps the one it
   was published under, so renaming its category later does not move it.
   """
-  @spec record_feeds(Database.t(), [feed]) :: Database.t()
-  def record_feeds(db, feeds) do
+  @spec record_lists(Database.t(), [blog_list]) :: Database.t()
+  def record_lists(db, lists) do
     kept =
-      Enum.reduce(feeds, db.blog.feeds, fn feed, kept ->
-        settings = Map.get(kept, feed.category, %BlogFeed{})
-
-        if feed.made,
-          do: Map.put(kept, feed.category, %{settings | slug: feed.slug}),
+      Enum.reduce(lists, db.blog.lists, fn list, kept ->
+        if list.made,
+          do: Map.update!(kept, list.category, &%{&1 | slug: list.slug}),
           else: kept
       end)
 
-    %{db | blog: %{db.blog | feeds: kept}}
+    %{db | blog: %{db.blog | lists: kept}}
   end
+
+  @doc """
+  The lists kept from a file of format 50 (meeting 2026-11-02-2244, § 6):
+  each child category of Posts was a feed, and becomes a list with
+  everything on, with the feed's settings (`feeds`, by category), so the
+  site does not change.
+  """
+  @spec lists_from_feeds(Database.t(), %{optional(Database.id()) => map}) :: Database.t()
+  def lists_from_feeds(%Database{blog: %__MODULE__{posts: posts}} = db, feeds)
+      when is_map_key(db.categories, posts) do
+    lists =
+      Map.new(db.categories[posts].children, &{&1, BlogList.from_feed(Map.get(feeds, &1))})
+
+    %{db | blog: %{db.blog | lists: lists}}
+  end
+
+  def lists_from_feeds(db, _feeds), do: db
 
   @doc "The posts and pages still waiting for their day on `today`, the soonest first."
   @spec waiting(Database.t(), Date.t()) :: [Agendum.Core.Item.t()]
@@ -261,27 +338,32 @@ defmodule Agendum.Core.Extras.Blog do
   def record(db, id), do: Map.get(db.blog.published, id)
 
   @doc """
-  Publishing on `today`: each post and page due gets its record, the first time an
-  address from the Site's pattern (unique among all addresses made, never
+  Publishing on `today`: each post and page due, and each item with a
+  page from one of `lists` (R74e, its list's pattern), gets its record,
+  the first time an address from the Site's pattern (unique among all addresses made, never
   one of the site's own files and folders, `own`), and later a modified
   date when its title, note or date changed since. Posts without a Zettel
   id are left out (Publish gives them one first). The site is built from
   the records this would make; they are kept once the person publishes.
   """
-  @spec record_posts(Database.t(), Date.t(), {[String.t()], [String.t()]}) :: Database.t()
-  def record_posts(db, today, own) do
+  @spec record_posts(Database.t(), Date.t(), {[String.t()], [String.t()]}, [blog_list]) ::
+          Database.t()
+  def record_posts(db, today, own, lists \\ []) do
     blog = db.blog
     taken = MapSet.new(Map.values(blog.published), & &1.path)
 
     # posts by the Site's pattern (oldest first, so the first of two posts
-    # with one slug keeps it), then pages at the top, by their slug
+    # with one slug keeps it), then pages at the top, by their slug, then
+    # each list's item pages by its own pattern (R74e)
     posts = db |> posts(today) |> Enum.reverse() |> Enum.map(&{&1, blog.address})
     pages = db |> pages(today) |> Enum.map(&{&1, "{slug}.html"})
+
+    listed = for {item, list} <- item_pages(db, lists), do: {item, list.address}
 
     # `{published, taken}` is carried through: a new address joins `taken`
     # at once, so it is built once, not once per post
     {published, _taken} =
-      (posts ++ pages)
+      (posts ++ pages ++ listed)
       |> Enum.filter(fn {item, _pattern} -> item.zettel end)
       |> Enum.reduce({blog.published, taken}, fn {item, pattern}, {published, taken} ->
         print = print(item)

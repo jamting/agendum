@@ -35,7 +35,7 @@ defmodule Agendum.Core.JSONFile do
     View
   }
 
-  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Calendar, Feed, PostRecord}
+  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, BlogList, Calendar, Feed, PostRecord}
 
   alias Agendum.Core.View.{Column, ItemColumn, Section, SortKey}
   alias Agendum.Core.Facade.Extras.Zettels
@@ -143,11 +143,26 @@ defmodule Agendum.Core.JSONFile do
       me: :string,
       address: :string,
       published: {:records, PostRecord},
-      feeds: {:records, BlogFeed, "category"}
+      lists: {:records, BlogList, "category"}
     ]
   end
 
-  # one of the blog's own feeds (R74), by its category's id
+  # one of the blog's lists (R74e), by its category's id
+  defp spec(BlogList),
+    do: [
+      title: :string,
+      description: :string,
+      slug: :string,
+      index: :bool,
+      feeds: :bool,
+      item_pages: :bool,
+      notes: :bool,
+      fields: {:list, :int},
+      address: :string
+    ]
+
+  # one of the blog's feeds as a file from before lists kept it (read only,
+  # to become a list: `Agendum.Core.Extras.Blog.lists_from_feeds/2`)
   defp spec(BlogFeed), do: [title: :string, description: :string, slug: :string]
 
   # what publishing remembers of a post (R74), by its item's id
@@ -621,7 +636,27 @@ defmodule Agendum.Core.JSONFile do
     }
     |> put_item_relations(items)
     |> read_settings(settings)
+    |> lists_from_feeds(Map.get(doc, "blog", %{}))
   end
+
+  # A document written before lists (Agendum 0.83 to 0.88) has the blog's
+  # feeds instead: each child category of Posts was one, and becomes a list
+  # with everything on (meeting 2026-11-02-2244, § 6), as a file of format
+  # 50 does when it opens.
+  defp lists_from_feeds(db, %{"lists" => _}), do: db
+
+  defp lists_from_feeds(db, blog) when is_map(blog) do
+    feeds = opt(blog, "feeds", {:records, BlogFeed, "category"}, %{}, "blog")
+
+    # a feed's folder becomes the list's: plain, or empty until made
+    for {id, feed} <- feeds,
+        feed.slug != "" and not BlogList.slug?(feed.slug),
+        do: bad("blog.feeds", "category #{id}: not a list's folder: #{inspect(feed.slug)}")
+
+    Blog.lists_from_feeds(db, feeds)
+  end
+
+  defp lists_from_feeds(db, _blog), do: db
 
   # File Properties and the settings below it, read into the file; a setting
   # left out is the struct's own default
@@ -1094,10 +1129,15 @@ defmodule Agendum.Core.JSONFile do
         not Address.safe?(record.path),
         do: bad("blog.published", "item #{id}: not a safe address: #{inspect(record.path)}")
 
-    # a feed's slug is a folder on the site: plain, or empty until made
-    for {id, feed} <- blog.feeds,
-        feed.slug != "" and not BlogFeed.slug?(feed.slug),
-        do: bad("blog.feeds", "category #{id}: not a feed's folder: #{inspect(feed.slug)}")
+    # a list's slug is a folder on the site: plain, or empty until made;
+    # its address a pattern the list's box would take, or empty
+    for {id, list} <- blog.lists do
+      unless list.slug == "" or BlogList.slug?(list.slug),
+        do: bad("blog.lists", "category #{id}: not a list's folder: #{inspect(list.slug)}")
+
+      unless list.address == "" or Address.valid?(list.address),
+        do: bad("blog.lists", "category #{id}: not an address pattern: #{inspect(list.address)}")
+    end
 
     blog
   end

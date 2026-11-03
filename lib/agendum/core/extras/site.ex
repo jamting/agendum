@@ -24,7 +24,7 @@ defmodule Agendum.Core.Extras.Site do
   or a bridge such as Bridgy Fed can follow.
   """
 
-  alias Agendum.Core.{Database, DateFormat}
+  alias Agendum.Core.{Database, DateFormat, ViewModel}
   alias Agendum.Core.Extras.{Address, Blog, Markdown, Template, ZettelLinks}
   alias Agendum.Core.Facade.Extras.Zettels
 
@@ -50,15 +50,16 @@ defmodule Agendum.Core.Extras.Site do
   @legacy_stylesheet File.read!(Path.join(@assets, "legacy-style.css"))
   @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
-  # a feed's own files, in its folder (R74, § 9)
-  @feed_files ~w(index.html rss.xml feed.json)
+  # a list's own files, in its folder (R74e), kept free of posts' pages
+  # whether or not its switches have them now
+  @list_files ~w(index.html rss.xml feed.json)
 
   # the templates a site's pages and RSS feeds are drawn from
   # (`Agendum.Core.Extras.Template`), written into its `templates/` folder
   # when missing, then the person's; an `.html` one is named without its
   # extension (`post`), any other by its whole name (`rss.xml`)
   @template_names ~w(layout index post page menu rss.xml)
-  for name <- @template_names ++ ["menu-0.81", "index-0.81"],
+  for name <- @template_names ++ ~w(menu-0.81 index-0.81 index-0.87 post-0.87),
       do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
   @default_templates Map.new(@template_names, fn name ->
@@ -69,7 +70,9 @@ defmodule Agendum.Core.Extras.Site do
   # Agendum's, not the person's, so a newer one replaces it (as `style.css`)
   @legacy_templates %{
     "templates/menu.html" => [File.read!(Path.join(@assets, "templates/menu-0.81.html"))],
-    "templates/index.html" => [File.read!(Path.join(@assets, "templates/index-0.81.html"))]
+    "templates/index.html" =>
+      for(v <- ~w(0.81 0.87), do: File.read!(Path.join(@assets, "templates/index-#{v}.html"))),
+    "templates/post.html" => [File.read!(Path.join(@assets, "templates/post-0.87.html"))]
   }
 
   @doc "The stylesheet's path: written only when the folder has none."
@@ -171,9 +174,16 @@ defmodule Agendum.Core.Extras.Site do
   defp images_there(site, assets, true) do
     have = MapSet.new(assets, &elem(&1, 0))
 
+    # a list's items show their titles, and their notes only when it says so
+    shown =
+      for(item <- site.posts ++ site.pages, do: {item, true}) ++
+        for list <- site.lists, item <- list.items, do: {item, list.notes}
+
     missing =
-      Enum.find_value(site.posts ++ site.pages, fn item ->
-        (Markdown.inline_assets(Blog.title(item)) ++ Markdown.assets(item.note))
+      Enum.find_value(shown, fn {item, notes?} ->
+        notes = if notes?, do: Markdown.assets(item.note), else: []
+
+        (Markdown.inline_assets(Blog.title(item)) ++ notes)
         |> Enum.find(&(not MapSet.member?(have, &1)))
         |> case do
           nil -> nil
@@ -198,13 +208,22 @@ defmodule Agendum.Core.Extras.Site do
   defp pages(%Database{} = db, today, templates, assets, check_images?) do
     # the addresses and modified days publishing would record now: shown in
     # the preview, kept only once the person publishes (`record/2`)
-    {db, feeds} = plan(db, today)
+    {db, lists} = db |> unshown_notes(today) |> plan(today)
     blog = db.blog
     used = Zettels.zettels(db)
     posts = db |> Blog.posts(today) |> Enum.filter(& &1.zettel)
     pages = db |> Blog.pages(today) |> Enum.filter(& &1.zettel)
-    feeds = for feed <- feeds, do: %{feed | posts: Enum.filter(feed.posts, & &1.zettel)}
-    published = MapSet.new(posts ++ pages, & &1.id)
+    # a list with feeds or item pages links its items, which needs a Zettel
+    # id (Publish gives each one); an index-only list shows them all
+    lists =
+      for list <- lists do
+        if list.feeds or list.item_pages,
+          do: %{list | items: Enum.filter(list.items, & &1.zettel)},
+          else: list
+      end
+
+    item_pages = Blog.item_pages(db, lists)
+    published = MapSet.new(posts ++ pages ++ Enum.map(item_pages, &elem(&1, 0)), & &1.id)
 
     site = %{
       db: db,
@@ -213,25 +232,31 @@ defmodule Agendum.Core.Extras.Site do
       published: published,
       posts: posts,
       pages: pages,
-      feeds: feeds
+      lists: lists,
+      item_pages: item_pages
     }
 
-    # the menu's pages, made once: each page drawn marks its own as current
-    site = Map.put(site, :menu, for(item <- pages, do: menu_entry(site, item)))
-    draw = &draw(site, templates, &1, &2)
+    # the menu's pages and the lists, made once: each page drawn marks its
+    # own as current
+    site =
+      site
+      |> Map.put(:menu, for(item <- pages, do: menu_entry(site, item)))
+      |> Map.put(:list_links, list_links(Enum.filter(lists, & &1.index)))
 
+    draw = &draw(site, templates, &1, &2)
     rss = &rss(site, templates, &1)
     main = main_feed(site)
 
     with :ok <- images_there(site, assets, check_images?),
          {:ok, index} <- draw.("index", index(site)),
          {:ok, main_rss} <- rss.(main),
-         {:ok, feed_files} <- feed_files(site, draw, rss),
+         {:ok, list_files} <- list_files(site, templates, draw, rss),
          {:ok, post_files} <-
            each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
          {:ok, page_files} <-
-           each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw) do
-      pages = post_files ++ page_files ++ feed_files
+           each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw),
+         {:ok, item_files} <- item_page_files(site, templates, draw) do
+      pages = post_files ++ page_files ++ item_files ++ list_files
 
       files =
         [
@@ -241,7 +266,9 @@ defmodule Agendum.Core.Extras.Site do
           {@stylesheet, default_stylesheet()}
         ] ++ pages
 
-      with :ok <- feeds_read_back(files, [main | Enum.map(site.feeds, &own_feed(site, &1))]),
+      metas = for list <- site.lists, list.feeds, do: own_feed(site, list)
+
+      with :ok <- feeds_read_back(files, [main | metas]),
            do: {:ok, files ++ @font_files ++ assets}
     end
   end
@@ -282,28 +309,69 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
-  # each feed's index page, from the index template, and its own RSS and
-  # JSON Feed, in its folder (R74, § 9)
-  defp feed_files(site, draw, rss) do
-    site.feeds
-    |> Enum.reduce_while({:ok, []}, fn feed, {:ok, files} ->
-      meta = own_feed(site, feed)
+  # Each list's own files in its folder (R74e), as its switches say: its
+  # index page, from its own `templates/<folder>/index.html` or the shared
+  # one, and its RSS (`<folder>/rss.xml` or the shared `rss.xml`) and JSON
+  # Feed.
+  defp list_files(site, templates, draw, rss) do
+    site.lists
+    |> Enum.reduce_while({:ok, []}, fn list, {:ok, files} ->
+      meta = %{
+        own_feed(site, list)
+        | template: own_template(templates, list, "rss.xml", "rss.xml")
+      }
 
-      with {:ok, index} <- draw.("index", feed_index(site, feed)),
-           {:ok, feed_rss} <- rss.(meta) do
-        three = [
-          {feed.slug <> "/index.html", index},
-          {feed.slug <> "/rss.xml", feed_rss},
-          {feed.slug <> "/feed.json", json_feed(site, meta)}
-        ]
+      with {:ok, index} <-
+             maybe(list.index, fn ->
+               draw.(own_template(templates, list, "index", "index"), list_index(site, list))
+             end),
+           {:ok, list_rss} <- maybe(list.feeds, fn -> rss.(meta) end) do
+        own =
+          Enum.filter(
+            [
+              list.index && {list.slug <> "/index.html", index},
+              list.feeds && {list.slug <> "/rss.xml", list_rss},
+              list.feeds && {list.slug <> "/feed.json", json_feed(site, meta)}
+            ],
+            & &1
+          )
 
-        {:cont, {:ok, [three | files]}}
+        {:cont, {:ok, [own | files]}}
       else
         error -> {:halt, error}
       end
     end)
     |> then(fn
       {:ok, files} -> {:ok, files |> Enum.reverse() |> List.flatten()}
+      error -> error
+    end)
+  end
+
+  # a file drawn only when its switch is on
+  defp maybe(true, draw), do: draw.()
+  defp maybe(false, _draw), do: {:ok, nil}
+
+  # A list's own template when its folder in `templates/` has one
+  # (`templates/gym/index.html`), else the shared one (the owner,
+  # 2026-11-03); Agendum never writes a list's own.
+  defp own_template(templates, list, own, shared) do
+    name = list.slug <> "/" <> own
+    if Map.has_key?(templates.whole, name), do: name, else: shared
+  end
+
+  # each item's page from its list (R74e), from the list's own `item.html`
+  # or the shared `post.html`, its values as `item` and as `post`
+  defp item_page_files(site, templates, draw) do
+    Enum.reduce_while(site.item_pages, {:ok, []}, fn {item, list}, {:ok, pages} ->
+      template = own_template(templates, list, "item", "post")
+
+      case draw.(template, item_page(site, item, list)) do
+        {:ok, page} -> {:cont, {:ok, [{post_path(site.db, item), page} | pages]}}
+        error -> {:halt, error}
+      end
+    end)
+    |> then(fn
+      {:ok, pages} -> {:ok, Enum.reverse(pages)}
       error -> error
     end)
   end
@@ -326,7 +394,13 @@ defmodule Agendum.Core.Extras.Site do
   # layout as `content`; the templates are each other's partials, so
   # `{{> menu}}` (or any template in the folder) can be included
   defp draw(site, templates, name, context) do
-    context = site |> site_context() |> Map.merge(menu(site, context)) |> Map.merge(context)
+    context =
+      site
+      |> site_context()
+      |> Map.merge(menu(site, context))
+      |> Map.put("lists", site.list_links)
+      |> Map.put("has_lists", site.list_links != [])
+      |> Map.merge(context)
 
     with {:ok, body} <- render(templates, name, context) do
       render(templates, "layout", Map.put(context, "content", body))
@@ -365,37 +439,65 @@ defmodule Agendum.Core.Extras.Site do
   """
   @spec record(Database.t(), Date.t()) :: Database.t()
   def record(db, today) do
-    {db, feeds} = plan(db, today)
-    Blog.record_feeds(db, feeds)
+    # the records made as the site was built, from the notes it may show;
+    # the file keeps its notes (only the blog's records come back)
+    {shown, lists} = db |> unshown_notes(today) |> plan(today)
+    Blog.record_lists(%{db | blog: shown.blog}, lists)
+  end
+
+  # Domain: an item published only through lists that keep their notes at
+  # home has its note left out of the whole site, as if empty: no title
+  # from a note's `# Heading` (on its pages, in feeds, in a `{slug}`
+  # address, as a link's text), and no "Updated" from a changed note (code
+  # review 2026-11-03). A post, a page, or an item of a list that publishes
+  # notes shows its note as before.
+  defp unshown_notes(db, today) do
+    lists = Blog.lists(db, today, [])
+    shown = MapSet.new(Blog.posts(db) ++ Blog.pages(db), & &1.id)
+    shown = for list <- lists, list.notes, item <- list.items, into: shown, do: item.id
+
+    hidden =
+      for list <- lists,
+          not list.notes,
+          item <- list.items,
+          not MapSet.member?(shown, item.id),
+          uniq: true,
+          do: item.id
+
+    %{
+      db
+      | items: Enum.reduce(hidden, db.items, &Map.update!(&2, &1, fn i -> %{i | note: ""} end))
+    }
   end
 
   @doc """
-  The blog's own feeds on `today` as the site makes them (R74): their
-  folders kept from the site's own, and from a post already at a feed's
-  index or feeds (`Agendum.Core.Extras.Blog.feeds/3`).
+  The blog's lists on `today` as the site makes them (R74e): their
+  folders kept from the site's own, and from a post already at a list's
+  index or feeds (`Agendum.Core.Extras.Blog.lists/3`).
   """
-  @spec feeds(Database.t(), Date.t()) :: [Blog.feed()]
-  def feeds(db, today) do
+  @spec lists(Database.t(), Date.t()) :: [Blog.blog_list()]
+  def lists(db, today) do
     {_files, folders} = own()
 
     clashing =
       for %{path: path} <- Map.values(db.blog.published),
-          Path.basename(path) in @feed_files,
+          Path.basename(path) in @list_files,
           Path.dirname(path) != ".",
           do: Path.dirname(path)
 
-    Blog.feeds(db, today, folders ++ clashing)
+    Blog.lists(db, today, folders ++ clashing)
   end
 
-  # The feeds first; then the posts' and pages' records, none of them on a
-  # feed's index or feeds (the rest of a feed's folder is free: a feed
-  # named Posts leaves `posts/<zettel id>.html` alone).
+  # The lists first; then the records of the posts, pages and list items'
+  # pages, none of them on a list's index or feeds (the rest of a list's
+  # folder is free: a list named Posts leaves `posts/<zettel id>.html`
+  # alone).
   defp plan(db, today) do
-    feeds = feeds(db, today)
+    lists = lists(db, today)
     {files, folders} = own()
-    feed_files = for feed <- feeds, file <- @feed_files, do: "#{feed.slug}/#{file}"
-    db = Blog.record_posts(db, today, {files ++ feed_files, folders})
-    {db, feeds}
+    list_files = for list <- lists, file <- @list_files, do: "#{list.slug}/#{file}"
+    db = Blog.record_posts(db, today, {files ++ list_files, folders}, lists)
+    {db, lists}
   end
 
   @doc """
@@ -484,14 +586,9 @@ defmodule Agendum.Core.Extras.Site do
     do: %{"title" => title_text(site, item), "url" => post_path(site.db, item)}
 
   # the main index: every post, the blog's description, and a line naming
-  # its own feeds (the owner's choice, 2026-11-02)
+  # the lists with feeds (the owner's choices, 2026-11-02 and 2026-11-03)
   defp index(site) do
-    feeds =
-      site.feeds
-      |> Enum.with_index()
-      |> Enum.map(fn {feed, i} ->
-        %{"title" => feed.title, "url" => feed.slug <> "/index.html", "first" => i == 0}
-      end)
+    feeds = list_links(Enum.filter(site.lists, &(&1.index and &1.feeds)))
 
     %{
       "root" => "",
@@ -504,16 +601,120 @@ defmodule Agendum.Core.Extras.Site do
     }
   end
 
-  # a feed's own index: its posts, its description, its title as heading
-  defp feed_index(site, feed) do
+  # lists named on a page: each title and index, from the site's root
+  defp list_links(lists) do
+    lists
+    |> Enum.with_index()
+    |> Enum.map(fn {list, i} ->
+      %{"title" => list.title, "url" => list.slug <> "/index.html", "first" => i == 0}
+    end)
+  end
+
+  # A list's own index (R74e): its items, its description, its title as
+  # heading; `feed` and `posts` are the names an index template written
+  # for feeds knows, `list` and `items` the same values by their new names
+  defp list_index(site, list) do
+    about = %{"title" => list.title, "slug" => list.slug, "has_rss" => list.feeds}
+
+    items =
+      list.items
+      |> Enum.with_index()
+      |> Enum.map(fn {item, i} ->
+        site |> list_item(item, list, "../", :index) |> Map.put("first", i == 0)
+      end)
+
     %{
       "root" => "../",
-      "path" => feed.slug <> "/index.html",
-      "page" => %{"title" => "#{feed.title} · #{site.blog.title}", "index" => false},
-      "summary" => feed.description,
-      "feed" => %{"title" => feed.title, "slug" => feed.slug},
-      "posts" => listed(site, feed.posts, "../")
+      "path" => list.slug <> "/index.html",
+      "page" => %{"title" => "#{list.title} · #{site.blog.title}", "index" => false},
+      "summary" => list.description,
+      "feed" => about,
+      "list" => about,
+      "posts" => items,
+      "items" => items
     }
+  end
+
+  # an item's own page from its list (R74e)
+  defp item_page(site, item, list) do
+    path = post_path(site.db, item)
+    root = root(path)
+    values = list_item(site, item, list, root, :page)
+
+    %{
+      "root" => root,
+      "path" => path,
+      "page" => %{"title" => "#{title_text(site, item)} · #{site.blog.title}", "index" => false},
+      "post" => values,
+      "item" => values
+    }
+  end
+
+  # One of a list's items, from a page at `root`: a post's values, with its
+  # address (its post page, its page from a list, else its place on the
+  # list's index), the list's fields, and its note only when the list
+  # publishes notes (the owner, 2026-11-03).
+  defp list_item(site, item, list, root, where) do
+    path = item_path(site, item, list)
+    {fields, columns} = fields(site, item, list)
+
+    values =
+      site
+      |> post_context(item, root, where)
+      |> Map.merge(%{
+        "url" => path && root <> path,
+        "permalink" => path && permalink_of(site, path),
+        "fields" => fields,
+        "columns" => columns,
+        "has_columns" => columns != []
+      })
+
+    if list.notes,
+      do: values,
+      else: Map.merge(values, %{"content" => "", "notes_hidden" => true})
+  end
+
+  # where an item of `list` is, from the site's root: its own page (a post's
+  # or one from a list), else its place on the list's index (by its Zettel
+  # id); nil when it has neither, as an index-only list's items
+  defp item_path(site, item, list) do
+    cond do
+      MapSet.member?(site.published, item.id) -> post_path(site.db, item)
+      list.index and item.zettel -> list.slug <> "/index.html#" <> Zettels.zettel(item)
+      true -> nil
+    end
+  end
+
+  # The list's fields of an item (R74e; the owner, 2026-11-03): each named
+  # by its category's name in lowercase, spaces as `_` (`Due date` is
+  # `due_date`), the second of two alike `_2`; its value as the item's
+  # column shows it (`Agendum.Core.ViewModel.cell/3`: the names of the
+  # categories it is in, a date, a number, a text), "" when it has none.
+  defp fields(site, item, list) do
+    {columns, _keys} =
+      list.fields
+      |> Enum.with_index()
+      |> Enum.map_reduce(MapSet.new(), fn {id, i}, keys ->
+        name = site.db.categories[id].name
+        key = free_key(field_key(name, id), keys, 1)
+        value = ViewModel.cell(site.db, item, id)
+        column = %{"name" => name, "key" => key, "value" => value, "first" => i == 0}
+        {column, MapSet.put(keys, key)}
+      end)
+
+    {Map.new(columns, &{&1["key"], &1["value"]}), columns}
+  end
+
+  defp field_key(name, id) do
+    case Address.slug(name) do
+      "" -> "field_#{id}"
+      slug -> String.replace(slug, "-", "_")
+    end
+  end
+
+  defp free_key(key, keys, n) do
+    candidate = if n == 1, do: key, else: "#{key}_#{n}"
+    if MapSet.member?(keys, candidate), do: free_key(key, keys, n + 1), else: candidate
   end
 
   defp listed(site, posts, root) do
@@ -575,10 +776,10 @@ defmodule Agendum.Core.Extras.Site do
 
   # on its own page the post says where it is, for the u-url microformat;
   # without a Base address, by its file name, as the page is in its folder
-  defp permalink(%{blog: %{base_url: ""}} = site, item),
-    do: Path.basename(post_path(site.db, item))
+  defp permalink(site, item), do: permalink_of(site, post_path(site.db, item))
 
-  defp permalink(site, item), do: absolute(site, post_path(site.db, item))
+  defp permalink_of(%{blog: %{base_url: ""}}, path), do: Path.basename(path)
+  defp permalink_of(site, path), do: absolute(site, path)
 
   # A Zettel link in a post: to the target's page when it is published,
   # else the target's text; a broken link stays as it was written.
@@ -628,27 +829,37 @@ defmodule Agendum.Core.Extras.Site do
 
   # --- feeds ---------------------------------------------------------------------
 
-  # what a feed says about itself: the site's main one, or a child's of
-  # Posts at `slug/` (R74, § 9)
+  # What a feed says about itself: the site's main one, or a list's at
+  # `slug/` (R74e); `url` gives an item's address from the site's root,
+  # `notes` whether its body is in the feed, `template` its RSS template.
   defp main_feed(site) do
     %{
       title: site.blog.title,
       description: site.blog.description,
       home: home(site),
       folder: "",
-      posts: site.posts
+      posts: site.posts,
+      url: &post_path(site.db, &1),
+      notes: true,
+      template: "rss.xml"
     }
   end
 
-  defp own_feed(site, feed) do
-    home = if home(site) == "", do: "", else: absolute(site, feed.slug <> "/")
+  defp own_feed(site, list) do
+    home = if home(site) == "", do: "", else: absolute(site, list.slug <> "/")
 
     %{
-      title: "#{site.blog.title} · #{feed.title}",
-      description: if(feed.description == "", do: site.blog.description, else: feed.description),
+      title: "#{site.blog.title} · #{list.title}",
+      description: if(list.description == "", do: site.blog.description, else: list.description),
       home: home,
-      folder: feed.slug <> "/",
-      posts: feed.posts
+      folder: list.slug <> "/",
+      posts: list.items,
+      # an item without a page of its own or a place on an index is still
+      # in the feed, at the list's folder by its own Zettel id, so each
+      # entry has an id of its own (code review 2026-11-03)
+      url: &(item_path(site, &1, list) || "#{list.slug}/##{Zettels.zettel(&1)}"),
+      notes: list.notes,
+      template: "rss.xml"
     }
   end
 
@@ -664,11 +875,11 @@ defmodule Agendum.Core.Extras.Site do
 
         %{
           "title" => title_text(site, item),
-          "url" => absolute(site, post_path(site.db, item)),
+          "url" => absolute(site, meta.url.(item)),
           "date_rss" => date && rss_date(date),
           "date_iso" => date && Date.to_iso8601(date),
           "zettel" => Zettels.zettel(item),
-          "content_html" => content_html(site, item)
+          "content_html" => if(meta.notes, do: content_html(site, item), else: "")
         }
       end)
 
@@ -685,7 +896,7 @@ defmodule Agendum.Core.Extras.Site do
         "items" => items
       })
 
-    render(templates, "rss.xml", context)
+    render(templates, meta.template, context)
   end
 
   # RSS dates are RFC 822 ("Sat, 17 Oct 2026 00:00:00 +0000"); a post has
@@ -702,7 +913,7 @@ defmodule Agendum.Core.Extras.Site do
 
     items =
       Enum.map(meta.posts, fn item ->
-        url = absolute(site, post_path(site.db, item))
+        url = absolute(site, meta.url.(item))
         date = Blog.date(item)
         modified = modified(site, item)
 
@@ -711,7 +922,7 @@ defmodule Agendum.Core.Extras.Site do
             {"id", url},
             {"url", url},
             {"title", title_text(site, item)},
-            {"content_html", content_html(site, item)},
+            {"content_html", if(meta.notes, do: content_html(site, item), else: "")},
             {"date_published", date && Date.to_iso8601(date) <> "T00:00:00Z"},
             {"date_modified", modified && Date.to_iso8601(modified) <> "T00:00:00Z"}
           ],

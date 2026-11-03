@@ -358,10 +358,18 @@ defmodule Agendum.Core.Database do
              | posts: if(db.blog.posts in doomed_set, do: nil, else: db.blog.posts),
                drafts: if(db.blog.drafts in doomed_set, do: nil, else: db.blog.drafts),
                pages: if(db.blog.pages in doomed_set, do: nil, else: db.blog.pages),
-               # and a feed's settings, its category gone
-               feeds: Map.drop(db.blog.feeds, MapSet.to_list(doomed_set))
+               # and a list, its category gone, and a field of a list
+               lists: prune_lists(db.blog.lists, doomed_set)
            }
        }}
+    end
+  end
+
+  # the blog's lists without those whose category is gone, and without the
+  # fields that are (R74e)
+  defp prune_lists(lists, doomed) do
+    for {id, list} <- lists, not MapSet.member?(doomed, id), into: %{} do
+      {id, %{list | fields: Enum.reject(list.fields, &MapSet.member?(doomed, &1))}}
     end
   end
 

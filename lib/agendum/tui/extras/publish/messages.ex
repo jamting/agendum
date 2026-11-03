@@ -33,8 +33,19 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:up_to_date), do: "The folder already holds this site: nothing to publish"
   def text(:password_later), do: "Not published: the server asks for a password. Publish again"
   def text(:site_kept), do: "Kept the site settings"
-  def text(:feed_kept), do: "Kept the feed's settings"
-  def text(:bad_slug), do: "A feed's folder: a-z, 0-9 and -, one no other feed or the site has"
+  def text(:list_kept), do: "Kept the list's settings"
+  def text(:bad_slug), do: "A list's folder: a-z, 0-9 and -, one no other list or the site has"
+  def text(:no_lists), do: "No lists yet · INS makes one of your categories a list"
+  def text(:already_a_list), do: "That category is a list already"
+
+  def text(:ambiguous_list),
+    do: "Two categories have that name: give the list's category a name of its own"
+
+  def text(:list_ingested),
+    do: "A list is one of your own categories, not a feed's or a calendar's"
+
+  def text(:bad_list), do: "Name one of your categories, not MAIN or a date category"
+  def text(:list_folder_new), do: "Its folder is made from its name at the first publish"
   def text(:save_first), do: "Save the file first: its upload settings are kept by its name"
 
   def text(:upload_session_only),
@@ -50,14 +61,19 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:not_published, reason), do: "Not published: #{reason}"
   def text(:upload_kept, file), do: "Kept the upload settings for #{file}"
 
-  def text(:no_feeds, posts),
-    do: "No feeds yet · a category under #{posts} is one (add it in the category manager, F9)"
-
-  def text(:feed_made, slug),
+  def text(:list_made, slug),
     do: "Its folder, made from its name at the first publish: /#{slug}/"
 
-  def text(:feed_where, slug),
-    do: "Its page and feeds: /#{slug}/index.html, rss.xml, feed.json"
+  def text(:list_where, slug), do: "Its folder on the site: /#{slug}/"
+
+  def text(:remove_list, title),
+    do: "Remove the list #{title}? Its pages go at the next publish"
+
+  def text(:list_removed, title), do: "Removed the list #{title}; the category stays"
+  def text(:unknown_field, name), do: "No category is called #{name}: a field is one of them"
+
+  def text(:ambiguous_field, name),
+    do: "Two categories are called #{name}: give one another name to make it a field"
 
   def text(:templates_written, names),
     do: "Writes templates/ for you to change: #{names} (never uploaded)"

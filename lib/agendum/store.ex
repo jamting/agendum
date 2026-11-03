@@ -57,18 +57,22 @@ defmodule Agendum.Store do
   publishing remembers of each post (`Agendum.Core.Extras.PostRecord`);
   49 adds `Blog.pages`, the category whose items are the site's pages;
   50 adds `Blog.feeds`, the settings of the blog's own feeds
-  (`Agendum.Core.Extras.BlogFeed`, by category).
+  (`Agendum.Core.Extras.BlogFeed`, by category); 51 replaces them by
+  `Blog.lists`, the blog's lists (`Agendum.Core.Extras.BlogList`, by
+  category): loading an older file makes each child of Posts a list with
+  everything on, with its feed's settings.
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
 
   alias Agendum.Core.Database
+  alias Agendum.Core.Extras.BlogList
 
   # Module attributes (`@name value`) are constants fixed when the module is
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 50
+  @format_version 51
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"
@@ -277,7 +281,7 @@ defmodule Agendum.Store do
         # `in` with a range is allowed in a guard. Domain: a file from a newer
         # Agendum (a version above ours) is refused, not misread.
         {:agenda, version, %{__struct__: Database} = db} when version in 1..@format_version ->
-          db |> upgrade() |> repair_text() |> checked()
+          with {:ok, db} <- upgraded(db), do: db |> repair_text() |> checked()
 
         {:agenda, version, _} ->
           {:error, {:unsupported_version, version}}
@@ -288,6 +292,15 @@ defmodule Agendum.Store do
     rescue
       ArgumentError -> {:error, :not_an_agenda_file}
     end
+  end
+
+  # Domain: a crafted file can hold a value of a shape no Agendum wrote (a
+  # blog's lists that are text, code review 2026-11-03), on which the
+  # upgrade raises; that is a damaged file, refused, not a crash
+  defp upgraded(db) do
+    {:ok, upgrade(db)}
+  rescue
+    _ -> {:error, {:damaged, "its parts do not fit together"}}
   end
 
   # Domain: a file whose values are of the wrong kind, or whose parts do not
@@ -374,6 +387,14 @@ defmodule Agendum.Store do
     # before 48 no records: the posts already out keep posts/<zettel id>.html
     # (after the rest is upgraded, as finding the posts reads the links)
     seed? = not Map.has_key?(old_blog, :published)
+    # before 51 no lists: each child of Posts was a feed, and becomes a list
+    # (meeting 2026-11-02-2244, § 6); a file of 50 kept their settings
+    feeds =
+      cond do
+        Map.has_key?(old_blog, :lists) -> nil
+        is_map(Map.get(old_blog, :feeds)) -> old_blog.feeds
+        true -> %{}
+      end
 
     db = %{
       db
@@ -382,8 +403,17 @@ defmodule Agendum.Store do
 
     # the calendars where this version keeps them, in Calendars (R75a)
     db = db |> upgrade_db(when_assign) |> Agendum.Core.Facade.Extras.Calendars.name_family()
-    if seed?, do: Agendum.Core.Extras.Blog.seed_records(db), else: db
+    db = if seed?, do: Agendum.Core.Extras.Blog.seed_records(db), else: db
+    db = if feeds, do: Agendum.Core.Extras.Blog.lists_from_feeds(db, feeds), else: db
+    %{db | blog: %{db.blog | lists: upgrade_lists(db.blog.lists)}}
   end
+
+  # each list's settings rebuilt as today's struct, as every struct is; a
+  # value of another shape (a crafted file) is left as it is, for the
+  # file's check to refuse it as damaged rather than crash here
+  # each list's settings rebuilt as today's struct, as every struct is
+  defp upgrade_lists(lists),
+    do: Map.new(lists, fn {id, list} -> {id, struct(BlogList, Map.from_struct(list))} end)
 
   defp upgrade_db(db, when_assign) do
     alias Agendum.Core.{Category, View}

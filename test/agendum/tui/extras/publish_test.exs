@@ -102,26 +102,45 @@ defmodule Agendum.TUI.Extras.PublishTest do
     assert screen(cleared) =~ ~r/Pages category : \(none\)/
   end
 
-  describe "Publish ▸ Feeds" do
+  describe "Publish ▸ Lists (R74e)" do
     setup %{state: state} do
       posts = hd(Database.find_categories(state.db, "Posts"))
       {:ok, db, devlog} = Core.add_category(state.db, posts, "Devlog")
+      {:ok, db, coworkers} = Core.add_category(db, db.main_id, "Co-workers")
+      {:ok, db, role} = Core.add_category(db, db.main_id, "Role")
       {:ok, db} = Core.set_blog(db, %{posts: posts})
-      %{state: %{state | db: db}, devlog: devlog}
+      {:ok, db, _} = Core.add_blog_list(db, devlog)
+
+      {:ok, db} =
+        Core.set_blog_list(db, devlog, %{index: true, feeds: true, item_pages: true, notes: true})
+
+      %{state: %{state | db: db}, devlog: devlog, coworkers: coworkers, role: role}
     end
 
-    test "lists each category under Posts, its folder and its posts", %{state: state} do
-      list = press(state, [{:f, 10}, "e", "p", "f"])
-      assert screen(list) =~ "Publish: feeds"
-      assert screen(list) =~ ~r"Devlog\s+/devlog/\s+0 posts"
+    defp lists(state), do: press(state, [{:f, 10}, "e", "p", "l"])
+
+    # the category picker's highlight put on `name`, and ENTER
+    defp pick_category(state, name) do
+      mode = State.mode(state)
+      rows = Agendum.TUI.CategoryScreens.rows(state, mode)
+      at = Enum.find_index(rows, fn {id, _} -> state.db.categories[id].name == name end)
+      state |> State.put_mode(%{mode | cursor: at}) |> press(:enter)
     end
 
-    test "ENTER opens a feed's box; ENTER there keeps its settings", %{
+    test "lists each list, its folder, its items and its switches", %{state: state} do
+      list = lists(state)
+      assert screen(list) =~ "Publish: lists"
+      assert screen(list) =~ ~r"Devlog\s+/devlog/\s+0 items\s+index feeds pages notes"
+      assert screen(list) =~ "INS add · DEL remove"
+    end
+
+    test "ENTER opens a list's box; ENTER there keeps its settings", %{
       state: state,
       devlog: devlog
     } do
-      box = press(state, [{:f, 10}, "e", "p", "f", :enter])
-      assert screen(box) =~ "Feed: Devlog"
+      box = press(lists(state), :enter)
+      assert screen(box) =~ "List: Devlog"
+      assert screen(box) =~ ~r/Index page\s+: Yes/
       # still to be made from its name at the first publish
       assert screen(box) =~ "made from its name at the first publish: /devlog/"
 
@@ -133,27 +152,97 @@ defmodule Agendum.TUI.Extras.PublishTest do
         |> press({:f, 2})
         |> press({:ctrl, "u"})
         |> type("workshop")
+        |> to_setting("Notes")
+        |> press(" ")
         |> press(:enter)
 
-      assert kept.db.blog.feeds[devlog].description == "How it is made"
-      assert kept.db.blog.feeds[devlog].slug == "workshop"
-      assert screen(kept) =~ "Kept the feed's settings"
+      list = kept.db.blog.lists[devlog]
+      assert list.description == "How it is made"
+      assert list.slug == "workshop"
+      refute list.notes
+      assert screen(kept) =~ "Kept the list's settings"
     end
 
-    test "a folder that cannot be one is refused, saying why", %{state: state} do
-      box = press(state, [{:f, 10}, "e", "p", "f", :enter])
-      refused = box |> to_setting("Folder") |> press({:f, 2}) |> press({:ctrl, "u"})
-      refused = refused |> type("fonts") |> press(:enter)
-      assert screen(refused) =~ "A feed's folder: a-z, 0-9 and -"
+    test "Fields: names with commas, checked on ENTER; F3 adds one picked", %{
+      state: state,
+      devlog: devlog,
+      role: role
+    } do
+      box = state |> lists() |> press(:enter) |> to_setting("Fields")
+      refused = box |> type("Role, Shoe size") |> press(:enter)
+      assert screen(refused) =~ "No category is called Shoe size"
+      assert refused.db.blog.lists[devlog].fields == []
+
+      picked = box |> press({:f, 3}) |> pick_category("Role")
+      assert screen(picked) =~ ~r/Fields\s+: Role/
+      kept = press(picked, :enter)
+      assert kept.db.blog.lists[devlog].fields == [role]
     end
 
-    test "with no category under Posts, the list says how to make one", %{
+    test "INS adds one of your categories as a list, only its index on, in one undo step",
+         %{state: state, coworkers: coworkers} do
+      box = state |> lists() |> press(:insert)
+      assert screen(box) =~ "Publish: add a list"
+      added = box |> type("Co-workers") |> press(:enter)
+
+      assert %{index: true, feeds: false, item_pages: false, notes: false} =
+               added.db.blog.lists[coworkers]
+
+      assert screen(added) =~ ~r"Co-workers\s+/co-workers/\s+0 items\s+index\s"
+      refute Map.has_key?(Agendum.TUI.History.undo(added).db.blog.lists, coworkers)
+    end
+
+    test "a category that is a list already, or MAIN's date, is refused", %{state: state} do
+      again = state |> lists() |> press({:ctrl, "n"}) |> press({:f, 2}) |> type("Devlog")
+      assert screen(press(again, :enter)) =~ "That category is a list already"
+
+      dates = state |> lists() |> press(:insert) |> press({:f, 2}) |> type("When")
+      assert screen(press(dates, :enter)) =~ "Name one of your categories"
+    end
+
+    test "DEL asks, and Y removes the list; the category stays", %{
       state: state,
       devlog: devlog
     } do
-      {:ok, db} = Core.discard_category(state.db, devlog)
-      list = press(%{state | db: db}, [{:f, 10}, "e", "p", "f"])
-      assert screen(list) =~ "No feeds yet"
+      asked = state |> lists() |> press(:delete)
+      assert screen(asked) =~ "Remove the list Devlog?"
+      kept = press(asked, "n")
+      assert Map.has_key?(kept.db.blog.lists, devlog)
+
+      removed = state |> lists() |> press({:ctrl, "d"}) |> press("y")
+      refute Map.has_key?(removed.db.blog.lists, devlog)
+      assert Map.has_key?(removed.db.categories, devlog)
+      assert screen(removed) =~ "No lists yet"
+    end
+
+    test "fields kept by id: a name with a comma, or one two categories have, still saves",
+         %{state: state, devlog: devlog} do
+      {:ok, db, smith} = Core.add_category(state.db, state.db.main_id, "Smith, John")
+      {:ok, db} = Core.set_blog_list(db, devlog, %{fields: [smith]})
+      {:ok, db, _} = Core.add_category(db, smith, "Smith, John")
+      box = %{state | db: db} |> lists() |> press(:enter)
+      kept = box |> to_setting("Description") |> type("Builds") |> press(:enter)
+      assert screen(kept) =~ "Kept the list's settings"
+      assert kept.db.blog.lists[devlog].fields == [smith]
+    end
+
+    test "a category picked with F3 is added by id, though another has its name", %{
+      state: state,
+      coworkers: coworkers
+    } do
+      {:ok, db, _} = Core.add_category(state.db, state.db.main_id, "Coworkers2")
+      {:ok, db} = Core.rename_category(db, coworkers, "Team")
+      {:ok, db, _twin} = Core.add_category(db, coworkers, "Team")
+      box = %{state | db: db} |> lists() |> press(:insert) |> press({:f, 3})
+      added = box |> pick_category("Team") |> press(:enter)
+      assert Map.has_key?(added.db.blog.lists, coworkers)
+    end
+
+    test "a folder that cannot be one is refused, saying why", %{state: state} do
+      box = state |> lists() |> press(:enter)
+      refused = box |> to_setting("Folder") |> press({:f, 2}) |> press({:ctrl, "u"})
+      refused = refused |> type("fonts") |> press(:enter)
+      assert screen(refused) =~ "A list's folder: a-z, 0-9 and -"
     end
   end
 

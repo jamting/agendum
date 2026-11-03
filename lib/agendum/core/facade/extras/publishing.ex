@@ -10,7 +10,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   alias Agendum.Core.Database
   alias Agendum.Core.Context
-  alias Agendum.Core.Extras.{Address, Blog, BlogFeed, Ingested, Markdown, Site}
+  alias Agendum.Core.Extras.{Address, Blog, BlogList, Ingested, Markdown, Site}
   alias Agendum.Core.Facade.Categories
   alias Agendum.Core.Facade.Extras.Zettels
 
@@ -125,8 +125,10 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
 
   @doc """
   Publish, the part in the file before the preview (R74): the settings are
-  kept, and each post without a Zettel id is given one (R73). Returns the
-  ids given, `{item, word}`.
+  kept, and each post and page without a Zettel id is given one (R73), and
+  each item of a list with feeds or item pages, which link to it (R74e;
+  an index-only list's items get none). Returns the ids given, `{item,
+  word}`.
   """
   @spec prepare_publish(db, changes) ::
           {:ok, db, [{id, String.t()}]}
@@ -140,60 +142,165 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   def prepare_publish(db, changes) do
     with {:ok, db} <- set_blog(db, changes) do
       # pages too: a page whose title gives no slug has its Zettel id
-      ids = for item <- Blog.posts(db) ++ Blog.pages(db), item.zettel == nil, do: item.id
+      # every list item that could be shown on any day: a post waiting for
+      # its day is in Blog.posts/1 already, so the far day leaves none out
+      linked =
+        for list <- Blog.lists(db, ~D[9999-12-31], []),
+            list.feeds or list.item_pages,
+            item <- list.items,
+            do: item
+
+      ids =
+        for item <- Blog.posts(db) ++ Blog.pages(db) ++ linked,
+            item.zettel == nil,
+            uniq: true,
+            do: item.id
+
       Zettels.attach_zettels(db, ids)
     end
   end
 
   @doc """
-  The blog's own feeds on `today` (R74, § 9): one for each child category
-  of Posts, with its title, description, folder and posts
-  (`Agendum.Core.Extras.Blog.feeds/3`).
+  The blog's lists on `today` (R74e; meeting 2026-11-02-2244, § 6): each
+  with its title, description, folder, switches, fields and items
+  (`Agendum.Core.Extras.Blog.lists/3`), in the category manager's order.
   """
-  @spec blog_feeds(db, Date.t()) :: [Blog.feed()]
-  def blog_feeds(db, today), do: Site.feeds(db, today)
+  @spec blog_lists(db, Date.t()) :: [Blog.blog_list()]
+  def blog_lists(db, today), do: Site.lists(db, today)
 
   @doc """
-  Changes a feed's settings (Extras ▸ Publish ▸ Feeds): its `title`
-  (the category's own name, or empty, follows the category when it is
-  renamed), `description` and `slug`, its folder on the site (a–z, 0–9
-  and `-`; `""` to make it from the name at the next publish). A folder
-  set takes its place before one made from a name. Refused for a category
-  that is not a child of Posts, and for a folder the site or another of
-  today's feeds has set.
+  Makes a category one of the blog's lists (Extras ▸ Publish ▸ Lists, INS;
+  R74e), by id or by name (`{:name, "Co-workers"}`, made under MAIN when
+  there is none of that name), with only its index page on (the owner,
+  2026-11-03). Returns its category's id. Refused for MAIN or a date
+  category, the person's own too (`:bad_setting`), a feed's or a calendar's (`:ingested`,
+  R75a), a name two categories have (`:ambiguous`), and a list already.
   """
-  @spec set_blog_feed(db, id, %{optional(atom) => String.t()}) ::
-          {:ok, db} | {:error, :not_a_feed | :bad_slug | :bad_setting}
-  def set_blog_feed(db, id, changes) do
-    changes = Map.take(changes, [:title, :description, :slug])
+  @spec add_blog_list(db, id | {:name, String.t()}) ::
+          {:ok, db, id} | {:error, :bad_setting | :ingested | :ambiguous | :already_a_list}
+  def add_blog_list(db, category) do
+    with {:ok, db, id} <- category(db, category) do
+      cond do
+        id == nil or Database.protected?(db, id) or Database.date_category?(db, id) ->
+          {:error, :bad_setting}
 
-    cond do
-      db.blog.posts == nil or id not in db.categories[db.blog.posts].children ->
-        {:error, :not_a_feed}
+        Ingested.ingested?(db, id) ->
+          {:error, :ingested}
 
-      not Enum.all?(Map.values(changes), &is_binary/1) ->
-        {:error, :bad_setting}
+        Map.has_key?(db.blog.lists, id) ->
+          {:error, :already_a_list}
 
-      true ->
-        changes = Map.new(changes, fn {k, v} -> {k, String.trim(v)} end)
-        put_feed(db, id, changes)
+        true ->
+          {:ok, put_in(db.blog.lists[id], %BlogList{}), id}
+      end
     end
   end
 
-  defp put_feed(db, id, changes) do
-    settings = struct(Map.get(db.blog.feeds, id, %BlogFeed{}), changes)
+  @doc """
+  The category `id` no longer one of the blog's lists (DEL; R74e): its
+  files go from the site at the next publish; the category and its items
+  stay.
+  """
+  @spec remove_blog_list(db, id) :: {:ok, db} | {:error, :not_a_list}
+  def remove_blog_list(db, id) do
+    if Map.has_key?(db.blog.lists, id),
+      do: {:ok, %{db | blog: %{db.blog | lists: Map.delete(db.blog.lists, id)}}},
+      else: {:error, :not_a_list}
+  end
+
+  @doc """
+  Changes a list's settings (Extras ▸ Publish ▸ Lists, ENTER; R74e): its
+  `title` (the category's own name, or empty, follows the category when it
+  is renamed), `description`, `slug` (its folder: a–z, 0–9 and `-`; `""`
+  to make it from the name at the next publish), the switches `index`,
+  `feeds`, `item_pages` and `notes`, its `fields` (categories by id or by
+  name, in order; never made: a name no category has, or two have, is
+  refused, naming it) and its item pages' `address` (a pattern as the
+  posts', `""` for `<folder>/{zettel}.html`). A folder set takes its place
+  before one made from a name, and is never the site's own nor another
+  list's.
+  """
+  @spec set_blog_list(db, id, %{optional(atom) => term}) ::
+          {:ok, db}
+          | {:error,
+             :not_a_list
+             | :bad_slug
+             | :bad_setting
+             | :bad_address
+             | {:unknown_field, String.t()}
+             | {:ambiguous_field, String.t()}}
+  def set_blog_list(db, id, changes) do
+    changes =
+      Map.take(changes, ~w(title description slug index feeds item_pages notes fields address)a)
+
+    texts = Map.take(changes, ~w(title description slug address)a)
+    switches = Map.take(changes, ~w(index feeds item_pages notes)a)
+
+    cond do
+      not Map.has_key?(db.blog.lists, id) ->
+        {:error, :not_a_list}
+
+      not (Enum.all?(Map.values(texts), &is_binary/1) and
+               Enum.all?(Map.values(switches), &is_boolean/1)) ->
+        {:error, :bad_setting}
+
+      true ->
+        texts = Map.new(texts, fn {k, v} -> {k, String.trim(v)} end)
+
+        with {:ok, fields} <- fields(db, Map.get(changes, :fields, db.blog.lists[id].fields)) do
+          put_list(db, id, texts |> Map.merge(switches) |> Map.put(:fields, fields))
+        end
+    end
+  end
+
+  # the fields as category ids, each once, in order: an id the file has, or
+  # a name one category has (MAIN is none)
+  defp fields(db, fields) when is_list(fields) do
+    Enum.reduce_while(fields, {:ok, []}, fn field, {:ok, ids} ->
+      case field(db, field) do
+        {:ok, id} -> {:cont, {:ok, if(id in ids, do: ids, else: ids ++ [id])}}
+        error -> {:halt, error}
+      end
+    end)
+  end
+
+  defp fields(_db, _fields), do: {:error, :bad_setting}
+
+  defp field(db, id) when is_integer(id) and id != db.main_id and is_map_key(db.categories, id),
+    do: {:ok, id}
+
+  defp field(db, name) when is_binary(name) do
+    name = String.trim(name)
+
+    case Enum.reject(Database.find_categories(db, name), &(&1 == db.main_id)) do
+      [id] -> {:ok, id}
+      [_, _ | _] -> {:error, {:ambiguous_field, name}}
+      [] -> {:error, {:unknown_field, name}}
+    end
+  end
+
+  defp field(_db, _other), do: {:error, :bad_setting}
+
+  defp put_list(db, id, changes) do
+    settings = struct(db.blog.lists[id], changes)
     # the category's own name is no title of its own: a rename follows
     settings =
       if settings.title == db.categories[id].name, do: %{settings | title: ""}, else: settings
 
-    siblings = db.categories[db.blog.posts].children -- [id]
-    others = for {other, %{slug: slug}} <- db.blog.feeds, other in siblings, slug != "", do: slug
+    others = for {other, %{slug: slug}} <- db.blog.lists, other != id, slug != "", do: slug
 
-    if settings.slug == "" or
-         (BlogFeed.slug?(settings.slug) and settings.slug not in elem(Site.own(), 1) and
-            settings.slug not in others),
-       do: {:ok, put_in(db.blog.feeds[id], settings)},
-       else: {:error, :bad_slug}
+    cond do
+      settings.slug != "" and
+          (not BlogList.slug?(settings.slug) or settings.slug in elem(Site.own(), 1) or
+             settings.slug in others) ->
+        {:error, :bad_slug}
+
+      settings.address != "" and not Address.valid?(settings.address) ->
+        {:error, :bad_address}
+
+      true ->
+        {:ok, put_in(db.blog.lists[id], settings)}
+    end
   end
 
   @doc "What a line of a note is, as Markdown (R64h; `Agendum.Core.Extras.Markdown.line/1`)."

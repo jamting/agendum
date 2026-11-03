@@ -1,0 +1,15 @@
+<main class="h-feed">
+{{#feed}}<h1 class="p-name">{{title}}</h1>
+{{/feed}}{{#summary}}<p class="p-summary">{{summary}}</p>
+{{/summary}}{{#has_feeds}}<p class="feeds">Feeds: {{#feeds}}{{^first}} · {{/first}}<a href="{{root}}{{url}}">{{title}}</a>{{/feeds}}</p>
+{{/has_feeds}}{{#feed}}<p class="feeds"><a href="rss.xml">RSS</a> · <a href="feed.json">JSON Feed</a></p>
+{{/feed}}{{#posts}}{{^first}}
+{{/first}}<article class="h-entry" id="{{zettel}}">
+<h2 class="p-name"><a class="u-url" href="{{url}}">{{{title_html}}}</a></h2>
+<p class="meta">{{#date}}<time class="dt-published" datetime="{{date_iso}}">{{date}}</time>{{/date}}{{#site.author}} · {{#site.home}}<a class="p-author h-card" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-author h-card">{{site.author}}</span>{{/site.home}}{{/site.author}}</p>
+<div class="e-content">
+{{{content}}}
+</div>
+</article>
+{{/posts}}{{^posts}}<p>No posts yet.</p>{{/posts}}
+</main>

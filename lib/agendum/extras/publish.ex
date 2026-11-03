@@ -50,12 +50,21 @@ defmodule Agendum.Extras.Publish do
   end
 
   # each `templates/*.html` (by its name, `post`) and `*.xml` (by its whole
-  # name, `rss.xml`); one that is a link, too big or unreadable stops
-  # publishing, saying so, rather than Agendum's being used unseen
+  # name, `rss.xml`), and those of a list's own folder, one level down
+  # (`templates/gym/index.html` is `gym/index`; R74e); one that is a link,
+  # too big or unreadable stops publishing, saying so, rather than
+  # Agendum's being used unseen
   defp templates(folder) do
     dir = Path.join(folder, "templates")
 
-    list(dir)
+    lists =
+      for name <- list(dir),
+          not String.starts_with?(name, "."),
+          match?({:ok, %{type: :directory}}, File.lstat(Path.join(dir, name))),
+          file <- list(Path.join(dir, name)),
+          do: name <> "/" <> file
+
+    (list(dir) ++ lists)
     |> Enum.filter(&(Path.extname(&1) in [".html", ".xml"]))
     |> Enum.sort()
     |> Enum.reduce_while({:ok, %{}}, fn name, {:ok, acc} ->
@@ -65,6 +74,10 @@ defmodule Agendum.Extras.Publish do
           if Site.legacy_template?("templates/" <> name, text),
             do: {:cont, {:ok, acc}},
             else: {:cont, {:ok, Map.put(acc, template_name(name), text)}}
+
+        # a folder named like a template is not one: passed over
+        {:error, "is not a file"} ->
+          {:cont, {:ok, acc}}
 
         {:error, why} ->
           {:halt, {:error, "templates/#{name} #{why}"}}

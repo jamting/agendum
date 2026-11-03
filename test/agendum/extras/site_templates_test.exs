@@ -93,6 +93,26 @@ defmodule Agendum.Extras.SiteTemplatesTest do
       assert "templates/rss.xml" in scan.templates_missing
     end
 
+    test "a list's own templates are read from templates/<folder>/, by folder and name", %{
+      tmp_dir: dir
+    } do
+      File.mkdir_p!(Path.join(dir, "templates/gym/deeper"))
+      File.write!(Path.join(dir, "templates/gym/index.html"), "<table/>")
+      File.write!(Path.join(dir, "templates/gym/rss.xml"), "<rss/>")
+      File.write!(Path.join(dir, "templates/gym/deeper/x.html"), "not read")
+      File.ln_s!("/etc/hosts", Path.join(dir, "templates/gym/item.html"))
+
+      assert {:error, "templates/gym/item.html is a link; put the template itself there"} =
+               Publish.inputs(dir)
+
+      File.rm!(Path.join(dir, "templates/gym/item.html"))
+
+      assert {:ok, %{templates: %{"gym/index" => "<table/>", "gym/rss.xml" => "<rss/>"} = t}} =
+               Publish.inputs(dir)
+
+      assert map_size(t) == 2
+    end
+
     test "a folder without them has none", %{tmp_dir: dir} do
       assert Publish.inputs(dir) == {:ok, %{templates: %{}, assets: []}}
     end

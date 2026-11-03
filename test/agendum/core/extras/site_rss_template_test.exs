@@ -24,6 +24,12 @@ defmodule Agendum.Core.Extras.SiteRssTemplateTest do
     {:ok, db} =
       Core.set_blog(db, %{posts: posts, title: "Owl's Notes", base_url: "https://owl.example/"})
 
+    # Devlog a list with everything on, as a feed of format 50 opens
+    {:ok, db, _} = Core.add_blog_list(db, devlog)
+
+    {:ok, db} =
+      Core.set_blog_list(db, devlog, %{index: true, feeds: true, item_pages: true, notes: true})
+
     {:ok, db, _} = Core.prepare_publish(db, %{})
     %{db: db}
   end

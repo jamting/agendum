@@ -12,7 +12,7 @@ Small, testable increments: the open work, by lane.
 
 **In order:** what comes next, across every lane (the owner reorders it; details where each line points; the owner, 2026-10-31):
 
-1. [ ] **The publisher's round 2** (meetings 2026-11-02-1954, § 13, and 2026-11-02-2244, § 7; [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md) § The steps), steps 1 and 2 done (the R74 split; images from `assets/`, v0.87.0); next step 3: **Lists** (any of the person's own categories published as a list, replacing feeds; meeting 2026-11-02-2244, § 6), the newest N plus an archive per list, a 404 page, tag pages as a list made from a family, and, optional, `--publish --quiet` for launchd or cron. Round 1 is done (v0.79.0–v0.85.0, [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)).
+1. [ ] **The publisher's round 2** (meetings 2026-11-02-1954, § 13, and 2026-11-02-2244, § 7; [`plans/PUBLISHER_2.md`](plans/PUBLISHER_2.md) § The steps), steps 1 to 3 done (the R74 split; images from `assets/`, v0.87.0; Lists, v0.88.0 and v0.89.0); next step 4: the newest N plus an archive per list, then a 404 page, tag pages as a list made from a family, and, optional, `--publish --quiet` for launchd or cron. Round 1 is done (v0.79.0–v0.85.0, [`plans/archive/PUBLISHER.md`](plans/archive/PUBLISHER.md)).
 
 Starters are done for now (the owner, 2026-11-02): GTD and the Journal are built and in use; the two in lane 3 are parked.
 

@@ -1,6 +1,6 @@
 # The publisher, round 2
 
-**Status:** under way (meetings 2026-11-02-1954 and 2026-11-02-2244); steps 1 and 2 done 2026-11-03 (v0.87.0), step 3 (Lists) next, its questions settled 2026-11-03. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
+**Status:** under way (meetings 2026-11-02-1954 and 2026-11-02-2244); steps 1 and 2 done 2026-11-03 (v0.87.0), step 3 (Lists) done 2026-11-03 (v0.88.0, v0.89.0); step 4 next. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
 
 The owner asked the panel to evaluate round 1 (omissions, improvements, what went well) and to formulate a round 2. A second meeting (2026-11-02-2244) replaced the blog's feeds with Lists and set the order below.
 
@@ -8,7 +8,7 @@ The owner asked the panel to evaluate round 1 (omissions, improvements, what wen
 
 1. [x] **Split R74 into sub-rules** (meeting 2026-11-02-1954, § 9): R74 the blog and publishing, R74a Site and Upload, R74b addresses and a post's metadata, R74c templates and assets, R74d pages and the menu, R74e feeds (named so it can become Lists in step 3; meeting 2026-11-02-2244, § 7), R74f publishing without the screen; each in SPEC's rule index; the meaning unchanged. Docs only. Done 2026-11-03 (R74a is the Site and Upload settings, R74b post addresses and records, R74d pages).
 2. [x] **Images from `assets/` in posts and pages** (meeting 2026-11-02-1954, § 6): `![alt](assets/me.jpg)` is shown, its address made right for each page (`../assets/…` from a post in a folder); an image naming an asset that is not there stops publishing and says which. Done in v0.87.0 (R74c): written `assets/…` from the site's root, an image without alt text allowed (`alt=""`; the owner's choices, 2026-11-02).
-3. [ ] **Lists** (meeting 2026-11-02-2244, § 6): Publish ▸ Feeds becomes **Publish ▸ Lists**. Details below.
+3. [x] **Lists** (meeting 2026-11-02-2244, § 6): Publish ▸ Feeds becomes **Publish ▸ Lists**. Details below. Done in v0.88.0 (RSS as a template, the read-back) and v0.89.0 (Lists, R74e, format 51).
 4. [ ] **The newest N posts, and an archive** (meeting 2026-11-02-1954, § 7): the index, each list's index and the feeds carry the newest N items (a Site setting, 20 by default); `archive.html` (and a list's own) lists every item's title and date by month, its links never moving. Per list, after step 3 (meeting 2026-11-02-2244, § 7).
 5. [ ] **A 404 page** (meeting 2026-11-02-1954, § 13): `404.html` drawn from a `404.html` template, which GitHub Pages and most servers show for an address that leads nowhere.
 6. [ ] **Tag pages, as a list made from a family** (meetings 2026-11-02-1954, § 13, and 2026-11-02-2244, § 7): a list's option "one page per child category", so a Tags family gives each tag a page of its items; a post's tags shown on it. Not a feature of its own.
@@ -43,7 +43,9 @@ Settled with the owner before step 3 is built (the `feature` skill's questions; 
 - **Newest first,** as posts; no order setting in the box. Sorting and filtering in templates may come later (an Idea on the roadmap); filtering already has its home in the list's category (its conditions, R15). The feeds and step 4's newest N stay newest first by date whatever a template does.
 - **An item in Posts and a list** is on both the main index and the list's (as a post in a feed is today).
 
-Left to the build: the stored change (the blog's feeds are kept by category id today, `Agendum.Core.Extras.BlogFeed`, `Blog.feeds`; a list adds its switches, fields, notes switch and address), a new format version and its golden file.
+Settled in the build's own round (the owner, 2026-11-03): INS (or CTRL-N) and DEL (or CTRL-D, after asking) add and remove a list, as the Subscriptions box does; Fields are names with commas, F3 adding one picked; only posts wait for their day (a list item's When is no publishing date); the main index's Feeds line names the lists with feeds, and every page sees every list with an index as `lists`. INS opens the list's box with its Category first, so a new list is made with its settings in one undo step.
+
+Done in the build: the stored change (the blog's feeds are kept by category id today, `Agendum.Core.Extras.BlogFeed`, `Blog.feeds`; a list adds its switches, fields, notes switch and address), a new format version and its golden file.
 
 ## Ideas, not in round 2
 

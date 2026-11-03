@@ -584,9 +584,10 @@ defmodule Agendum.TUI.Update.Prompts do
     end
   end
 
-  # unsubscribing from a feed or a calendar (R75, R45), beside the extras
-  defp confirmed(state, {unsubscribe, _id} = action, discard)
-       when unsubscribe in [:unsubscribe_feed, :unsubscribe_calendar],
+  # unsubscribing from a feed or a calendar (R75, R45), and removing one of
+  # the blog's lists (R74e), beside the extras
+  defp confirmed(state, {extra, _id} = action, discard)
+       when extra in [:unsubscribe_feed, :unsubscribe_calendar, :remove_blog_list],
        do: Agendum.TUI.Extras.Prompts.confirmed(state, action, discard)
 
   # Domain: the answers to "Save changes first?" (Retrieve, New, Import)

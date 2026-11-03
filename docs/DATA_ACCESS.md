@@ -92,6 +92,8 @@ Every change goes through `Core.run(db, command, clock)`. The commands are liste
 | `Core.ingested_categories(db)`, `ingested?(db, id)` | read | The categories a feed or a calendar fills, and the Feeds parent (R75a), worked out from the subscriptions; a person's command that would change one is refused with `{:error, :ingested}` (`Agendum.Core.Command`). |
 | `Core.feeds_due(db, now)`, `Core.parse_feed(text)`, `Core.export_opml(db)` | read | The feeds to read again; a feed's text read into entries (`FeedParser`); the feeds as OPML. |
 | `Core.set_blog(db, changes)`, `Core.prepare_publish(db, changes)`                                          | write | The micro-blog's settings (categories by id or `{:name, name}`, made when missing); Publish's part in the file: the settings and a Zettel id for each post without one (R74). |
+| `Core.add_blog_list(db, category)`, `Core.set_blog_list(db, id, changes)`, `Core.remove_blog_list(db, id)` | write | The blog's lists (R74e): a category made a list (by id or `{:name, name}`, only its index page on), its settings (switches, fields by id or name, folder, item address), and no longer a list. |
+| `Core.blog_lists(db, today)`                                                                                | read  | The blog's lists as the site makes them: each with its folder, switches, fields and items (R74e). |
 | `Core.blog_posts(db)`, `Core.site(db)`, `Core.site_changes(files, existing, published)`                     | read  | The posts, newest first; the site as `{path, content}` pairs (`Agendum.Core.Extras.Site`); what writing it would change in a folder (R74). |
 
 ### Categories and the hierarchy
