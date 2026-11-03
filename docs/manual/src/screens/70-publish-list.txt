@@ -1,0 +1,25 @@
+ The list's name on its page and in its feeds. Type it; empty for the
+ category's name.
+ Garden                                   When             Priority Friends
+ ┌────────────────────────────── Publish: lists ──────────────────────────────┐
+ │┌─────────────────────────────── List: Garden ───────────────────────────────┐
+ ││ Title          : Rabbit's Garden                                           │
+ ││ Description    : For Pooh and Piglet, who said they would help             │
+ └│ Folder         :                                                           │
+ N│ Index page     : Yes       Feeds : No        Item pages : No               │
+  │ Notes          : No        Newest :                                        │
+  │ Fields         : Priority                                                  │
+  │ Item address   :                                                           │
+  │                                                                            │
+ F│ Its folder, made from its name at the first publish: /garden/              │
+  │ SPACE next choice · type text · F3 choices                                 │
+  └─────────────────── Press ENTER when done, ESC to cancel ───────────────────┘
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
+
+
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │       │       │       │       │       │Default│       │

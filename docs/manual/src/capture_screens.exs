@@ -52,6 +52,7 @@ defmodule ManualScreens do
     help_and_views(state)
     trash_and_search(state)
     away(state)
+    publishing(state)
   end
 
   defp view(state) do
@@ -261,6 +262,88 @@ defmodule ManualScreens do
 
     s = %{s | saved: %{s.saved | db: s.db}, now: state.now, message: nil}
     shot("53-away", Agendum.TUI.Update.arrive(s), :away)
+  end
+
+  # The blog (an extra, R74): Rabbit's Notices published as a website. A
+  # new notice with a Markdown note is the post; the meeting's notice, with
+  # its When on Friday, waits for its day. Then the Site box, the note in
+  # the editor (its Markdown coloured), the Upload box, the Garden as a
+  # list (Publish ▸ Lists and its box), and Publish's preview, the folder
+  # read as the shell would read an empty one.
+  defp publishing(state) do
+    state = put_in(state.prefs.extras, true)
+    db = state.db
+    notices = hd(Database.find_categories(db, "Notices"))
+    {db, post} = Core.add_item(db, "Notice about the lettuces", @today, section: notices)
+
+    note = """
+    # Lettuces Are Not for Bouncing
+    A Notice to **all Tiggers**: the lettuces are for eating.
+
+    - [x] Count the lettuces
+    - [ ] Count them again after Tigger
+    - [ ] Put up a fence
+    """
+
+    db = Core.set_note(db, post, String.trim_trailing(note), @today)
+
+    {:ok, db} =
+      Core.set_blog(db, %{
+        posts: notices,
+        title: "Rabbit's Notices",
+        description: "Notices from Rabbit's house, for everyone in the Forest",
+        author: "Rabbit",
+        language: "en",
+        base_url: "https://rabbit.example/notices/"
+      })
+
+    s = Layout.settle(%{state | db: db})
+    shot("66-publish-site", press(s, [{:f, 10}, "e", "p", "s"]), :publish)
+
+    # the post's note: the cursor on its last line, so the rest is coloured
+    on_post = Layout.move_to(s, row(s, "Notice about"))
+    shot("67-note-markdown", press(on_post, [{:f, 5}, :ctrl_end]), :note)
+
+    upload =
+      press(
+        s,
+        [{:f, 10}, "e", "p", "u", :down, " ", :down] ++
+          String.graphemes("rabbit@forest.example:www/notices")
+      )
+
+    upload = press(upload, :enter)
+    shot("68-upload", upload, :publish_upload)
+    # ENTER keeps them, in Rabbit's preferences: the preview uploads
+    s = press(upload, :enter)
+
+    garden = hd(Database.find_categories(db, "Garden"))
+    {:ok, db, _} = Core.add_blog_list(db, garden)
+
+    {:ok, db} =
+      Core.set_blog_list(db, garden, %{
+        title: "Rabbit's Garden",
+        description: "For Pooh and Piglet, who said they would help",
+        fields: ["Priority"]
+      })
+
+    s = Layout.settle(%{s | db: db})
+    lists = press(s, [{:f, 10}, "e", "p", "l"])
+    shot("69-publish-lists", lists, :publish_lists)
+    shot("70-publish-list", press(lists, :enter), :publish_list)
+
+    Process.put(:effects_seen, [])
+    published = press(s, [{:f, 10}, "e", "p", "p"])
+
+    {:publish_scan, folder, files} =
+      List.last(for {:publish_scan, _, _} = e <- Process.get(:effects_seen), do: e)
+
+    missing = for {path, _} <- Core.site_default_templates(), do: path
+    scan = %{existing: %{}, published: [], templates_missing: missing}
+
+    preview =
+      Agendum.TUI.Extras.Publish.Results.publish_scanned(published, folder, files, {:ok, scan})
+
+    shot("71-publish-preview", preview, :publish_preview)
   end
 
   defp name(state, {id, _depth}), do: state.db.categories[id].name

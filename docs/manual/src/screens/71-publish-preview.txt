@@ -1,0 +1,25 @@
+ Reading site …
+
+ Garden                                   When             Priority Friends
+   ┌────────────────────── Publish: what will change ───────────────────────┐
+   │ 1 post · 13 added, 0 changed, 0 removed                                │
+   │ Written to /home/rabbit/site, then sent by rsync to                    │
+   │ rabbit@forest.example:www/notices.                                     │
+   │ 1 post waits for its day (10/16/26)                                    │
+ No│ Writes templates/ for you to change: 404.html, archive.html,           │
+   │ index.html, layout.html, menu.html, page.html, post.html, rss.xml      │
+   │ (never uploaded)                                                       │
+   │                                                                        │
+   │ + index.html                                                           │
+ Fr│ + rss.xml                                                              │
+   │ + feed.json                                                            │
+   │ + style.css                                                            │
+   │ + 404.html                                                             │
+   │ + posts/pigavono.html                                                  │
+   │ … 6 more: ↓ PGDN                                                       │o
+   │                                                                        │
+   │ ENTER publishes · ESC changes nothing                                  │
+   └───────────────────── Press ENTER or ESC to return ─────────────────────┘
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │       │       │       │       │       │       │       │       │

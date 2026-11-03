@@ -1,0 +1,25 @@
+ The category whose items are the posts. Type a name (F5 a new one) or F3 to
+ pick.
+ Garden                                   When             Priority Friends
+ ┌──────────────────────────── Publish: the site ─────────────────────────────┐
+ │ Posts category : Notices               Drafts   : (none)                   │
+ │ Pages category : (none)                                                    │
+ │ Site title     : Rabbit's Notices                                          │
+ │ Description    : Notices from Rabbit's house, for everyone in the F…       │
+ │ Author         : Rabbit                Language : en                       │
+ │ Base address   : https://rabbit.example/notices/                           │
+ │ rel="me" links :                                                           │
+ │ Address        : posts/{zettel}.html                                       │
+ │ Newest posts   : 20                                                        │
+ │                                                                            │
+ │ The items in Notices are the posts; ENTER keeps the settings.              │
+ │ SPACE next choice · type text                                              │
+ └─────────────────── Press ENTER when done, ESC to cancel ───────────────────┘
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
+
+
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Edit  │       │       │       │       │       │Default│       │

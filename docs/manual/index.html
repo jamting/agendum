@@ -27,6 +27,7 @@
     <li><a href="#waiting">Things that wait</a></li>
     <li><a href="#files">Files and your own settings</a></li>
     <li><a href="#macros">Macros</a></li>
+    <li><a href="#publishing">A website from your file</a></li>
     <li><a href="#more">A few more things</a></li>
     <li><a href="#reference">Reference</a></li>
     <li><a href="#evening">Evening</a></li>
@@ -60,7 +61,7 @@
   <p>Everything worth knowing about Wol's Agendum, the important things in depth and the
      rest in brief, as Owl explained it to Rabbit one afternoon. For the short
      version, see the <a href="../guide/index.html">User Guide</a>.</p>
-  <p class="written-for">Written for Agendum 0.77</p>
+  <p class="written-for">Written for Agendum 0.91</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -510,8 +511,23 @@ the note's own menu: <strong>Import</strong> puts a text file in at the cursor,
   <li><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd> save it and go on to the next or previous
       item's note;</li>
   <li><kbd>ALT-F6</kbd> searches and replaces, and <kbd>ALT-S</kbd> finds the next
-      occurrence.</li>
+      occurrence;</li>
+  <li><kbd>CTRL-Z</kbd> and <kbd>CTRL-Y</kbd> undo and redo, a word at a time (below).</li>
 </ul>
+
+<p>Undo in a note goes back in small steps: “Buy milk today” goes back as “today”,
+then “milk ”, then “Buy ”. A run of <kbd>BACKSPACE</kbd>s is one step, and a paste or a
+date typed with <kbd>ALT-D</kbd> is one of its own. What a note's command did to the
+file goes back too: <kbd>CTRL-Z</kbd> after <kbd>ALT-F7</kbd> puts the text back into
+the note and takes away the item it made. Once the note is closed, <kbd>CTRL-Z</kbd> in
+the view puts the whole note back as it was when you opened it.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I wrote “Tigger is a nuisance” in Tigger's note. And
+then I thought he might read it.</p>
+<p class="owl"><b>Owl.</b> <kbd>CTRL-Z</kbd>, three times. “nuisance”, “a ”, and
+“is ”. You may stop at “Tigger”, which is true and unkind to nobody.</p>
+</div>
 
 <p>A line longer than the screen is wide wraps onto as many rows as it needs, broken
 after a space, so the whole of it always shows; the wrapping is only on the screen,
@@ -533,6 +549,10 @@ a line anywhere else, and what you copy in one place pastes in another.</p>
 text (or the word, the line or all of it) a new item, below the note's item in the same
 section, and takes it out of the note. <kbd>ALT-F2</kbd> makes a new category of it,
 under a parent you pick from the tree; the note keeps its text.</p>
+
+<p>With the <a href="#extras">extras</a> on, the note editor also helps with the
+Markdown a blog post is written in: lists that carry on by themselves and task boxes
+that tick (<a href="#markdown">chapter 15</a>).</p>
 
 <div class="talk">
 <p class="rabbit"><b>Rabbit.</b> My note on “Plan the harvest” has nine things in it
@@ -1557,7 +1577,7 @@ shows <code>&amp;</code> until they are all done.</p>
   <tr><td>Print the view to a text file</td><td><kbd>CTRL-P</kbd>, or <strong>Print</strong></td></tr>
   <tr><td>Export the whole file as JSON / open a JSON or Lotus Agenda file</td><td><strong>File ▸ Transfer ▸ Export</strong> / <strong>Import</strong></td></tr>
   <tr><td>Subscribe to a calendar on the web (an <a href="#extras">extra</a>)</td><td><strong>Extras ▸ Calendars</strong></td></tr>
-  <tr><td>Subscribe to news feeds / publish the blog (extras)</td><td><strong>Extras ▸ Feeds</strong> / <strong>Publish</strong></td></tr>
+  <tr><td>Subscribe to news feeds / publish a blog or a website (extras, <a href="#publishing">chapter 15</a>)</td><td><strong>Extras ▸ Feeds</strong> / <strong>Publish</strong></td></tr>
   <tr><td>Quit</td><td><kbd>CTRL-Q</kbd> (or <kbd>ALT-Q</kbd>)</td></tr>
 </table>
 
@@ -1668,9 +1688,10 @@ Agenda's own menus stay exactly Agenda's either way. You get calendars from the 
 7</a>), <code>►</code> before the view you are in and <kbd>F5</kbd> to list the views by
 when you last used them in the view manager, the commands' longer names on the key bar
 of a wide screen, a reader for news feeds (below), Zettel ids and links between items
-(<strong>Extras ▸ Zettel</strong>) and a small blog published from the file
-(<strong>Extras ▸ Publish</strong>, below). Turning them off hides them again;
-nothing in the file is lost.</p>
+(<strong>Extras ▸ Zettel</strong>), help with Markdown in notes, and a blog or a small
+website published from the file (<strong>Extras ▸ Publish</strong>, <a
+href="#publishing">chapter 15</a>). Turning them off hides them again; nothing in the
+file is lost.</p>
 
 <h3 id="calendars">Calendars from the web</h3>
 
@@ -1752,16 +1773,6 @@ often it is read and how long its entries stay (7 days to for ever; 30 by defaul
   <li>Old entries fade away by themselves, unless Rabbit kept them: gave one a
       category by hand, changed its text or note, or gave it a Zettel id.</li>
 </ul>
-
-<div class="brief">
-<p><strong>A small blog.</strong> <strong>Extras ▸ Publish</strong> writes the
-items in a <em>Posts</em> category as a website: a page per post, the whole blog on its
-front page, and feeds for readers to follow. The note is the post, in a little
-Markdown (headings, <code>**strong**</code>, lists, links). The site is plain HTML in
-<em>The Proportional Web</em>'s typography, with its fonts included, dark when the
-reader's computer is, and can be uploaded by rsync or SFTP. Posts in a
-<em>Drafts</em> category wait until they are ready.</p>
-</div>
 
 <h3 id="planner">Ready-made files</h3>
 <p>Agenda came with ready-made files to begin from, and Agendum comes with three, in the
@@ -1855,7 +1866,8 @@ them, and saves them in your preferences file
       <em>Borland</em>, yellow on blue like the old DOS programming tools; or the
       colours of a well-liked terminal scheme: <em>Modus Operandi</em> (light),
       <em>Modus Vivendi</em> (dark), <em>Alabaster</em>, <em>Zenburn</em> or
-      <em>Ayu</em>.</li>
+      <em>Ayu</em>; or <em>Amber</em>, amber on near-black, as the amber monitors of
+      the 1980s.</li>
   <li><strong>Date language</strong> and <strong>Fallback language</strong>: which
       languages you type dates in (English, Swedish).</li>
   <li><strong>Input format</strong>: how you type numeric dates and times (chapter 7).</li>
@@ -1890,7 +1902,9 @@ think, or to chase Tigger, Agendum saves for you.</p>
 ./agendum --lang=swedish --fallback=english rabbit.agendum
 ./agendum --number-order=dmy --date-separator=. --clock=24 rabbit.agendum</pre>
 <p><code>agendum --version</code> says which version you have, for a letter to whoever
-looks after it; <code>agendum --help</code> lists all of these.</p>
+looks after it; <code>agendum --help</code> lists all of these, and
+<code>agendum --publish</code>, which publishes a file's blog without opening the screen
+(<a href="#headless">chapter 15</a>).</p>
 </section>
 
 <!-- ===================================================================== -->
@@ -1941,8 +1955,276 @@ Method should not go round in circles. That is what Tigger is for.</p>
 </section>
 
 <!-- ===================================================================== -->
+<section id="publishing">
+<h2>15. A website from your file</h2>
+<p class="in-which">In Which Rabbit's Notices Go Up on the Web, and One of Them Waits for Friday</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> I put up a Notice on the Pooh tree, and Tigger bounced
+into it, and the rain did the rest. Nobody read it but Eeyore, who said it was about
+what he expected.</p>
+<p class="owl"><b>Owl.</b> Then put your Notices where neither Tigger nor the rain can
+reach them. On the web. Agendum will write them out as a website: a page for each
+Notice, all of them on a front page, and feeds, so that Christopher Robin's reader
+fetches the next one without anyone climbing a tree.</p>
+</div>
+
+<p>Publishing is one of the <a href="#extras">extras</a>: with them on,
+<strong>Extras ▸ Publish</strong> has four commands.</p>
+<ul>
+  <li><strong>Publish</strong> makes the site and shows what it would change, before
+      anything is written.</li>
+  <li><strong>Site</strong> holds the blog's settings, kept in the file.</li>
+  <li><strong>Lists</strong> publishes any of your other categories as a list (below).</li>
+  <li><strong>Upload</strong> says where the site is written and how it gets to your
+      server; these are yours, not the file's.</li>
+</ul>
+
+<p>The items of one category are the <strong>posts</strong>. A post's text is its
+title, its note is what the reader reads, and its date is its When date (or, without
+one, the day it was entered). The newest come first.</p>
+
+<h3>The site's settings</h3>
+<p>The first time you choose Publish, Agendum opens <strong>Site</strong> first, and
+<kbd>ENTER</kbd> there goes on to publish. Rabbit's posts are his Notices:</p>
+
+<!-- screen: 66-publish-site -->
+<img class="screen" src="screens/66-publish-site.png" width="720" height="400" alt="Agendum&#x27;s screen: The category whose items are the posts. Type a name (F5 a new one) or F3 to · pick.">
+
+<ul>
+  <li><strong>Posts category</strong>: the category whose items are the posts
+      (<em>Posts</em> unless you say otherwise). Type its name, which is completed as
+      you type, or <kbd>F3</kbd> to pick it from the tree.</li>
+  <li><strong>Drafts</strong>: a post that is also in this category waits until it is
+      ready. Take it out of Drafts and it goes out with the next Publish.
+      <kbd>DEL</kbd> leaves Drafts empty.</li>
+  <li><strong>Pages category</strong>: items that are pages of the site, such as
+      <em>About</em> or <em>Now</em>, rather than posts (below).</li>
+  <li><strong>Site title</strong>, <strong>Description</strong>,
+      <strong>Author</strong> and <strong>Language</strong>: on every page and in the
+      feeds. The language also names the months in the archive.</li>
+  <li><strong>Base address</strong>: where the site will be on the web. The feeds need
+      it, as a feed reader cannot follow a link that does not say where it is from;
+      without it the site is still written, and Agendum reminds you.</li>
+  <li><strong>rel="me" links</strong>: the addresses of your other profiles, such as a
+      Mastodon account, so that each can vouch for the other.</li>
+  <li><strong>Address</strong>: where a post's page goes. <code>posts/{zettel}.html</code>
+      names it by the post's Zettel id; <code>{year}/{month}/{day}-{slug}.html</code>
+      gives addresses like <code>2026/10/12-lettuces-are-not-for-bouncing.html</code>, the
+      slug made from the title.</li>
+  <li><strong>Newest posts</strong>: how many of the newest posts the front page and
+      the feeds carry, 20 unless you change it, 0 for all of them.</li>
+</ul>
+
+<p><kbd>ENTER</kbd> keeps the settings, as one step for <kbd>CTRL-Z</kbd>;
+<kbd>ESC</kbd> changes nothing.</p>
+
+<h3 id="markdown">Writing a post</h3>
+<p>A post is written in its note, in <em>Markdown</em>: plain text with a few marks
+that become headings, lists and links on the page.</p>
+<ul>
+  <li><code># A heading</code>, and <code>##</code> for a smaller one;
+      <code>**strong**</code>, <code>*emphasis*</code> and <code>`code`</code>; a line
+      of <code>---</code> for a rule; <code>&gt;</code> before a quotation; three
+      backticks above and below a block of code.</li>
+  <li>Lists, with <code>- </code> or <code>1. </code> before each line, and task boxes:
+      <code>- [ ]</code> to do, <code>- [x]</code> done, <code>- [-]</code> cancelled
+      (struck through on the page).</li>
+  <li>Links, <code>[the Gazette](https://gazette.example)</code>, or a bare address;
+      and pictures, <code>![Owl by his door](assets/owl.jpg)</code> (see
+      <a href="#looks">below</a>).</li>
+  <li>Anything else is text. HTML typed into a note shows as what you typed, never as
+      markup.</li>
+</ul>
+
+<p>A note whose first line is a <code># Heading</code> gives the post that title, so
+the item can keep a short text in the view while the post has a proper one. With the
+extras on, the note editor helps: <kbd>ENTER</kbd> at the end of a list item starts the
+next one (<code>- </code>, <code>2. </code>, <code>- [ ] </code>), <kbd>ENTER</kbd> on
+an empty one leaves the list, and <kbd>CTRL-T</kbd> ticks or unticks the line's task
+box, or gives a list item one. Headings, list marks and task boxes are coloured, and
+done tasks dimmed, on every line but the one you are typing in:</p>
+
+<!-- screen: 67-note-markdown -->
+<img class="screen" src="screens/67-note-markdown.png" width="720" height="400" alt="Agendum&#x27;s screen: Note for: Notice about the lettuces Line 6 INS EDIT">
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> The colours. Will the Notice be blue on the web?</p>
+<p class="owl"><b>Owl.</b> No. The colours are only for you, while you write. The note
+is exactly what you typed, and that is what the site reads.</p>
+</div>
+
+<p>A post whose When date is still to come waits for its day: Publish leaves it out
+and says so, and the first time you publish on or after that day, it goes out. A post
+you change after publishing it says “Updated”, with the day, on its page.</p>
+
+<h3>Where it goes</h3>
+<p><strong>Extras ▸ Publish ▸ Upload</strong> says where the site is written and how
+it is sent on:</p>
+
+<!-- screen: 68-upload -->
+<img class="screen" src="screens/68-upload.png" width="720" height="400" alt="Agendum&#x27;s screen: rsync: where to (me@host:www/blog). SFTP: the server (host or host:port). Type · it.">
+
+<ul>
+  <li><strong>Folder</strong>: where the site is written, <code>site</code> beside the
+      file unless you choose another; <kbd>F3</kbd> lists the folders.</li>
+  <li><strong>Upload</strong> (<kbd>SPACE</kbd> for the next): <em>None</em> only
+      writes the folder; <em>rsync over ssh</em> sends it on to a place such as
+      <code>rabbit@forest.example:www/notices</code>; <em>SFTP</em> to a server, as a
+      user, into a folder there. SFTP uses your ssh keys; if the server wants a
+      password, Agendum asks for it and never keeps it.</li>
+</ul>
+
+<p>These settings are kept in your own preferences, for this file on this computer,
+not in the file: a file you share does not carry your server's address. So the file
+must have a name before Upload opens; a new one asks to be saved first.</p>
+
+<h3>Publishing</h3>
+<p><strong>Extras ▸ Publish ▸ Publish</strong> makes the site, reads the folder, and
+shows what would change: <code>+</code> for a file it would add, <code>~</code> one it
+would change, <code>−</code> one it would remove. Nothing is written yet.</p>
+
+<!-- screen: 71-publish-preview -->
+<img class="screen" src="screens/71-publish-preview.png" width="720" height="400" alt="Agendum&#x27;s screen: Reading site …">
+
+<p><kbd>ENTER</kbd> writes the files and uploads them; <kbd>ESC</kbd> writes nothing.
+Publishing goes on in the background while you work, and the message line says when
+it is done: “Published and uploaded: 13 added, 0 changed, 0 removed”, or why not.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> “1 post waits for its day.” But I wrote the Notice
+about the Organising Meeting on Monday!</p>
+<p class="owl"><b>Owl.</b> And it says “on Friday”, so its When date is Friday, the day
+of the meeting. For a post, Agendum takes that as the day you want it published. Give
+it today's date, and it goes out now.</p>
+<p class="rabbit"><b>Rabbit.</b> Today. Certainly today. Nobody organises anything by
+reading about it on the day.</p>
+</div>
+
+<p>What the site holds:</p>
+<ul>
+  <li>A front page, <code>index.html</code>, with the newest posts in full. Once there
+      are more posts than <em>Newest posts</em>, <code>archive.html</code> lists every
+      post's title and date by month, and the front page ends with “All posts”.</li>
+  <li>A page for each post, at its address. Publishing gives each post a Zettel id
+      (one step for <kbd>CTRL-Z</kbd>), and a post keeps the address it was first
+      published at, whatever you change later, so no link to it breaks.</li>
+  <li>Two feeds, <code>rss.xml</code> and <code>feed.json</code>, for feed readers.
+      Each is read back before publishing; a feed that does not read stops publishing
+      and says which, as a broken feed fails without a word in a reader.</li>
+  <li><code>404.html</code>, the page most servers show for an address that leads
+      nowhere: “This page is not here”, a link home and the five newest posts.</li>
+  <li><code>style.css</code> and its fonts, in the typography of <em>The Proportional
+      Web</em>, dark when the reader's computer is. The pages are plain HTML, without
+      JavaScript.</li>
+</ul>
+
+<p>Agendum writes, changes and removes only its own files; anything else in the folder
+or on the server is left alone.</p>
+
+<h3>Pages</h3>
+<p>The items of the <strong>Pages category</strong> are pages of their own:
+<em>About</em>, <em>Now</em>, <em>How to Find Rabbit's House</em>. Each gets an address
+from its title (<code>about.html</code>), keeps it, and is not among the posts or in
+the feeds. Once there are pages, every page of the site has a menu: Home, then the
+pages from A to Z.</p>
+
+<h3 id="lists">Lists</h3>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> Pooh and Piglet said they would help in the garden.
+They never know what needs doing. Could the garden go on the web too?</p>
+<p class="owl"><b>Owl.</b> Any of your categories can. Make it a <em>list</em>.</p>
+</div>
+
+<p><strong>Extras ▸ Publish ▸ Lists</strong> shows the categories you publish as
+lists, each with its folder, how many items it has, and what it publishes.
+<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) adds one, its category first; <kbd>DEL</kbd> (or
+<kbd>CTRL-D</kbd>) removes one, after asking, and the category and its items stay.</p>
+
+<!-- screen: 69-publish-lists -->
+<img class="screen" src="screens/69-publish-lists.png" width="720" height="400" alt="Agendum&#x27;s screen: The blog&#x27;s lists: your categories published. ENTER its settings, INS adds, DEL · removes.">
+
+<p><kbd>ENTER</kbd> (or <kbd>F6</kbd>) opens a list's settings:</p>
+
+<!-- screen: 70-publish-list -->
+<img class="screen" src="screens/70-publish-list.png" width="720" height="400" alt="Agendum&#x27;s screen: The list&#x27;s name on its page and in its feeds. Type it; empty for the · category&#x27;s name.">
+
+<ul>
+  <li><strong>Title</strong> and <strong>Description</strong>: its heading and the line
+      under it; an empty title is the category's name.</li>
+  <li><strong>Folder</strong>: where it goes on the site, made from its name at the
+      first publish and kept (<code>/garden/</code>). Change it, and the list moves at
+      the next publish.</li>
+  <li>Four switches (<kbd>SPACE</kbd> turns one over, <kbd>Y</kbd> and <kbd>N</kbd>
+      set it): an <strong>Index page</strong> of its items; <strong>Feeds</strong> of
+      its own; <strong>Item pages</strong>, a page for each item; and
+      <strong>Notes</strong>, whether its items' notes are published. A new list has
+      only its index page.</li>
+  <li><strong>Newest</strong>: how many of its newest items its index and feeds show;
+      empty, the Site's number; 0, all. Past them, it has an archive of its own.</li>
+  <li><strong>Fields</strong>: the families whose values go out with each item, by
+      name, with commas (<kbd>F3</kbd> adds one from the tree). Agendum's pages show
+      them as “Priority: High”.</li>
+  <li><strong>Item address</strong>: where its item pages go, as the posts' Address;
+      empty, <code>garden/{zettel}.html</code>.</li>
+</ul>
+
+<p>A list's items are those in its category or under it, newest first. Drafts holds
+them back as it holds back posts, and an item in the Pages category is a page only.
+Only posts wait for their When date: a garden job dated Thursday is listed now.</p>
+
+<div class="talk">
+<p class="rabbit"><b>Rabbit.</b> But some of the garden things have notes. “Tigger is not to
+be trusted near the lettuces.” Tigger can read, Owl. Sometimes.</p>
+<p class="owl"><b>Owl.</b> Only what you name leaves the file. The list's Notes is
+<em>No</em>, so no note goes out, and its Fields say Priority, so the priority does and
+nothing else does: not who the job is for, not when you wrote it. Your opinion of Tigger
+stays at home.</p>
+</div>
+
+<h3 id="looks">Changing how it looks</h3>
+<p>The first time you publish, Agendum writes a folder <code>templates/</code> into the
+site's folder: <code>layout.html</code> (around every page), <code>index.html</code>,
+<code>post.html</code>, <code>page.html</code>, <code>archive.html</code>,
+<code>404.html</code>, <code>menu.html</code> and <code>rss.xml</code>. They make the
+pages exactly as before; change them, and your pages change.</p>
+<ul>
+  <li>A template is HTML with places for values: <code>&#123;&#123;title&#125;&#125;</code>
+      for the post's title, <code>&#123;&#123;#posts&#125;&#125;…&#123;&#123;/posts&#125;&#125;</code>
+      to repeat for each post, <code>&#123;&#123;&gt; menu&#125;&#125;</code> to take in
+      another template, <code>&#123;&#123;fields.priority&#125;&#125;</code> for a list's
+      field. Nothing in a template can run a program.</li>
+  <li>Agendum never overwrites a template that is there; delete one to get Agendum's
+      back. Templates are never uploaded.</li>
+  <li>A mistake stops publishing and says where: “templates/post.html line 12:
+      &#123;&#123;#post&#125;&#125; is not closed”.</li>
+  <li>A list can have templates of its own, in a folder of its name:
+      <code>templates/garden/index.html</code>, <code>item.html</code>,
+      <code>rss.xml</code>, <code>archive.html</code>. The others use the shared
+      ones.</li>
+  <li>Pictures, fonts and stylesheets of your own go in the site's <code>assets/</code>
+      folder, and out with the pages at the same path. A post shows a picture from there
+      with <code>![Owl by his door](assets/owl.jpg)</code>, and every page and feed gets
+      the right address to it. A picture that is not in <code>assets/</code> stops
+      publishing and says which, and in which post. Leave the text in <code>[ ]</code>
+      empty for a picture that only decorates.</li>
+</ul>
+
+<h3 id="headless">Publishing without the screen</h3>
+<p>A file's blog can be published without opening Agendum, from a terminal or a
+script:</p>
+<pre class="shell">./agendum --publish rabbit.agendum
+./agendum --publish rabbit.agendum --preview</pre>
+<p>The first does what Publish and <kbd>ENTER</kbd> on its preview do, with your Upload
+settings, and prints what changed; with <code>--preview</code> it only says what would
+change. The extras must be on for the file's blog. A file with a password, or a server
+that asks for one, is published in Agendum, where a password can be asked for.</p>
+</section>
+
+<!-- ===================================================================== -->
 <section id="more">
-<h2>15. A few more things</h2>
+<h2>16. A few more things</h2>
 <p class="in-which">In Which Rabbit's Head Is Full, and There Is a Little More, All of It Small</p>
 
 <div class="talk">
@@ -1979,8 +2261,9 @@ until the day you need one, and then you will remember there was something.</p>
   <li><strong>The key bar</strong>: <kbd>ALT-K</kbd> goes round the ALT, CTRL and
       SHIFT bars and then hides it, for a little more room; Agendum remembers whether it
       was shown.</li>
-  <li><strong>Undo</strong> goes back up to 100 steps, in views and in the managers;
-      undoing back to the last save clears the <code>*</code>.</li>
+  <li><strong>Undo</strong> goes back up to 100 steps, in views and in the managers,
+      and in a note a word at a time; undoing back to the last save clears the
+      <code>*</code>.</li>
   <li><strong>Several at once</strong>: <kbd>ALT</kbd> and digits before a command in a
       view make it run that many times: <kbd>ALT-1</kbd> <kbd>ALT-0</kbd> <kbd>↓</kbd>
       moves ten rows down. It works for moving the highlight, the next marked item, hop
@@ -1993,7 +2276,7 @@ until the day you need one, and then you will remember there was something.</p>
 
 <!-- ===================================================================== -->
 <section id="reference">
-<h2>16. Reference</h2>
+<h2>17. Reference</h2>
 <p class="in-which">In Which Every Key Is Written Down, for the Day Rabbit Forgets One</p>
 
 <p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
@@ -2028,6 +2311,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>ALT-B</kbd></td><td>Browse a datebook or a date filter; then <kbd>F8</kbd> back to the start, <kbd>F10</kbd> the menu</td><td><kbd>⌥b</kbd></td></tr>
   <tr><td><kbd>ALT-C</kbd></td><td>The calendar</td><td><kbd>⌥c</kbd></td></tr>
   <tr><td><kbd>CTRL-V</kbd></td><td>Open the item's web link in the browser (an extra)</td><td></td></tr>
+  <tr><td><kbd>CTRL-T</kbd>; <kbd>CTRL-G</kbd> / <kbd>CTRL-R</kbd></td><td>Give the item (or the marked ones) a Zettel id; follow its links / show what links to it (extras)</td><td></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-U</kbd></td><td>Section below / above</td><td></td></tr>
   <tr><td><kbd>ALT-H</kbd></td><td>Hop to the item's next occurrence</td><td><kbd>⌥h</kbd></td></tr>
   <tr><td><kbd>ALT-R</kbd> / <kbd>ALT-L</kbd></td><td>Column right / left</td><td></td></tr>
@@ -2069,6 +2353,8 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>SPACE</kbd> or <kbd>F7</kbd>; <kbd>F4</kbd>; <kbd>ENTER</kbd></td><td>In a list of categories: switch one; take them all out; accept the list</td><td></td></tr>
   <tr><td><kbd>Y</kbd> / <kbd>N</kbd></td><td>In a yes-or-no question: answer at once</td><td></td></tr>
   <tr><td><kbd>ENTER</kbd> / <kbd>ALT-ENTER</kbd>; <kbd>F7</kbd> / <kbd>F8</kbd></td><td>In the Feeds or Calendars manager: read this one / all now; in Feeds, import / export OPML</td><td>— / <kbd>⌥-Return</kbd></td></tr>
+  <tr><td><kbd>ENTER</kbd> or <kbd>F6</kbd>; <kbd>INS</kbd>; <kbd>DEL</kbd></td><td>In <strong>Publish ▸ Lists</strong>: a list's settings; add a list; remove one (after asking)</td><td>—; <kbd>CTRL-N</kbd>; <kbd>CTRL-D</kbd></td></tr>
+  <tr><td><kbd>SPACE</kbd>; <kbd>Y</kbd> / <kbd>N</kbd>; <kbd>F3</kbd></td><td>In a list's box: turn a switch over; set it; list the categories for Category or Fields</td><td></td></tr>
 </table>
 
 <h3>In a note</h3>
@@ -2089,6 +2375,8 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td><kbd>ALT-N</kbd> / <kbd>ALT-P</kbd></td><td>The next / previous note</td><td></td></tr>
   <tr><td><kbd>ALT-F6</kbd>; <kbd>ALT-S</kbd></td><td>Search and replace; the next occurrence</td><td></td></tr>
   <tr><td><kbd>↑</kbd> <kbd>↓</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>A row up / down on the screen (long lines wrap); start / end of the row, again: of the line</td><td><kbd>CTRL-A</kbd> / <kbd>CTRL-E</kbd></td></tr>
+  <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo / redo, a word at a time</td><td></td></tr>
+  <tr><td><kbd>CTRL-T</kbd>; <kbd>CTRL-L</kbd></td><td>Tick or untick the line's task box, <code>- [ ]</code>; type a link to each marked item (extras)</td><td></td></tr>
   <tr><td><kbd>F5</kbd>; <kbd>ESC</kbd></td><td>Save it and go back; go back, asking “Discard changes?” if it changed</td><td></td></tr>
 </table>
 
@@ -2114,7 +2402,7 @@ and the letter, with your terminal set to use Option as Meta.</p>
   <tr><td>View</td><td>Properties, Add, Browse, Discard, Column (Properties, Add, Remove, Move, Width), Section (Properties, Add, Remove, Move)</td></tr>
   <tr><td>Print</td><td>The view to a text file</td></tr>
   <tr><td>Utilities</td><td>Customize, Execute, Show (Match, Prereqs, Depends, ItemsDone, Circular, Alarm, Sched, Every), Questions, Trash</td></tr>
-  <tr><td>Extras</td><td>Only with the extras on: Calendars, Feeds, Publish, Open link, Zettel (Attach, Follow, Linked)</td></tr>
+  <tr><td>Extras</td><td>Only with the extras on: Calendars, Feeds, Publish (Publish, Site, Lists, Upload), Open link, Zettel (Attach, Follow, Linked)</td></tr>
   <tr><td>Quit</td><td></td></tr>
 </table>
 

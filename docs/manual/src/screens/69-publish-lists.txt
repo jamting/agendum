@@ -1,0 +1,25 @@
+ The blog's lists: your categories published. ENTER its settings, INS adds, DEL
+ removes.
+ Garden                                   When             Priority Friends
+ ┌────────────────────────────── Publish: lists ──────────────────────────────┐
+ │ Rabbit's Garden        /garden/        2 items    index                    │
+ │                                                                            │
+ │ ENTER properties · INS add · DEL remove                                    │
+ └────────────────────────────────────────────────────────────────────────────┘
+ Notices                                  When             Priority Friends
+    • Put up a Notice about the          ·10/16/26        ·High
+      Organising Meeting on Friday
+    ♪ Notice about the lettuces
+
+ Friends and Relations                    When             Priority Friends
+    • Count the lettuces before Tigger                    ·Medium  ·Tigger
+      bounces on them
+    • Ask Owl how to spell Organising                     ·Low     ·Owl
+    • Find Small, who is lost again                       ·High    ·Small
+    • Visit Kanga and Roo on Thursday at ·10/15/26 3:00pm ·Medium  ·Kanga, Roo
+      3pm
+
+
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │       │       │       │       │ Props │       │       │       │

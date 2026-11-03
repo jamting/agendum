@@ -1,0 +1,25 @@
+ Note for:   Notice about the lettuces                       Line    6 INS EDIT
+
+ # Lettuces Are Not for Bouncing
+ A Notice to **all Tiggers**: the lettuces are for eating.
+
+ - [x] Count the lettuces
+ - [ ] Count them again after Tigger
+ - [ ] Put up a fence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  F1   │  F2   │  F3   │  F4   │  F5   │  F6   │  F7   │  F8   │  F9   │  F10
+ Help  │ Paste │ Copy  │  Cut  │Return │       │ Mark  │       │       │ Menu
