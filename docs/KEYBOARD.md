@@ -58,7 +58,7 @@ Agenda's original keys assume a PC keyboard with F-keys, INS and an ALT key. Fun
 | In the Feeds and Calendars managers (ours, an extra, R75, R45): read the highlighted one now; read all; subscribe; rename; properties (how often, how long kept or how far ahead); unsubscribe | ENTER; ALT-ENTER; INS; F2; F6; DEL or F4 | —; ⌥-Return; **CTRL-N**; —; —; fn-⌫ or F4 |
 | In the Feeds manager: import an OPML feed list; export one | F7; F8 | the same |
 | In Publish ▸ Lists (ours, an extra, R74e): the highlighted list's settings; add one of your categories as a list; remove one (after asking) | ENTER or F6; INS; DEL | —; **CTRL-N**; fn-⌫ or **CTRL-D** |
-| In a list's box: turn a switch over (Index page, Feeds, Item pages, Notes); set it; list the categories for Category or Fields | SPACE; Y / N; F3 | the same |
+| In a list's box: turn a switch over (Index page, Feeds, Item pages, Notes, Tag pages); set it; list the categories for Category or Fields | SPACE; Y / N; F3 | the same |
 | Pop-up calendar: pick a date (in a date column) / look one up (anywhere in a view)              | F3 / ALT-C                    | — / ⌥c                                           |
 | In a Star column: star or unstar; in a Yes/No column: yes or no (R56)                           | SPACE; Y / N                  | —                                                                     |
 | In a Category note column: type the line; edit it; empty it (R56)                               | type; F2; DEL                 | CTRL-E for F2; fn-⌫ for DEL                                           |

@@ -6,6 +6,16 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.92.0 — 2026-11-03
+
+- **Tag pages.** Make a family a list (a **Tags** category with Elixir, Agenda … under it) and turn on **Tag pages** in its box: each tag gets a page listing its posts by month, at `tags/elixir.html`, and each post's page shows its tags, linked ("Tags: Elixir · Agenda"). A post in a tag's child category counts for the tag. Renaming a tag moves its page. A list may draw its tag pages with `templates/<folder>/child.html`; Agendum's `archive.html` draws them otherwise.
+- Agendum's `post.html` and `archive.html` templates show tags; yours are replaced if they are still word for word the ones Agendum wrote.
+- The file format is now 53; older files open as before.
+
+### Facade
+
+- `set_blog_list/3` takes `tag_pages:`; `blog_lists/2` gives each list's `tag_pages`.
+
 ## 0.91.0 — 2026-11-03
 
 - **A 404 page.** The site gets `404.html`, which GitHub Pages and most servers show for an address that leads nowhere: "This page is not here", a link home (and to the archive), and the five newest posts. Its links start with your Base address, so it works at any address. `templates/404.html` draws it; Agendum writes its own for you to change. GitHub Pages uses only the `404.html` at the top of a Pages site, so a blog in a folder of a bigger site (such as a devlog) has one that is never shown.

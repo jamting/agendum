@@ -1,0 +1,13 @@
+{{! The archive: every post (or a list's every item) by month, newest
+    first, written once an index no longer shows them all. Each month has
+    title (in the blog's language), month_iso (2026-11) and posts, each
+    with title, title_html, url (empty for an item without a page of its
+    own), date, date_iso and zettel. }}
+<main class="h-feed">
+<h1 class="p-name">{{#feed}}{{title}} · {{/feed}}Archive</h1>
+{{#months}}<h2>{{title}}</h2>
+<ul>
+{{#posts}}<li class="h-entry"><time class="dt-published" datetime="{{date_iso}}">{{date}}</time> · {{#url}}<a href="{{url}}" class="u-url p-name">{{title}}</a>{{/url}}{{^url}}<span class="p-name">{{title}}</span>{{/url}}</li>
+{{/posts}}</ul>
+{{/months}}<p class="back"><a href="{{#feed}}index.html{{/feed}}{{^feed}}{{root}}index.html{{/feed}}">← {{#feed}}{{title}}{{/feed}}{{^feed}}{{site.title}}{{/feed}}</a></p>
+</main>

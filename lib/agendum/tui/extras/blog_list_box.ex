@@ -31,7 +31,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
      Description    : [description                                      ]
      Folder         : [slug                     ]
      Index page     : [index]   Feeds : [feeds]   Item pages : [item_pages]
-     Notes          : [notes]   Newest : [newest]
+     Notes          : [notes]   Newest : [newest]   Tag pages : [tag_pages]
      Fields         : [fields                                           ]
      Item address   : [address                                          ]
     """,
@@ -40,7 +40,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
      Description    : [description                                      ]
      Folder         : [slug                     ]
      Index page     : [index]   Feeds : [feeds]   Item pages : [item_pages]
-     Notes          : [notes]   Newest : [newest]
+     Notes          : [notes]   Newest : [newest]   Tag pages : [tag_pages]
      Fields         : [fields                                           ]
      Item address   : [address                                          ]
     """
@@ -57,6 +57,8 @@ defmodule Agendum.TUI.Extras.BlogListBox do
     feeds: "An RSS feed and a JSON Feed of its items, in its folder. SPACE turns it over.",
     item_pages: "A page for each item that is not a post. SPACE turns it over.",
     notes: "Whether its items' notes are published, as their bodies. SPACE turns it over.",
+    tag_pages:
+      "A page for each child of its category (each tag), and an item's tags on its page. SPACE turns it over.",
     newest:
       "How many of its newest items its index and feeds show; empty: the Site's, 0: all. Type it.",
     fields:
@@ -66,7 +68,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
   }
 
   @text_fields ~w(category title description slug newest fields address)a
-  @switches ~w(index feeds item_pages notes)a
+  @switches ~w(index feeds item_pages tag_pages notes)a
   @kept ~w(title description slug newest fields address)a ++ @switches
 
   @doc "Opens the box for `list` (as `Agendum.Core.blog_lists/2` gives it)."
@@ -88,6 +90,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
         index: list.index,
         feeds: list.feeds,
         item_pages: list.item_pages,
+        tag_pages: list.tag_pages,
         notes: list.notes,
         # its own number as text, empty while it follows the Site's
         newest: if(settings.newest, do: Integer.to_string(settings.newest), else: ""),
@@ -380,7 +383,9 @@ defmodule Agendum.TUI.Extras.BlogListBox do
     the list says. Title is its name there (empty: the category's),
     Description a line about it, Folder where it is on the site (a-z, 0-9
     and -). Index page, Feeds and Item pages switch its index, its RSS and
-    JSON Feed, and a page for each item that is not a post; Notes whether
+    JSON Feed, and a page for each item that is not a post; Tag pages a page
+    for each child of its category (a Tags family: a page per tag, its
+    items by month) and an item's tags on its own page; Notes whether
     the items' notes go out. Fields names the families a template sees
     (Role, Email), by name with commas; nothing else of an item leaves the
     file. Item address is where an item's page goes, made once.

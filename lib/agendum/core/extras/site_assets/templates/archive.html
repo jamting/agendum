@@ -2,12 +2,15 @@
     first, written once an index no longer shows them all. Each month has
     title (in the blog's language), month_iso (2026-11) and posts, each
     with title, title_html, url (empty for an item without a page of its
-    own), date, date_iso and zettel. }}
+    own), date, date_iso and zettel. It also draws a list's tag pages,
+    with tag (its title) beside feed, unless the list's folder has its own
+    child.html; feed.has_index says whether the list has an index page to
+    lead back to. }}
 <main class="h-feed">
-<h1 class="p-name">{{#feed}}{{title}} · {{/feed}}Archive</h1>
+<h1 class="p-name">{{#feed}}{{title}} · {{/feed}}{{#tag}}{{title}}{{/tag}}{{^tag}}Archive{{/tag}}</h1>
 {{#months}}<h2>{{title}}</h2>
 <ul>
 {{#posts}}<li class="h-entry"><time class="dt-published" datetime="{{date_iso}}">{{date}}</time> · {{#url}}<a href="{{url}}" class="u-url p-name">{{title}}</a>{{/url}}{{^url}}<span class="p-name">{{title}}</span>{{/url}}</li>
 {{/posts}}</ul>
-{{/months}}<p class="back"><a href="{{#feed}}index.html{{/feed}}{{^feed}}{{root}}index.html{{/feed}}">← {{#feed}}{{title}}{{/feed}}{{^feed}}{{site.title}}{{/feed}}</a></p>
+{{/months}}<p class="back">{{#feed}}{{#has_index}}<a href="index.html">← {{title}}</a>{{/has_index}}{{^has_index}}<a href="{{root}}index.html">← {{site.title}}</a>{{/has_index}}{{/feed}}{{^feed}}<a href="{{root}}index.html">← {{site.title}}</a>{{/feed}}</p>
 </main>

@@ -157,6 +157,7 @@ defmodule Agendum.Core.JSONFile do
       index: :bool,
       feeds: :bool,
       item_pages: :bool,
+      tag_pages: :bool,
       notes: :bool,
       newest: {:nullable, :int},
       fields: {:list, :int},

@@ -169,7 +169,7 @@ The micro-blog's settings (R74); left out, none: no posts category.
 | `me` | Addresses of the person's other profiles, for `rel="me"` links, separated by spaces. |
 | `address` | Where a post's page goes, a pattern: `"posts/{zettel}.html"` by default, or with `{slug}`, `{year}`, `{month}`, `{day}`. |
 | `newest` | How many of the newest posts the index and feeds carry (`20` when left out; `0` for all). |
-| `lists` | The blog's lists, in category order (R74e): `category` (its id), `title`, `description`, `slug` (its folder: a–z, 0–9 and `-`, or `""` until it is made), the switches `index`, `feeds`, `item_pages` and `notes` (booleans), `newest` (its own number, `null` for the Site's), `fields` (category ids, in order) and `address` (its item pages' pattern, `""` for `<folder>/{zettel}.html`). |
+| `lists` | The blog's lists, in category order (R74e): `category` (its id), `title`, `description`, `slug` (its folder: a–z, 0–9 and `-`, or `""` until it is made), the switches `index`, `feeds`, `item_pages`, `tag_pages` and `notes` (booleans; `tag_pages` `false` when left out), `newest` (its own number, `null` for the Site's), `fields` (category ids, in order) and `address` (its item pages' pattern, `""` for `<folder>/{zettel}.html`). |
 | `feeds` | Read only, from a document written before lists (Agendum 0.83 to 0.88), when it has no `lists`: each child of the posts category becomes a list with everything on, with the `title`, `description` and `slug` given here by `category`. |
 | `published` | What publishing remembers of each post, in item order: `item` (its id), `path` (its page's address, made once), `print` (a fingerprint of its title, note and date, an integer) and `modified` (the day a publish found it changed, or `null`). |
 

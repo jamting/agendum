@@ -699,6 +699,7 @@ Format versions:
 | 50 | `Blog` gains `feeds`, the settings of the blog's own feeds (each child category of Posts) by category id: title, description, folder (`Agendum.Core.Extras.BlogFeed`; meeting 2026-11-02-1255, §§ 9–10) |
 | 51 | `Blog.feeds` becomes `Blog.lists`, the blog's lists by category id (`Agendum.Core.Extras.BlogList`: title, description, folder, the switches `index`, `feeds`, `item_pages` and `notes`, `fields`, `address`; meeting 2026-11-02-2244, § 6): `upgrade/1` makes each child of Posts a list with everything on, with its feed's settings, so the site does not change |
 | 52 | `Blog` gains `newest` (20) and `BlogList` gains `newest` (nil: the Site's): how many of the newest items an index and its feeds carry, 0 for all; past them, an archive (`plans/PUBLISHER_2.md` step 4) |
+| 53 | `BlogList` gains `tag_pages`: a page for each child of the list's category, and an item's tags on its page (`plans/PUBLISHER_2.md` step 6) |
 
 ## UI state around the database
 

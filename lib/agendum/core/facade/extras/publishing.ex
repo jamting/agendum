@@ -221,7 +221,7 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
   `title` (the category's own name, or empty, follows the category when it
   is renamed), `description`, `slug` (its folder: a–z, 0–9 and `-`; `""`
   to make it from the name at the next publish), the switches `index`,
-  `feeds`, `item_pages` and `notes`, its `fields` (categories by id or by
+  `feeds`, `item_pages`, `tag_pages` and `notes`, its `newest`, its `fields` (categories by id or by
   name, in order; never made: a name no category has, or two have, is
   refused, naming it) and its item pages' `address` (a pattern as the
   posts', `""` for `<folder>/{zettel}.html`). A folder set takes its place
@@ -241,11 +241,11 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
     changes =
       Map.take(
         changes,
-        ~w(title description slug index feeds item_pages notes newest fields address)a
+        ~w(title description slug index feeds item_pages tag_pages notes newest fields address)a
       )
 
     texts = Map.take(changes, ~w(title description slug address)a)
-    switches = Map.take(changes, ~w(index feeds item_pages notes)a)
+    switches = Map.take(changes, ~w(index feeds item_pages tag_pages notes)a)
 
     cond do
       not Map.has_key?(db.blog.lists, id) ->

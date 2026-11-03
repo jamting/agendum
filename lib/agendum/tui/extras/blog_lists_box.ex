@@ -115,17 +115,17 @@ defmodule Agendum.TUI.Extras.BlogListsBox do
     rows ++ [[], Box.hint(keys(state, mode), inner)]
   end
 
-  # "Devlog        /devlog/      12 items  index feeds pages notes"
+  # "Devlog   /devlog/   12 items  index feeds pages tags notes"
   defp line(list) do
     switches =
-      [index: "index", feeds: "feeds", item_pages: "pages", notes: "notes"]
+      [index: "index", feeds: "feeds", item_pages: "pages", tag_pages: "tags", notes: "notes"]
       |> Enum.filter(fn {key, _word} -> Map.fetch!(list, key) end)
       |> Enum.map_join(" ", &elem(&1, 1))
 
-    Draw.pad(list.title, 22) <>
+    Draw.pad(list.title, 18) <>
       " " <>
-      Draw.pad("/#{list.slug}/", 16) <>
-      Draw.pad(Draw.count(length(list.items), "item"), 11) <> switches
+      Draw.pad("/#{list.slug}/", 15) <>
+      Draw.pad(Draw.count(length(list.items), "item"), 10) <> switches
   end
 
   defp row({style, text}),

@@ -18,6 +18,9 @@ defmodule Agendum.Core.Extras.BlogList do
       feed and a JSON Feed, and a page per item; a new list has only its
       index page (the owner, 2026-11-03: as little as possible goes out
       until the person says so)
+    * `tag_pages`: whether each child of its category gets a page of its
+      items (a Tags family: a page per tag), and an item's page its tags
+      (format 53)
     * `notes`: whether its items' notes are published, as their bodies
     * `newest`: how many items its index and feeds carry, the newest; nil
       for the Site's number, 0 for all; past them, an archive (format 52)
@@ -34,6 +37,7 @@ defmodule Agendum.Core.Extras.BlogList do
           index: boolean,
           feeds: boolean,
           item_pages: boolean,
+          tag_pages: boolean,
           notes: boolean,
           newest: non_neg_integer | nil,
           fields: [pos_integer],
@@ -46,6 +50,7 @@ defmodule Agendum.Core.Extras.BlogList do
             index: true,
             feeds: false,
             item_pages: false,
+            tag_pages: false,
             notes: false,
             newest: nil,
             fields: [],

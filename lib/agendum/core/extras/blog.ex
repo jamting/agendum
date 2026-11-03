@@ -133,6 +133,7 @@ defmodule Agendum.Core.Extras.Blog do
           index: boolean,
           feeds: boolean,
           item_pages: boolean,
+          tag_pages: boolean,
           notes: boolean,
           newest: non_neg_integer,
           fields: [Database.id()],
@@ -194,6 +195,7 @@ defmodule Agendum.Core.Extras.Blog do
           index: settings.index,
           feeds: settings.feeds,
           item_pages: settings.item_pages,
+          tag_pages: settings.tag_pages,
           notes: settings.notes,
           # its own number of newest items, else the Site's (0: all)
           newest: settings.newest || blog.newest,

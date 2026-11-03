@@ -1,0 +1,13 @@
+<main>
+{{#post}}<article class="h-entry" id="{{zettel}}">
+<h1 class="p-name">{{{title_html}}}</h1>
+<p class="meta">{{#date}}<time class="dt-published" datetime="{{date_iso}}">{{date}}</time>{{/date}}{{#updated}} · Updated <time class="dt-updated" datetime="{{updated_iso}}">{{updated}}</time>{{/updated}}{{#site.author}} · {{#site.home}}<a class="p-author h-card" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-author h-card">{{site.author}}</span>{{/site.home}}{{/site.author}} · <a class="u-url" href="{{permalink}}">permalink</a></p>
+{{#has_columns}}<p class="fields">{{#columns}}{{^first}} · {{/first}}{{name}}: {{value}}{{/columns}}</p>
+{{/has_columns}}{{^notes_hidden}}<div class="e-content">
+{{{content}}}
+</div>
+{{/notes_hidden}}
+</article>
+{{/post}}
+<p class="back"><a href="{{root}}index.html">← {{site.title}}</a></p>
+</main>

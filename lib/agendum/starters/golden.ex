@@ -306,6 +306,7 @@ defmodule Agendum.Starters.Golden do
         index: false,
         feeds: true,
         item_pages: true,
+        tag_pages: true,
         notes: true,
         newest: 0,
         fields: ["When"],

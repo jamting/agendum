@@ -268,6 +268,17 @@ defmodule Agendum.TUI.Extras.PublishTest do
       assert screen(refused) =~ "Newest: a number of items, 0 for all, empty for the Site's"
     end
 
+    test "Tag pages: SPACE turns it over, and the list says tags", %{
+      state: state,
+      devlog: devlog
+    } do
+      box = state |> lists() |> press(:enter)
+      assert screen(box) =~ ~r/Tag pages : No/
+      kept = box |> to_setting("Tag pages") |> press(" ") |> press(:enter)
+      assert kept.db.blog.lists[devlog].tag_pages
+      assert screen(kept) =~ ~r"index feeds pages tags notes"
+    end
+
     test "a folder that cannot be one is refused, saying why", %{state: state} do
       box = state |> lists() |> press(:enter)
       refused = box |> to_setting("Folder") |> press({:f, 2}) |> press({:ctrl, "u"})

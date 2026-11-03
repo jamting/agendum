@@ -64,7 +64,9 @@ defmodule Agendum.Core.Extras.Site do
   # when missing, then the person's; an `.html` one is named without its
   # extension (`post`), any other by its whole name (`rss.xml`)
   @template_names ~w(layout index post page menu archive 404 rss.xml)
-  for name <- @template_names ++ ~w(menu-0.81 index-0.81 index-0.87 index-0.89 post-0.87),
+  for name <-
+        @template_names ++
+          ~w(menu-0.81 index-0.81 index-0.87 index-0.89 post-0.87 post-0.89 archive-0.90),
       do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
   @default_templates Map.new(@template_names, fn name ->
@@ -80,7 +82,9 @@ defmodule Agendum.Core.Extras.Site do
         v <- ~w(0.81 0.87 0.89),
         do: File.read!(Path.join(@assets, "templates/index-#{v}.html"))
       ),
-    "templates/post.html" => [File.read!(Path.join(@assets, "templates/post-0.87.html"))]
+    "templates/post.html" =>
+      for(v <- ~w(0.87 0.89), do: File.read!(Path.join(@assets, "templates/post-#{v}.html"))),
+    "templates/archive.html" => [File.read!(Path.join(@assets, "templates/archive-0.90.html"))]
   }
 
   @doc "The stylesheet's path: written only when the folder has none."
@@ -253,6 +257,9 @@ defmodule Agendum.Core.Extras.Site do
       |> Map.put(:menu, for(item <- pages, do: menu_entry(site, item)))
       |> Map.put(:list_links, list_links(Enum.filter(lists, & &1.index)))
 
+    # the tag pages, made once: each item's page names its tags
+    site = Map.put(site, :tags, tags(site))
+
     draw = &draw(site, templates, &1, &2)
     rss = &rss(site, templates, &1)
     main = main_feed(site)
@@ -267,8 +274,9 @@ defmodule Agendum.Core.Extras.Site do
            each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
          {:ok, page_files} <-
            each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw),
-         {:ok, item_files} <- item_page_files(site, templates, draw) do
-      pages = post_files ++ page_files ++ item_files ++ list_files
+         {:ok, item_files} <- item_page_files(site, templates, draw),
+         {:ok, tag_files} <- tag_files(site, templates, draw) do
+      pages = post_files ++ page_files ++ item_files ++ list_files ++ tag_files
 
       files =
         [
@@ -696,6 +704,118 @@ defmodule Agendum.Core.Extras.Site do
     end
   end
 
+  # --- tag pages (R74e; PUBLISHER_2 step 6) ---------------------------------------
+  #
+  # Domain: a list with Tag pages gives each child of its category a page of
+  # its items (those in it or under it: an item in a category is in its
+  # parents too), titles by month as the archive (the owner, 2026-11-03).
+  # A child without items has none. Its page is `<folder>/<name>.html`,
+  # made from the child's name at every publish, so a rename moves it (the
+  # owner's choice); a name the list's own files, a page published before,
+  # or another tag of the list has gets `-2`, `-3` ….
+
+  defp tags(site) do
+    for list <- site.lists, list.tag_pages, reduce: [] do
+      tags ->
+        folder = list.slug <> "/"
+        own = MapSet.new([folder <> "index.html", archive_path(site, folder)])
+
+        {made, _taken} =
+          site.db.categories[list.category].children
+          |> Enum.map(
+            &{&1, Enum.filter(list.items, fn item -> Database.member?(site.db, item.id, &1) end)}
+          )
+          |> Enum.reject(fn {_child, items} -> items == [] end)
+          |> Enum.map_reduce(MapSet.union(site.taken, own), fn {child, items}, taken ->
+            name = site.db.categories[child].name
+            path = free_tag_path(folder, tag_slug(name, child), taken, 1)
+
+            tag = %{
+              list: list,
+              category: child,
+              title: name,
+              path: path,
+              items: items,
+              ids: MapSet.new(items, & &1.id)
+            }
+
+            {tag, MapSet.put(taken, path)}
+          end)
+
+        tags ++ made
+    end
+  end
+
+  defp tag_slug(name, id) do
+    case Address.slug(name) do
+      "" -> "tag-#{id}"
+      slug -> slug
+    end
+  end
+
+  defp free_tag_path(folder, slug, taken, n) do
+    path = if n == 1, do: "#{folder}#{slug}.html", else: "#{folder}#{slug}-#{n}.html"
+    if MapSet.member?(taken, path), do: free_tag_path(folder, slug, taken, n + 1), else: path
+  end
+
+  # each tag's page, from the list's own `child.html` or the shared archive
+  defp tag_files(site, templates, draw) do
+    Enum.reduce_while(site.tags, {:ok, []}, fn tag, {:ok, files} ->
+      list = tag.list
+      # (a tag page leads back to the list's index only when it has one)
+      about = %{
+        "title" => list.title,
+        "slug" => list.slug,
+        "has_rss" => list.feeds,
+        "has_index" => list.index
+      }
+
+      path = fn item ->
+        if MapSet.member?(site.published, item.id), do: post_path(site.db, item)
+      end
+
+      context =
+        site
+        |> archive(tag.items, "../", about, path)
+        |> Map.merge(%{
+          "path" => tag.path,
+          "tag" => %{"title" => tag.title, "url" => tag.path},
+          "page" => %{
+            "title" => "#{list.title} · #{tag.title} · #{site.blog.title}",
+            "index" => false
+          }
+        })
+
+      case draw.(own_template(templates, list, "child", "archive"), context) do
+        {:ok, page} -> {:cont, {:ok, [{tag.path, page} | files]}}
+        error -> {:halt, error}
+      end
+    end)
+    |> then(fn
+      {:ok, files} -> {:ok, Enum.reverse(files)}
+      error -> error
+    end)
+  end
+
+  # An item's tags, for its own page: for each list with tag pages it is
+  # in, the list's title and its tags, each with its title and its page
+  # from the site's root (the owner, 2026-11-03: on its own page only)
+  defp tag_lists(site, item) do
+    site.tags
+    |> Enum.filter(&MapSet.member?(&1.ids, item.id))
+    |> Enum.chunk_by(& &1.list.category)
+    |> Enum.map(fn [first | _] = tags ->
+      entries =
+        tags
+        |> Enum.with_index()
+        |> Enum.map(fn {tag, i} ->
+          %{"title" => tag.title, "url" => tag.path, "first" => i == 0}
+        end)
+
+      %{"title" => first.list.title, "tags" => entries}
+    end)
+  end
+
   # Where an archive goes, from the site's root: `archive.html` in its
   # folder, else `archive-2.html` … when a page published before archives
   # were has that address, as a published page never moves (R74b)
@@ -729,7 +849,12 @@ defmodule Agendum.Core.Extras.Site do
   # post's, or one from a list), else to nothing, as it may no longer be
   # on the list's index (the owner, 2026-11-03)
   defp list_archive(site, list) do
-    about = %{"title" => list.title, "slug" => list.slug, "has_rss" => list.feeds}
+    about = %{
+      "title" => list.title,
+      "slug" => list.slug,
+      "has_rss" => list.feeds,
+      "has_index" => true
+    }
 
     path = fn item ->
       if MapSet.member?(site.published, item.id), do: post_path(site.db, item)
@@ -802,7 +927,9 @@ defmodule Agendum.Core.Extras.Site do
   defp item_page(site, item, list) do
     path = post_path(site.db, item)
     root = root(path)
-    values = list_item(site, item, list, root, :page)
+
+    values =
+      site |> list_item(item, list, root, :page) |> Map.put("tag_lists", tag_lists(site, item))
 
     %{
       "root" => root,
@@ -898,7 +1025,8 @@ defmodule Agendum.Core.Extras.Site do
       "root" => root,
       "path" => path,
       "page" => %{"title" => "#{title_text(site, item)} · #{site.blog.title}", "index" => false},
-      key => post_context(site, item, root, :page)
+      key =>
+        site |> post_context(item, root, :page) |> Map.put("tag_lists", tag_lists(site, item))
     }
   end
 
