@@ -6,6 +6,17 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.90.0 — 2026-11-03
+
+- **The newest posts, and an archive.** The blog's index and feeds now show the newest 20 posts (**Newest posts** in Extras ▸ Publish ▸ Site; 0 for all). Once there are more, `archive.html` lists every post's title and date by month ("november 2026" for a Swedish blog), and the index ends with "All posts". Every post keeps its page and its address.
+- **Each list too:** a list shows the Site's number of newest items, or its own (**Newest** in its box; 0 for all), with its own archive in its folder. An item without a page of its own is listed in the archive without a link.
+- `templates/archive.html` draws the archive; Agendum writes its own for you to change, and a list may have `templates/<folder>/archive.html`. Agendum's `index.html` gets the archive link; yours is replaced if it is still word for word the one 0.89 wrote.
+- The file format is now 52; older files open as before (with 20).
+
+### Facade
+
+- `set_blog/2` takes `newest:`, `set_blog_list/3` `newest:` (nil for the Site's); `blog_lists/2` gives each list's `newest`.
+
 ## 0.89.0 — 2026-11-03
 
 - **Publish ▸ Lists replaces Publish ▸ Feeds:** any of your own categories can be published as a list, not only the categories under Posts. A list can have an index page, its own RSS and JSON Feed, and a page for each item, each switched on or off in its box; a new list starts with only its index page.

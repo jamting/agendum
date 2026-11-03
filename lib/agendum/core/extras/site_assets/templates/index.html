@@ -13,4 +13,5 @@
 </div>
 {{/notes_hidden}}</article>
 {{/posts}}{{^posts}}<p>No posts yet.</p>{{/posts}}
-</main>
+{{#has_archive}}<p class="archive"><a href="{{archive_url}}">{{#feed}}All of {{title}}{{/feed}}{{^feed}}All posts{{/feed}}</a></p>
+{{/has_archive}}</main>

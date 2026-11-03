@@ -34,6 +34,8 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def text(:password_later), do: "Not published: the server asks for a password. Publish again"
   def text(:site_kept), do: "Kept the site settings"
   def text(:list_kept), do: "Kept the list's settings"
+  def text(:bad_newest), do: "Newest: a number of posts, 0 for all"
+  def text(:bad_list_newest), do: "Newest: a number of items, 0 for all, empty for the Site's"
   def text(:bad_slug), do: "A list's folder: a-z, 0-9 and -, one no other list or the site has"
   def text(:no_lists), do: "No lists yet · INS makes one of your categories a list"
   def text(:already_a_list), do: "That category is a list already"

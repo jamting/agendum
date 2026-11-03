@@ -90,6 +90,19 @@ defmodule Agendum.TUI.Extras.PublishTest do
     assert screen(refused) =~ "needs {zettel} or {slug}"
   end
 
+  test "Site's Newest: a number, 0 for all; anything else refused, saying so", %{state: state} do
+    site = open(state)
+    assert screen(site) =~ ~r/Newest posts\s+: 20/
+    kept = site |> to_setting("Newest posts") |> press({:f, 2}) |> press({:ctrl, "u"})
+    kept = kept |> type("5") |> press(:enter)
+    assert kept.db.blog.newest == 5
+
+    refused = site |> to_setting("Newest posts") |> press({:f, 2}) |> press({:ctrl, "u"})
+    refused = refused |> type("many") |> press(:enter)
+    assert screen(refused) =~ "Newest: a number of posts, 0 for all"
+    assert refused.db.blog.newest == 20
+  end
+
   test "Site's Pages field completes a category, and DEL leaves none", %{state: state} do
     {:ok, db, _} = Core.add_category(state.db, state.db.main_id, "Pages")
     site = press(%{state | db: db}, [{:f, 10}, "e", "p", "s"])
@@ -236,6 +249,23 @@ defmodule Agendum.TUI.Extras.PublishTest do
       box = %{state | db: db} |> lists() |> press(:insert) |> press({:f, 3})
       added = box |> pick_category("Team") |> press(:enter)
       assert Map.has_key?(added.db.blog.lists, coworkers)
+    end
+
+    test "a list's Newest: empty for the Site's, a number, 0 for all", %{
+      state: state,
+      devlog: devlog
+    } do
+      box = state |> lists() |> press(:enter)
+      assert screen(box) =~ "Newest : "
+      own = box |> to_setting("Newest") |> type("0") |> press(:enter)
+      assert own.db.blog.lists[devlog].newest == 0
+
+      back = own |> lists() |> press(:enter) |> to_setting("Newest") |> press({:f, 2})
+      back = back |> press({:ctrl, "u"}) |> press(:enter) |> press(:enter)
+      assert back.db.blog.lists[devlog].newest == nil
+
+      refused = box |> to_setting("Newest") |> type("-1") |> press(:enter)
+      assert screen(refused) =~ "Newest: a number of items, 0 for all, empty for the Site's"
     end
 
     test "a folder that cannot be one is refused, saying why", %{state: state} do

@@ -19,6 +19,8 @@ defmodule Agendum.Core.Extras.BlogList do
       index page (the owner, 2026-11-03: as little as possible goes out
       until the person says so)
     * `notes`: whether its items' notes are published, as their bodies
+    * `newest`: how many items its index and feeds carry, the newest; nil
+      for the Site's number, 0 for all; past them, an archive (format 52)
     * `fields`: the categories (families) whose values a template sees,
       by id, in order; nothing else of an item leaves the file
     * `address`: where an item's page goes, a pattern as the posts' is
@@ -33,6 +35,7 @@ defmodule Agendum.Core.Extras.BlogList do
           feeds: boolean,
           item_pages: boolean,
           notes: boolean,
+          newest: non_neg_integer | nil,
           fields: [pos_integer],
           address: String.t()
         }
@@ -44,6 +47,7 @@ defmodule Agendum.Core.Extras.BlogList do
             feeds: false,
             item_pages: false,
             notes: false,
+            newest: nil,
             fields: [],
             address: ""
 

@@ -60,7 +60,9 @@ defmodule Agendum.Store do
   (`Agendum.Core.Extras.BlogFeed`, by category); 51 replaces them by
   `Blog.lists`, the blog's lists (`Agendum.Core.Extras.BlogList`, by
   category): loading an older file makes each child of Posts a list with
-  everything on, with its feed's settings.
+  everything on, with its feed's settings; 52 adds `Blog.newest` and
+  `BlogList.newest`, how many of the newest items an index and its feeds
+  carry (20, and the Site's).
   Older versions are upgraded on load by filling new struct fields with
   their defaults.
   """
@@ -72,7 +74,7 @@ defmodule Agendum.Store do
   # compiled; each use of `@format_version` is replaced by its value.
   # Domain: raising this number is what a new stored field needs; DATA_MODEL.md
   # has a row per version, and the golden-file tests hold a file of each.
-  @format_version 51
+  @format_version 52
   @extension ".agendum"
   # files from before the program was called Wol's Agendum (ADR 0019)
   @old_extension ".agenda"

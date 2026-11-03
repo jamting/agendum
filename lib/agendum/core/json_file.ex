@@ -142,6 +142,7 @@ defmodule Agendum.Core.JSONFile do
       base_url: :string,
       me: :string,
       address: :string,
+      newest: :int,
       published: {:records, PostRecord},
       lists: {:records, BlogList, "category"}
     ]
@@ -157,6 +158,7 @@ defmodule Agendum.Core.JSONFile do
       feeds: :bool,
       item_pages: :bool,
       notes: :bool,
+      newest: {:nullable, :int},
       fields: {:list, :int},
       address: :string
     ]
@@ -1129,9 +1131,14 @@ defmodule Agendum.Core.JSONFile do
         not Address.safe?(record.path),
         do: bad("blog.published", "item #{id}: not a safe address: #{inspect(record.path)}")
 
+    if blog.newest < 0, do: bad("blog.newest", "a number from 0, not #{blog.newest}")
+
     # a list's slug is a folder on the site: plain, or empty until made;
     # its address a pattern the list's box would take, or empty
     for {id, list} <- blog.lists do
+      if list.newest != nil and list.newest < 0,
+        do: bad("blog.lists", "category #{id}: newest a number from 0, not #{list.newest}")
+
       unless list.slug == "" or BlogList.slug?(list.slug),
         do: bad("blog.lists", "category #{id}: not a list's folder: #{inspect(list.slug)}")
 

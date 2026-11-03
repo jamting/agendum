@@ -51,15 +51,19 @@ defmodule Agendum.Core.Extras.Site do
   @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
   # a list's own files, in its folder (R74e), kept free of posts' pages
-  # whether or not its switches have them now
+  # whether or not its switches have them now; an item page already at one
+  # of the first three moves the list's folder, while one already at
+  # `archive.html` (made before the archive was) moves the archive to the
+  # next free name instead (code review 2026-11-03)
   @list_files ~w(index.html rss.xml feed.json)
+  @archive "archive.html"
 
   # the templates a site's pages and RSS feeds are drawn from
   # (`Agendum.Core.Extras.Template`), written into its `templates/` folder
   # when missing, then the person's; an `.html` one is named without its
   # extension (`post`), any other by its whole name (`rss.xml`)
-  @template_names ~w(layout index post page menu rss.xml)
-  for name <- @template_names ++ ~w(menu-0.81 index-0.81 index-0.87 post-0.87),
+  @template_names ~w(layout index post page menu archive rss.xml)
+  for name <- @template_names ++ ~w(menu-0.81 index-0.81 index-0.87 index-0.89 post-0.87),
       do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
   @default_templates Map.new(@template_names, fn name ->
@@ -71,7 +75,10 @@ defmodule Agendum.Core.Extras.Site do
   @legacy_templates %{
     "templates/menu.html" => [File.read!(Path.join(@assets, "templates/menu-0.81.html"))],
     "templates/index.html" =>
-      for(v <- ~w(0.81 0.87), do: File.read!(Path.join(@assets, "templates/index-#{v}.html"))),
+      for(
+        v <- ~w(0.81 0.87 0.89),
+        do: File.read!(Path.join(@assets, "templates/index-#{v}.html"))
+      ),
     "templates/post.html" => [File.read!(Path.join(@assets, "templates/post-0.87.html"))]
   }
 
@@ -223,6 +230,7 @@ defmodule Agendum.Core.Extras.Site do
       end
 
     item_pages = Blog.item_pages(db, lists)
+    taken = MapSet.new(Map.values(db.blog.published), & &1.path)
     published = MapSet.new(posts ++ pages ++ Enum.map(item_pages, &elem(&1, 0)), & &1.id)
 
     site = %{
@@ -233,7 +241,8 @@ defmodule Agendum.Core.Extras.Site do
       posts: posts,
       pages: pages,
       lists: lists,
-      item_pages: item_pages
+      item_pages: item_pages,
+      taken: taken
     }
 
     # the menu's pages and the lists, made once: each page drawn marks its
@@ -249,6 +258,7 @@ defmodule Agendum.Core.Extras.Site do
 
     with :ok <- images_there(site, assets, check_images?),
          {:ok, index} <- draw.("index", index(site)),
+         {:ok, archive} <- main_archive(site, draw),
          {:ok, main_rss} <- rss.(main),
          {:ok, list_files} <- list_files(site, templates, draw, rss),
          {:ok, post_files} <-
@@ -264,7 +274,7 @@ defmodule Agendum.Core.Extras.Site do
           {"rss.xml", main_rss},
           {"feed.json", json_feed(site, main)},
           {@stylesheet, default_stylesheet()}
-        ] ++ pages
+        ] ++ archive ++ pages
 
       metas = for list <- site.lists, list.feeds, do: own_feed(site, list)
 
@@ -321,15 +331,21 @@ defmodule Agendum.Core.Extras.Site do
         | template: own_template(templates, list, "rss.xml", "rss.xml")
       }
 
+      archive? = list.index and archive?(list.items, list.newest)
+      archive_template = own_template(templates, list, "archive", "archive")
+
       with {:ok, index} <-
              maybe(list.index, fn ->
                draw.(own_template(templates, list, "index", "index"), list_index(site, list))
              end),
+           {:ok, archive} <-
+             maybe(archive?, fn -> draw.(archive_template, list_archive(site, list)) end),
            {:ok, list_rss} <- maybe(list.feeds, fn -> rss.(meta) end) do
         own =
           Enum.filter(
             [
               list.index && {list.slug <> "/index.html", index},
+              archive? && {archive_path(site, list.slug <> "/"), archive},
               list.feeds && {list.slug <> "/rss.xml", list_rss},
               list.feeds && {list.slug <> "/feed.json", json_feed(site, meta)}
             ],
@@ -427,7 +443,7 @@ defmodule Agendum.Core.Extras.Site do
   """
   @spec own() :: {[String.t()], [String.t()]}
   def own do
-    files = ["index.html", "rss.xml", "feed.json", @stylesheet]
+    files = ["index.html", "rss.xml", "feed.json", @archive, @stylesheet]
     fonts = @font_files |> Enum.map(&(&1 |> elem(0) |> Path.dirname())) |> Enum.uniq()
     # the person's templates and assets are never a post's page
     {files, fonts ++ ["templates", "assets"]}
@@ -495,7 +511,7 @@ defmodule Agendum.Core.Extras.Site do
   defp plan(db, today) do
     lists = lists(db, today)
     {files, folders} = own()
-    list_files = for list <- lists, file <- @list_files, do: "#{list.slug}/#{file}"
+    list_files = for list <- lists, file <- [@archive | @list_files], do: "#{list.slug}/#{file}"
     db = Blog.record_posts(db, today, {files ++ list_files, folders}, lists)
     {db, lists}
   end
@@ -597,7 +613,9 @@ defmodule Agendum.Core.Extras.Site do
       "summary" => site.blog.description,
       "feeds" => feeds,
       "has_feeds" => feeds != [],
-      "posts" => listed(site, site.posts, "")
+      "posts" => listed(site, newest(site.posts, site.blog.newest), ""),
+      "has_archive" => archive?(site.posts, site.blog.newest),
+      "archive_url" => archive_path(site, "")
     }
   end
 
@@ -618,6 +636,7 @@ defmodule Agendum.Core.Extras.Site do
 
     items =
       list.items
+      |> newest(list.newest)
       |> Enum.with_index()
       |> Enum.map(fn {item, i} ->
         site |> list_item(item, list, "../", :index) |> Map.put("first", i == 0)
@@ -631,7 +650,114 @@ defmodule Agendum.Core.Extras.Site do
       "feed" => about,
       "list" => about,
       "posts" => items,
-      "items" => items
+      "items" => items,
+      "has_archive" => archive?(list.items, list.newest),
+      # from the list's own folder
+      "archive_url" => site |> archive_path(list.slug <> "/") |> Path.basename()
+    }
+  end
+
+  # --- the newest N, and the archive (R74, R74e; PUBLISHER_2 step 4) -----------
+
+  # Where an archive goes, from the site's root: `archive.html` in its
+  # folder, else `archive-2.html` … when a page published before archives
+  # were has that address, as a published page never moves (R74b)
+  defp archive_path(site, folder, n \\ 1) do
+    name = if n == 1, do: @archive, else: "archive-#{n}.html"
+    path = folder <> name
+    if MapSet.member?(site.taken, path), do: archive_path(site, folder, n + 1), else: path
+  end
+
+  # the newest `n` of items already newest first; 0 is all
+  defp newest(items, 0), do: items
+  defp newest(items, n), do: Enum.take(items, n)
+
+  # Domain: an archive only once an index no longer shows every item (the
+  # owner, 2026-11-03), so a small site stays as it is
+  defp archive?(items, n), do: n > 0 and length(items) > n
+
+  defp main_archive(site, draw) do
+    if archive?(site.posts, site.blog.newest) do
+      context = archive(site, site.posts, "", nil, &post_path(site.db, &1))
+      path = archive_path(site, "")
+
+      with {:ok, page} <- draw.("archive", Map.put(context, "path", path)),
+           do: {:ok, [{path, page}]}
+    else
+      {:ok, []}
+    end
+  end
+
+  # a list's archive, in its folder: an item links to its own page (a
+  # post's, or one from a list), else to nothing, as it may no longer be
+  # on the list's index (the owner, 2026-11-03)
+  defp list_archive(site, list) do
+    about = %{"title" => list.title, "slug" => list.slug, "has_rss" => list.feeds}
+
+    path = fn item ->
+      if MapSet.member?(site.published, item.id), do: post_path(site.db, item)
+    end
+
+    site
+    |> archive(list.items, "../", about, path)
+    |> Map.put("path", archive_path(site, list.slug <> "/"))
+  end
+
+  # The archive's values: every item by month, newest first, each month's
+  # title in the blog's language (its date language pack's month names,
+  # English when Agendum has none for it), `path` giving an item's page
+  # from the site's root, or nil.
+  defp archive(site, items, root, about, path) do
+    names = Agendum.Core.DateLanguage.for_code(site.blog.language).month_names()
+
+    months =
+      items
+      |> Enum.chunk_by(&month(Blog.date(&1)))
+      |> Enum.with_index()
+      |> Enum.map(fn {[first | _] = items, i} ->
+        {title, iso} = month_title(Blog.date(first), names)
+
+        %{
+          "title" => title,
+          "month_iso" => iso,
+          "first" => i == 0,
+          "posts" => items |> Enum.with_index() |> Enum.map(&archived(site, &1, root, path))
+        }
+      end)
+
+    title = if about, do: "#{about["title"]} · ", else: ""
+
+    %{
+      "root" => root,
+      "page" => %{"title" => "#{title}Archive · #{site.blog.title}", "index" => false},
+      "feed" => about,
+      "list" => about,
+      "months" => months
+    }
+  end
+
+  defp month(nil), do: nil
+  defp month(date), do: {date.year, date.month}
+
+  defp month_title(nil, _names), do: {"", ""}
+
+  defp month_title(date, names) do
+    iso = "#{date.year}-#{String.pad_leading("#{date.month}", 2, "0")}"
+    {"#{Enum.at(names, date.month - 1)} #{date.year}", iso}
+  end
+
+  defp archived(site, {item, i}, root, path) do
+    date = Blog.date(item)
+    to = path.(item)
+
+    %{
+      "title" => title_text(site, item),
+      "title_html" => site |> title_html(item, root) |> place_assets(root),
+      "url" => to && root <> to,
+      "date" => shown(site, date),
+      "date_iso" => date && Date.to_iso8601(date),
+      "zettel" => Zettels.zettel(item),
+      "first" => i == 0
     }
   end
 
@@ -838,7 +964,7 @@ defmodule Agendum.Core.Extras.Site do
       description: site.blog.description,
       home: home(site),
       folder: "",
-      posts: site.posts,
+      posts: newest(site.posts, site.blog.newest),
       url: &post_path(site.db, &1),
       notes: true,
       template: "rss.xml"
@@ -853,7 +979,7 @@ defmodule Agendum.Core.Extras.Site do
       description: if(list.description == "", do: site.blog.description, else: list.description),
       home: home,
       folder: list.slug <> "/",
-      posts: list.items,
+      posts: newest(list.items, list.newest),
       # an item without a page of its own or a place on an index is still
       # in the feed, at the list's folder by its own Zettel id, so each
       # entry has an id of its own (code review 2026-11-03)

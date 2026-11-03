@@ -19,6 +19,9 @@ defmodule Agendum.Core.Extras.Blog do
       links (a fediverse account, micro.blog), separated by spaces
     * `address`: where a post's page goes, a pattern such as
       `posts/{zettel}.html` (`Agendum.Core.Extras.Address`)
+    * `newest`: how many posts the main index and feeds carry, the newest
+      (20; 0 for all), and a list's unless it sets its own; past them, an
+      archive (format 52)
     * `lists`: the blog's lists, each one's settings by its category's id
       (`Agendum.Core.Extras.BlogList`; format 51, which keeps format 50's
       feeds, each child category of Posts, as lists)
@@ -44,6 +47,7 @@ defmodule Agendum.Core.Extras.Blog do
           base_url: String.t(),
           me: String.t(),
           address: String.t(),
+          newest: non_neg_integer,
           published: %{optional(Database.id()) => PostRecord.t()},
           lists: %{optional(Database.id()) => BlogList.t()},
           moved_upload: Agendum.Core.Extras.Upload.t() | nil
@@ -59,6 +63,7 @@ defmodule Agendum.Core.Extras.Blog do
             base_url: "",
             me: "",
             address: "posts/{zettel}.html",
+            newest: 20,
             published: %{},
             lists: %{},
             moved_upload: nil
@@ -129,6 +134,7 @@ defmodule Agendum.Core.Extras.Blog do
           feeds: boolean,
           item_pages: boolean,
           notes: boolean,
+          newest: non_neg_integer,
           fields: [Database.id()],
           address: String.t(),
           items: [Agendum.Core.Item.t()]
@@ -189,6 +195,8 @@ defmodule Agendum.Core.Extras.Blog do
           feeds: settings.feeds,
           item_pages: settings.item_pages,
           notes: settings.notes,
+          # its own number of newest items, else the Site's (0: all)
+          newest: settings.newest || blog.newest,
           # a field whose category is gone (a crafted file) is left out
           fields: Enum.filter(settings.fields, &Map.has_key?(db.categories, &1)),
           address: BlogList.address(settings, slug),

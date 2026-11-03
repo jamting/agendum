@@ -31,7 +31,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
      Description    : [description                                      ]
      Folder         : [slug                     ]
      Index page     : [index]   Feeds : [feeds]   Item pages : [item_pages]
-     Notes          : [notes]
+     Notes          : [notes]   Newest : [newest]
      Fields         : [fields                                           ]
      Item address   : [address                                          ]
     """,
@@ -40,7 +40,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
      Description    : [description                                      ]
      Folder         : [slug                     ]
      Index page     : [index]   Feeds : [feeds]   Item pages : [item_pages]
-     Notes          : [notes]
+     Notes          : [notes]   Newest : [newest]
      Fields         : [fields                                           ]
      Item address   : [address                                          ]
     """
@@ -57,15 +57,17 @@ defmodule Agendum.TUI.Extras.BlogListBox do
     feeds: "An RSS feed and a JSON Feed of its items, in its folder. SPACE turns it over.",
     item_pages: "A page for each item that is not a post. SPACE turns it over.",
     notes: "Whether its items' notes are published, as their bodies. SPACE turns it over.",
+    newest:
+      "How many of its newest items its index and feeds show; empty: the Site's, 0: all. Type it.",
     fields:
       "The families the templates see, by name with commas: Role, Email. Type them; F3 adds one.",
     address:
       "Where an item's page goes, made once: {zettel} {slug} {year} {month} {day}, ending .html. Empty: folder/{zettel}.html."
   }
 
-  @text_fields ~w(category title description slug fields address)a
+  @text_fields ~w(category title description slug newest fields address)a
   @switches ~w(index feeds item_pages notes)a
-  @kept ~w(title description slug fields address)a ++ @switches
+  @kept ~w(title description slug newest fields address)a ++ @switches
 
   @doc "Opens the box for `list` (as `Agendum.Core.blog_lists/2` gives it)."
   @spec open(State.t(), map) :: State.t()
@@ -87,6 +89,8 @@ defmodule Agendum.TUI.Extras.BlogListBox do
         feeds: list.feeds,
         item_pages: list.item_pages,
         notes: list.notes,
+        # its own number as text, empty while it follows the Site's
+        newest: if(settings.newest, do: Integer.to_string(settings.newest), else: ""),
         fields: names,
         address: settings.address
       },
@@ -112,7 +116,7 @@ defmodule Agendum.TUI.Extras.BlogListBox do
       settings:
         new
         |> Map.take(@kept)
-        |> Map.merge(%{category: "", fields: ""}),
+        |> Map.merge(%{category: "", fields: "", newest: ""}),
       field_ids: [],
       cursor: 0,
       typing: nil,
@@ -286,6 +290,27 @@ defmodule Agendum.TUI.Extras.BlogListBox do
 
     changes = mode.settings |> Map.take(@kept) |> Map.put(:fields, fields)
 
+    case newest(mode.settings.newest) do
+      {:ok, newest} -> set_changes(state, mode, Map.put(changes, :newest, newest), before)
+      :error -> State.error(before, Messages.text(:bad_list_newest))
+    end
+  end
+
+  # empty: the Site's number; else a whole number from 0
+  defp newest(text) do
+    case String.trim(text) do
+      "" ->
+        {:ok, nil}
+
+      text ->
+        case Integer.parse(text) do
+          {n, ""} when n >= 0 -> {:ok, n}
+          _ -> :error
+        end
+    end
+  end
+
+  defp set_changes(state, mode, changes, before) do
     case State.command(state, {:set_blog_list, mode.category, changes}) do
       {:ok, state, _changes} -> state |> State.pop() |> State.info(Messages.text(:list_kept))
       {:error, reason} -> State.error(before, error_text(reason))

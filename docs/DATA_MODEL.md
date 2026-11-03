@@ -169,6 +169,7 @@ erDiagram
         string base_url
         string me "rel=me links"
         string address "a post's page address pattern, posts/{zettel}.html by default"
+        int newest "how many newest posts the index and feeds carry, 20; 0 all"
         map published "item id => PostRecord: address made once, fingerprint, modified day"
         map lists "category id => BlogList: title, description, folder, switches, fields, item address"
         map moved_upload "an older file's upload settings, on their way to the preferences; never written"
@@ -398,6 +399,7 @@ classDiagram
         +title, description, author, language : String
         +base_url, me : String
         +address : String
+        +newest : integer
         +published : Map~id, PostRecord~
         +lists : Map~id, BlogList~
         +moved_upload : Upload or nil, never written
@@ -696,6 +698,7 @@ Format versions:
 | 49 | `Blog` gains `pages`, the category whose items are the site's pages (About, Now), outside the index and the feeds (meeting 2026-11-02-1255, § 8) |
 | 50 | `Blog` gains `feeds`, the settings of the blog's own feeds (each child category of Posts) by category id: title, description, folder (`Agendum.Core.Extras.BlogFeed`; meeting 2026-11-02-1255, §§ 9–10) |
 | 51 | `Blog.feeds` becomes `Blog.lists`, the blog's lists by category id (`Agendum.Core.Extras.BlogList`: title, description, folder, the switches `index`, `feeds`, `item_pages` and `notes`, `fields`, `address`; meeting 2026-11-02-2244, § 6): `upgrade/1` makes each child of Posts a list with everything on, with its feed's settings, so the site does not change |
+| 52 | `Blog` gains `newest` (20) and `BlogList` gains `newest` (nil: the Site's): how many of the newest items an index and its feeds carry, 0 for all; past them, an archive (`plans/PUBLISHER_2.md` step 4) |
 
 ## UI state around the database
 

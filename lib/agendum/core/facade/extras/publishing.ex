@@ -60,6 +60,10 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
         Map.has_key?(settings, :address) and not Address.valid?(settings.address) ->
           {:error, :bad_address}
 
+        # how many of the newest the indexes and feeds carry: 0 for all
+        Map.has_key?(changes, :newest) and not newest?(changes.newest) ->
+          {:error, :bad_setting}
+
         true ->
           {:ok,
            %{
@@ -67,12 +71,16 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
              | blog:
                  struct(
                    db.blog,
-                   Map.merge(settings, %{posts: posts, drafts: drafts, pages: pages})
+                   settings
+                   |> Map.merge(%{posts: posts, drafts: drafts, pages: pages})
+                   |> Map.merge(Map.take(changes, [:newest]))
                  )
            }}
       end
     end
   end
+
+  defp newest?(n), do: is_integer(n) and n >= 0
 
   # two of the categories the same, or one above another
   defp tangled?(db, ids) do
@@ -231,7 +239,10 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
              | {:ambiguous_field, String.t()}}
   def set_blog_list(db, id, changes) do
     changes =
-      Map.take(changes, ~w(title description slug index feeds item_pages notes fields address)a)
+      Map.take(
+        changes,
+        ~w(title description slug index feeds item_pages notes newest fields address)a
+      )
 
     texts = Map.take(changes, ~w(title description slug address)a)
     switches = Map.take(changes, ~w(index feeds item_pages notes)a)
@@ -244,11 +255,22 @@ defmodule Agendum.Core.Facade.Extras.Publishing do
                Enum.all?(Map.values(switches), &is_boolean/1)) ->
         {:error, :bad_setting}
 
+      # its own number of newest items, nil for the Site's
+      Map.has_key?(changes, :newest) and changes.newest != nil and not newest?(changes.newest) ->
+        {:error, :bad_setting}
+
       true ->
         texts = Map.new(texts, fn {k, v} -> {k, String.trim(v)} end)
 
         with {:ok, fields} <- fields(db, Map.get(changes, :fields, db.blog.lists[id].fields)) do
-          put_list(db, id, texts |> Map.merge(switches) |> Map.put(:fields, fields))
+          put_list(
+            db,
+            id,
+            texts
+            |> Map.merge(switches)
+            |> Map.merge(Map.take(changes, [:newest]))
+            |> Map.put(:fields, fields)
+          )
         end
     end
   end

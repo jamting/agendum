@@ -141,6 +141,12 @@ defmodule Agendum.Core.DateLanguage.English do
   def name, do: "english"
 
   @impl true
+  def code, do: "en"
+
+  @impl true
+  def month_names, do: Enum.map(@full_months, &String.capitalize/1)
+
+  @impl true
   def words, do: @words
 
   @impl true

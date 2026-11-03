@@ -289,7 +289,8 @@ defmodule Agendum.Starters.Golden do
         language: "sv",
         base_url: "https://owl.example/",
         me: "https://mastodon.example/@owl",
-        address: "{year}/{month}/{day}-{slug}.html"
+        address: "{year}/{month}/{day}-{slug}.html",
+        newest: 7
       })
 
     # one of the blog's lists, every setting away from its default (format
@@ -306,6 +307,7 @@ defmodule Agendum.Starters.Golden do
         feeds: true,
         item_pages: true,
         notes: true,
+        newest: 0,
         fields: ["When"],
         address: "devlog/{slug}.html"
       })

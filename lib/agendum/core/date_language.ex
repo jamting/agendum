@@ -25,6 +25,10 @@ defmodule Agendum.Core.DateLanguage do
       `:day_month` ("5/11" is 5 November).
     * `clock/0`: `:agenda` (hours 1–7 without am/pm are afternoon, User's
       Guide 6-12) or `:twenty_four`.
+    * `code/0`: the language's ISO 639-1 code (`"en"`), and
+      `month_names/0`: the months as a heading writes them, January first
+      ("November 2026" in English, "november 2026" in Swedish; the blog's
+      archive, R74).
     * `recurrence_phrase/1`, `starting/0` and `time_phrase/1`: how a
       recurring date is offered for editing (R14a), `every Monday (starting
       2026-10-19) at 9:00am`: the rule in the pack's words (nil when it has
@@ -36,6 +40,8 @@ defmodule Agendum.Core.DateLanguage do
   @type pack :: module
 
   @callback name() :: String.t()
+  @callback code() :: String.t()
+  @callback month_names() :: [String.t()]
   @callback rules() :: [{atom | {atom, term}, String.t()}]
   @callback time_rules() :: [{atom, String.t()}]
   @callback text_excluded() :: [atom]
@@ -49,6 +55,16 @@ defmodule Agendum.Core.DateLanguage do
   @doc "Every language pack, the default (English) first."
   @spec packs() :: [pack]
   def packs, do: [Agendum.Core.DateLanguage.English, Agendum.Core.DateLanguage.Swedish]
+
+  @doc """
+  The pack of a language code such as `"sv"` or `"sv-SE"` (a blog's
+  language), ignoring case; English when no pack has it.
+  """
+  @spec for_code(String.t()) :: pack
+  def for_code(code) do
+    wanted = code |> String.downcase() |> String.split(["-", "_"]) |> hd()
+    Enum.find(packs(), hd(packs()), &(&1.code() == wanted))
+  end
 
   @doc "A pack by its name (\"english\"), ignoring case."
   @spec find(String.t()) :: {:ok, pack} | :error

@@ -183,6 +183,13 @@ defmodule Agendum.Core.DateLanguage.Swedish do
   def name, do: "swedish"
 
   @impl true
+  def code, do: "sv"
+
+  # Domain: Swedish writes month names in lowercase, at a heading's start too
+  @impl true
+  def month_names, do: @full_months
+
+  @impl true
   def words, do: @words
 
   @impl true

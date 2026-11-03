@@ -39,6 +39,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
    Base address   : [base_url                                         ]
    rel="me" links : [me                                               ]
    Address        : [address                                          ]
+   Newest posts   : [newest ]
   """
 
   @help %{
@@ -56,10 +57,12 @@ defmodule Agendum.TUI.Extras.PublishBox do
       "Addresses of your other profiles (a Mastodon account), for rel=\"me\" links; " <>
         "spaces between. Type them.",
     address:
-      "Where a post's page goes, made once: {zettel} {slug} {year} {month} {day}, ending .html. Type it."
+      "Where a post's page goes, made once: {zettel} {slug} {year} {month} {day}, ending .html. Type it.",
+    newest:
+      "How many of the newest posts the index and feeds show (0: all); past them, an archive. Type it."
   }
 
-  @text_fields ~w(posts drafts pages title description author language base_url me address)a
+  @text_fields ~w(posts drafts pages title description author language base_url me address newest)a
   # the fields that name a category, completed as typed (R32)
   @category_fields [:posts, :drafts, :pages]
 
@@ -93,6 +96,7 @@ defmodule Agendum.TUI.Extras.PublishBox do
         pages: name.(blog.pages)
       })
       |> Map.update!(:title, &default(&1, default_title(state)))
+      |> Map.update!(:newest, &Integer.to_string/1)
 
     State.push(state, %Agendum.TUI.Modes.Publish{
       settings: settings,
@@ -236,9 +240,17 @@ defmodule Agendum.TUI.Extras.PublishBox do
   # ENTER: the settings kept (one undo step); opened by the first
   # Publish, it then publishes, in the same key
   defp keep(state, mode) do
+    case Integer.parse(String.trim(mode.settings.newest)) do
+      {newest, ""} when newest >= 0 -> keep(state, mode, newest)
+      _ -> State.error(state, Messages.text(:bad_newest))
+    end
+  end
+
+  defp keep(state, mode, newest) do
     changes =
       mode.settings
       |> Map.take(@text_fields -- @category_fields)
+      |> Map.put(:newest, newest)
       |> Map.merge(%{
         posts: category_setting(state, :posts, mode.settings.posts),
         drafts: category_setting(state, :drafts, mode.settings.drafts),
