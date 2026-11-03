@@ -1,6 +1,6 @@
 # The publisher, round 2
 
-**Status:** under way (meetings 2026-11-02-1954 and 2026-11-02-2244); steps 1 and 2 done 2026-11-03 (v0.87.0), step 3 (Lists) next, after its questions. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
+**Status:** under way (meetings 2026-11-02-1954 and 2026-11-02-2244); steps 1 and 2 done 2026-11-03 (v0.87.0), step 3 (Lists) next, its questions settled 2026-11-03. Round 1 is [`archive/PUBLISHER.md`](archive/PUBLISHER.md) (v0.79.0–v0.85.0). Every step is part of the micro-blog, an extra (R74, ADR 0043), built the `feature` way, one step per release, each tried by the owner before the next.
 
 The owner asked the panel to evaluate round 1 (omissions, improvements, what went well) and to formulate a round 2. A second meeting (2026-11-02-2244) replaced the blog's feeds with Lists and set the order below.
 
@@ -31,12 +31,19 @@ Added by the owner after the meeting (2026-11-02, an addendum to § 6): an RSS f
 - **Every feed written is read back** with Agendum's own feed reader (`Agendum.Core.Extras.FeedParser`) before publishing; one that does not read stops publishing and says which, as a missing image does (step 2), since a broken feed fails silently in readers.
 - **Dates in RSS's form** (`Mon, 02 Nov 2026 22:44:00 +0000`) are a value of their own for templates, beside `date_iso`.
 
-Referred to this plan, to settle with the owner before step 3 is built (the `feature` skill's questions):
+Settled with the owner before step 3 is built (the `feature` skill's questions; the owner's choices, 2026-11-03):
 
-- **What a template sees of a list's items:** beyond `title`, `content`, dates and `url`, an item's columns (Role, Email for co-workers; Sets, Reps, Weight for the gym), and what they are called in a template.
-- **The privacy guard:** what leaves the file from a list made of any category; whether a list's item notes are published, or only chosen fields; whether Drafts holds a list's items back as it holds posts.
-- **Defaults of a new list's switches,** and whether a list's items appear on the main index when they are also in Posts.
-- **The stored change:** the blog's feeds are kept by category id today (`Agendum.Core.Extras.BlogFeed`, `Blog.feeds`); a list adds its switches and template; a new format version and its golden file.
+- **Fields are named in the list's box:** a **Fields** line (completed as category names are: Role, Email) says which of an item's families a template sees; nothing else of the item leaves the file. Not a view's columns (changing a view for one's own work would change the site), not every family (anything ever assigned could reach the web).
+- **A field's name in a template:** `{{fields.role}}`, the family's name in lowercase with spaces as `_` (Due date → `fields.due_date`), several values joined with `, `; under `fields.` so a family named Title or Date never clashes with the item's own values. `{{#columns}}…{{name}}: {{value}}…{{/columns}}` lists the named fields in order, so one template can draw any table.
+- **Notes are a switch per list:** a list publishes its items' notes only when its box says so; Devlog, kept from today's feed, has it on.
+- **Drafts holds back every list's items,** as it holds back posts: an item in Drafts is on no page, index or feed.
+- **A new list starts with only its index page on:** feeds, item pages and notes off until switched on in its box; the preview shows what each adds. Devlog keeps everything on, so the site does not change.
+- **Templates of its own, in a folder per list:** `templates/<folder>/index.html`, `item.html` and `rss.xml` are used for the list in that folder when present, else the shared `index.html`, `post.html` and `rss.xml`. Agendum never writes a list's own.
+- **An Address pattern per list** for its item pages, `<folder>/{zettel}.html` by default, with the posts' `{slug}`, `{year}` … and kept for good once published, as a post's address is. An item in Posts keeps its post page, so no item gets two pages.
+- **Newest first,** as posts; no order setting in the box. Sorting and filtering in templates may come later (an Idea on the roadmap); filtering already has its home in the list's category (its conditions, R15). The feeds and step 4's newest N stay newest first by date whatever a template does.
+- **An item in Posts and a list** is on both the main index and the list's (as a post in a feed is today).
+
+Left to the build: the stored change (the blog's feeds are kept by category id today, `Agendum.Core.Extras.BlogFeed`, `Blog.feeds`; a list adds its switches, fields, notes switch and address), a new format version and its golden file.
 
 ## Ideas, not in round 2
 
