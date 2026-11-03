@@ -6,6 +6,18 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.93.0 — 2026-11-03
+
+- **A new look for the blog, "Wood & Amber".** The menu sits on the right and stays put while you scroll, its entries raised buttons, the page you are on pressed in; on a phone it is a bar at the top with a Menu button. Posts on an index are cards, a post's page has its date, author, tags and permalink in a column beside the text, and pictures are framed. The text is bigger, and the menu, dates and code are set in Inconsolata.
+- **Light and dark, with a button.** The site follows the reader's system, and a button in the menu switches it, remembered from page to page. It is the site's only script; without it the site still follows the system.
+- **A logo.** Put `logo.svg` (or `.png`, `.webp`, `.jpg`) in the site folder's `assets/`, and it is shown beside the site's name.
+- **The menu shows your lists** (those with an index page) after Home, and the pages after them.
+- Your `style.css` and templates are replaced if they are still word for word the ones Agendum wrote; ones you changed stay as they are.
+
+### Facade
+
+- No changes.
+
 ## 0.92.0 — 2026-11-03
 
 - **Tag pages.** Make a family a list (a **Tags** category with Elixir, Agenda … under it) and turn on **Tag pages** in its box: each tag gets a page listing its posts by month, at `tags/elixir.html`, and each post's page shows its tags, linked ("Tags: Elixir · Agenda"). A post in a tag's child category counts for the tag. Renaming a tag moves its page. A list may draw its tag pages with `templates/<folder>/child.html`; Agendum's `archive.html` draws them otherwise.

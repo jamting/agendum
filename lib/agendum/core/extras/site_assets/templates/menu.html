@@ -1,2 +1,7 @@
-{{#has_pages}}
-<nav class="menu"><a href="{{root}}index.html"{{#page.index}} aria-current="page"{{/page.index}}>Home</a>{{#pages}} · <a href="{{root}}{{url}}"{{#current}} aria-current="page"{{/current}}>{{title}}</a>{{/pages}}</nav>{{/has_pages}}
+<nav class="menu" aria-label="Site">
+<ul>
+<li><a href="{{root}}index.html"{{#page.index}} class="current" aria-current="page"{{/page.index}}>Home</a></li>
+{{#lists}}<li><a href="{{root}}{{url}}"{{#current}} class="current" aria-current="page"{{/current}}>{{title}}</a></li>
+{{/lists}}{{#pages}}<li><a href="{{root}}{{url}}"{{#current}} class="current" aria-current="page"{{/current}}>{{title}}</a></li>
+{{/pages}}</ul>
+</nav>

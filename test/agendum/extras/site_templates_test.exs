@@ -34,8 +34,7 @@ defmodule Agendum.Extras.SiteTemplatesTest do
     menu = ~s(<nav><a href="{{root}}index.html">Home</a></nav>\n)
     {:ok, files} = Core.site(db, @today, inputs(%{"menu" => menu}))
 
-    assert file(files, "index.html") =~
-             ~s(</header><nav><a href="index.html">Home</a></nav>\n<main)
+    assert file(files, "index.html") =~ ~s(<nav><a href="index.html">Home</a></nav>)
 
     post = Enum.find(files, &String.starts_with?(elem(&1, 0), "posts/")) |> elem(1)
     assert post =~ ~s(<nav><a href="../index.html">Home</a></nav>)
@@ -113,6 +112,32 @@ defmodule Agendum.Extras.SiteTemplatesTest do
       assert map_size(t) == 2
     end
 
+    test "a stylesheet of the person's own keeps their templates as they are, old copies too",
+         %{tmp_dir: dir} do
+      old = File.read!("lib/agendum/core/extras/site_assets/templates/layout-0.92.html")
+      File.mkdir_p!(Path.join(dir, "templates"))
+      File.write!(Path.join(dir, "templates/layout.html"), old)
+
+      # Agendum's 0.92 stylesheet: the old layout is Agendum's, replaced
+      File.write!(
+        Path.join(dir, "style.css"),
+        File.read!("lib/agendum/core/extras/site_assets/style-0.92.css")
+      )
+
+      assert {:ok, %{templates: templates}} = Publish.inputs(dir)
+      refute Map.has_key?(templates, "layout")
+      assert {:ok, %{templates_missing: missing}} = Publish.scan(dir, [])
+      assert "templates/layout.html" in missing
+
+      # the person's own stylesheet: the layout it was made for stays theirs
+      File.write!(Path.join(dir, "style.css"), "body { color: hotpink; }\n")
+      assert {:ok, %{templates: %{"layout" => ^old}}} = Publish.inputs(dir)
+      assert {:ok, %{templates_missing: missing}} = Publish.scan(dir, [])
+      refute "templates/layout.html" in missing
+      :ok = Publish.write_templates(dir, Core.site_default_templates())
+      assert File.read!(Path.join(dir, "templates/layout.html")) == old
+    end
+
     test "a folder without them has none", %{tmp_dir: dir} do
       assert Publish.inputs(dir) == {:ok, %{templates: %{}, assets: []}}
     end
@@ -186,7 +211,7 @@ defmodule Agendum.Extras.SiteTemplatesTest do
     refute Map.has_key?(templates, "menu")
 
     :ok = Publish.write_templates(dir, Core.site_default_templates())
-    assert File.read!(Path.join(dir, "templates/menu.html")) =~ "has_pages"
+    assert File.read!(Path.join(dir, "templates/menu.html")) =~ ~s(<nav class="menu")
 
     File.write!(Path.join(dir, "templates/menu.html"), old <> "<nav>mine</nav>")
     :ok = Publish.write_templates(dir, Core.site_default_templates())

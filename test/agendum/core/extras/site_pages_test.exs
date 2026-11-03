@@ -58,17 +58,21 @@ defmodule Agendum.Core.Extras.SitePagesTest do
     files = Core.site(db, @today)
 
     assert file(files, "index.html") =~
-             ~s(<nav class="menu"><a href="index.html" aria-current="page">Home</a>) <>
-               ~s( · <a href="about-owl.html">About Owl</a> · <a href="now.html">Now</a></nav>)
+             ~s(<li><a href="index.html" class="current" aria-current="page">Home</a></li>\n) <>
+               ~s(<li><a href="about-owl.html">About Owl</a></li>\n<li><a href="now.html">Now</a></li>)
 
-    assert file(files, "now.html") =~ ~s(<a href="now.html" aria-current="page">Now</a>)
+    assert file(files, "now.html") =~
+             ~s(<a href="now.html" class="current" aria-current="page">Now</a>)
+
     post = Enum.find(files, &String.starts_with?(elem(&1, 0), "posts/")) |> elem(1)
     assert post =~ ~s(<a href="../about-owl.html">About Owl</a>)
   end
 
-  test "without pages there is no menu: the site is as before", ctx do
+  test "without pages the menu is Home alone", ctx do
     {:ok, db} = Core.set_blog(ctx.db, %{pages: nil})
-    refute file(Core.site(db, @today), "index.html") =~ "<nav"
+    index = file(Core.site(db, @today), "index.html")
+    assert index =~ ~s(<nav class="menu" aria-label="Site">)
+    refute index =~ "now.html"
   end
 
   test "a page's address is made once and kept, as a post's", ctx do

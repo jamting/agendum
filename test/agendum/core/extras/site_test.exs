@@ -75,6 +75,7 @@ defmodule Agendum.Core.Extras.SiteTest do
       fonts =
         ~w(fonts/alegreya-latin-wght-normal.woff2 fonts/alegreya-latin-wght-italic.woff2
            fonts/alegreya-sc-latin-400-normal.woff2 fonts/alegreya-sc-latin-500-normal.woff2
+           fonts/inconsolata-latin-400-normal.woff2 fonts/inconsolata-latin-700-normal.woff2
            fonts/courier-prime-latin-400-normal.woff2 fonts/OFL.txt)
 
       assert Enum.map(files, &elem(&1, 0)) ==
@@ -87,7 +88,7 @@ defmodule Agendum.Core.Extras.SiteTest do
       index = file(files, "index.html")
       assert index =~ ~s(<main class="h-feed">)
       assert index =~ ~s(<a class="u-url" href="posts/bonalaku.html">Party</a>)
-      [party, hello] = Regex.scan(~r/<article class="h-entry"/, index)
+      [party, hello] = Regex.scan(~r/<article class="h-entry card"/, index)
       assert party == hello
       {party_at, _} = :binary.match(index, "Party")
       {hello_at, _} = :binary.match(index, "Hello, Wood")

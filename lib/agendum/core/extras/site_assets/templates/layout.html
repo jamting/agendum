@@ -9,11 +9,44 @@
 <link rel="alternate" type="application/rss+xml" title="{{site.title}}" href="{{root}}rss.xml">
 <link rel="alternate" type="application/feed+json" title="{{site.title}}" href="{{root}}feed.json">
 {{#site.me}}<link rel="me" href="{{.}}">
-{{/site.me}}</head>
+{{/site.me}}<script>
+/* The site's only script: the light/dark button, remembered from page to
+   page. Without it the site follows the reader's system, and the button
+   stays hidden. */
+(function () {
+  var key = "agendum-theme", root = document.documentElement;
+  try { var saved = localStorage.getItem(key); if (saved) root.dataset.theme = saved; } catch (e) {}
+  document.addEventListener("DOMContentLoaded", function () {
+    var button = document.getElementById("theme-toggle");
+    if (!button) return;
+    button.hidden = false;
+    button.addEventListener("click", function () {
+      var dark = root.dataset.theme ? root.dataset.theme === "dark"
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      root.dataset.theme = dark ? "light" : "dark";
+      try { localStorage.setItem(key, root.dataset.theme); } catch (e) {}
+    });
+  });
+})();
+</script>
+</head>
 <body>
-{{#page.index}}<header><h1 class="site"><a href="index.html">{{site.title}}</a></h1></header>{{/page.index}}{{^page.index}}<header><p class="site"><a href="{{root}}index.html">{{site.title}}</a></p></header>{{/page.index}}{{> menu}}
+<div class="shell">
+<div class="main">
 {{{content}}}<footer>
 <p>{{#site.author}}<span class="h-card">{{#site.home}}<a class="p-name u-url" rel="me" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-name">{{site.author}}</span>{{/site.home}}</span> · {{/site.author}}<a href="{{root}}rss.xml">RSS</a> · <a href="{{root}}feed.json">JSON Feed</a> · made with Wol's Agendum</p>
 </footer>
+</div>
+<aside class="side">
+<header class="brand-block">
+<a class="lockup" href="{{root}}index.html">{{#site.logo}}<img class="logo" src="{{root}}{{site.logo}}" alt="">{{/site.logo}}{{#page.index}}<h1 class="site">{{site.title}}</h1>{{/page.index}}{{^page.index}}<p class="site">{{site.title}}</p>{{/page.index}}</a>
+{{#site.description}}<p class="tagline">{{site.description}}</p>
+{{/site.description}}</header>
+<input type="checkbox" id="menu-open" class="menu-open"><label for="menu-open" class="menu-button">Menu</label>
+{{> menu}}
+<button type="button" id="theme-toggle" class="theme-toggle" hidden><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="6.25"></circle><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"></path></svg> Light / Dark</button>
+<p class="follow">Follow: <a href="{{root}}rss.xml">RSS</a> · <a href="{{root}}feed.json">JSON Feed</a></p>
+</aside>
+</div>
 </body>
 </html>

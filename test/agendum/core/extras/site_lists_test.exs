@@ -202,8 +202,8 @@ defmodule Agendum.Core.Extras.SiteListsTest do
       # not a post: not on the main index nor in its feeds
       refute file(files, "index.html") =~ "Anna"
       refute file(files, "rss.xml") =~ "Anna"
-      # and an index-only list is not on the Feeds line
-      refute file(files, "index.html") =~ "co-workers/index.html"
+      # and an index-only list is not on the Feeds line (the menu has it)
+      refute file(files, "index.html") =~ ~r{<p class="feeds">Feeds:[^\n]*co-workers}
     end
 
     test "an index-only list gives its items no Zettel id", ctx do
@@ -352,7 +352,9 @@ defmodule Agendum.Core.Extras.SiteListsTest do
     test "Drafts holds back every list's items", ctx do
       db = Core.assign(ctx.db, ctx.bo, ctx.drafts)
       db = coworkers(%{ctx | db: db})
-      refute Core.site(db, @today) |> file("co-workers/index.html") =~ "Bo"
+
+      refute Core.site(db, @today) |> file("co-workers/index.html") =~
+               ~r{<h2 class="p-name">[^\n]*Bo<}
     end
 
     test "a list item with a When to come is published; a post in a list waits", ctx do

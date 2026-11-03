@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="{{site.language}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Wol's Agendum">
+<title>{{page.title}}</title>
+<link rel="stylesheet" href="{{root}}style.css">
+<link rel="alternate" type="application/rss+xml" title="{{site.title}}" href="{{root}}rss.xml">
+<link rel="alternate" type="application/feed+json" title="{{site.title}}" href="{{root}}feed.json">
+{{#site.me}}<link rel="me" href="{{.}}">
+{{/site.me}}</head>
+<body>
+{{#page.index}}<header><h1 class="site"><a href="index.html">{{site.title}}</a></h1></header>{{/page.index}}{{^page.index}}<header><p class="site"><a href="{{root}}index.html">{{site.title}}</a></p></header>{{/page.index}}{{> menu}}
+{{{content}}}<footer>
+<p>{{#site.author}}<span class="h-card">{{#site.home}}<a class="p-name u-url" rel="me" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-name">{{site.author}}</span>{{/site.home}}</span> · {{/site.author}}<a href="{{root}}rss.xml">RSS</a> · <a href="{{root}}feed.json">JSON Feed</a> · made with Wol's Agendum</p>
+</footer>
+</body>
+</html>

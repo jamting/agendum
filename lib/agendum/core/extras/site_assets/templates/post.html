@@ -1,14 +1,22 @@
 <main>
-{{#post}}<article class="h-entry" id="{{zettel}}">
+{{#post}}<article class="h-entry post" id="{{zettel}}">
+<p class="crumb"><a href="{{root}}index.html">{{site.title}}</a>{{#date}} › {{date}}{{/date}}</p>
 <h1 class="p-name">{{{title_html}}}</h1>
-<p class="meta">{{#date}}<time class="dt-published" datetime="{{date_iso}}">{{date}}</time>{{/date}}{{#updated}} · Updated <time class="dt-updated" datetime="{{updated_iso}}">{{updated}}</time>{{/updated}}{{#site.author}} · {{#site.home}}<a class="p-author h-card" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-author h-card">{{site.author}}</span>{{/site.home}}{{/site.author}} · <a class="u-url" href="{{permalink}}">permalink</a></p>
-{{#tag_lists}}<p class="tags">{{title}}: {{#tags}}{{^first}} · {{/first}}<a href="{{root}}{{url}}" rel="tag">{{title}}</a>{{/tags}}</p>
-{{/tag_lists}}{{#has_columns}}<p class="fields">{{#columns}}{{^first}} · {{/first}}{{name}}: {{value}}{{/columns}}</p>
+<div class="post-grid">
+<dl class="post-meta">
+{{#date}}<dt>Published</dt><dd><time class="dt-published" datetime="{{date_iso}}">{{date}}</time></dd>
+{{/date}}{{#updated}}<dt>Updated</dt><dd><time class="dt-updated" datetime="{{updated_iso}}">{{updated}}</time></dd>
+{{/updated}}{{#site.author}}<dt>By</dt><dd>{{#site.home}}<a class="p-author h-card" href="{{site.home}}">{{site.author}}</a>{{/site.home}}{{^site.home}}<span class="p-author h-card">{{site.author}}</span>{{/site.home}}</dd>
+{{/site.author}}{{#tag_lists}}<dt>{{title}}</dt><dd class="tags">{{#tags}}{{^first}} · {{/first}}<a href="{{root}}{{url}}" rel="tag">{{title}}</a>{{/tags}}</dd>
+{{/tag_lists}}<dt>Link</dt><dd><a class="u-url" href="{{permalink}}">permalink</a></dd>
+</dl>
+<div class="post-body">
+{{#has_columns}}<p class="fields">{{#columns}}{{^first}} · {{/first}}{{name}}: {{value}}{{/columns}}</p>
 {{/has_columns}}{{^notes_hidden}}<div class="e-content">
 {{{content}}}
 </div>
-{{/notes_hidden}}
+{{/notes_hidden}}</div>
+</div>
 </article>
-{{/post}}
-<p class="back"><a href="{{root}}index.html">← {{site.title}}</a></p>
+{{/post}}<p class="back"><a href="{{root}}index.html">← {{site.title}}</a></p>
 </main>

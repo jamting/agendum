@@ -20,16 +20,54 @@ defmodule Agendum.Core.Extras.SiteDesignTest do
     Core.site(db, ~D[2026-11-02])
   end
 
-  test "the stylesheet is The Proportional Web's, credited, with its fonts self-hosted" do
+  test "the stylesheet is Wood & Amber, its fonts self-hosted, light or dark" do
     css = site() |> Map.new() |> Map.fetch!("style.css")
-    assert css =~ "Oskar Wickström"
-    assert css =~ "MIT"
+    assert css =~ "Wood & Amber"
     assert css =~ "@font-face"
     assert css =~ ~s{url("fonts/alegreya-latin-wght-normal.woff2")}
+    assert css =~ ~s{url("fonts/inconsolata-latin-400-normal.woff2")}
     refute css =~ "googleapis"
     refute css =~ "@import"
-    # dark when the reader's system is
+    # dark when the reader's system is, unless the button says otherwise
     assert css =~ "prefers-color-scheme: dark"
+    assert css =~ ~s{:root[data-theme="dark"]}
+    assert css =~ ~s{:root:not([data-theme="light"])}
+  end
+
+  test "the layout's one script switches light and dark, its button hidden without it" do
+    index = site() |> Map.new() |> Map.fetch!("index.html")
+    assert index =~ ~s(<button type="button" id="theme-toggle" class="theme-toggle" hidden>)
+    assert index =~ "localStorage"
+    # one script, the theme switch's, and nothing loaded from elsewhere
+    assert length(Regex.scan(~r/<script/, index)) == 1
+    refute index =~ ~r/<script[^>]* src=/
+    # the phone's Menu button needs no script
+    assert index =~ ~s(<input type="checkbox" id="menu-open" class="menu-open">)
+  end
+
+  test "a site folder's assets/logo.* is shown beside the site's name; none, no picture" do
+    db = Core.new_file()
+    {:ok, db, posts} = Core.add_category(db, db.main_id, "Posts")
+    {db, _} = Core.add_item(db, "Hello", ~D[2026-10-26], section: posts)
+    {:ok, db} = Core.set_blog(db, %{posts: posts, title: "Owl"})
+    {:ok, db, _} = Core.prepare_publish(db, %{})
+    logo = %{templates: %{}, assets: [{"assets/logo.png", <<137, 80, 78, 71>>}]}
+    {:ok, files} = Core.site(db, ~D[2026-11-02], logo)
+    files = Map.new(files)
+    assert files["index.html"] =~ ~s(<img class="logo" src="assets/logo.png" alt="")
+    post = Enum.find_value(files, fn {path, text} -> if path =~ ~r{^posts/}, do: text end)
+    assert post =~ ~s(<img class="logo" src="../assets/logo.png")
+    refute Map.new(site())["index.html"] =~ ~s(class="logo")
+  end
+
+  test "templates and the stylesheet as Agendum 0.92 wrote them are replaced" do
+    for name <- ~w(layout menu index post) do
+      old = File.read!("lib/agendum/core/extras/site_assets/templates/#{name}-0.92.html")
+      assert Site.legacy_template?("templates/#{name}.html", old), name
+    end
+
+    old = File.read!("lib/agendum/core/extras/site_assets/style-0.92.css")
+    assert "style.css" in Core.site_changes(site(), %{"style.css" => old}, []).changed
   end
 
   test "the fonts and their licence are files of the site" do
@@ -37,11 +75,13 @@ defmodule Agendum.Core.Extras.SiteDesignTest do
 
     for font <-
           ~w(alegreya-latin-wght-normal alegreya-latin-wght-italic alegreya-sc-latin-400-normal
-                   alegreya-sc-latin-500-normal courier-prime-latin-400-normal) do
+                   alegreya-sc-latin-500-normal inconsolata-latin-400-normal
+                   inconsolata-latin-700-normal courier-prime-latin-400-normal) do
       assert <<"wOF2", _::binary>> = Map.fetch!(files, "fonts/#{font}.woff2")
     end
 
     assert files["fonts/OFL.txt"] =~ "SIL Open Font License"
+    assert files["fonts/OFL.txt"] =~ "The Inconsolata Project Authors"
   end
 
   test "the old stylesheet is replaced only when it is still exactly Agendum's" do

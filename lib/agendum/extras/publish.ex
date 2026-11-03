@@ -43,7 +43,7 @@ defmodule Agendum.Extras.Publish do
   """
   @spec inputs(String.t()) :: {:ok, Site.inputs()} | {:error, String.t()}
   def inputs(folder) do
-    with {:ok, templates} <- templates(folder),
+    with {:ok, templates} <- templates(folder, own_style?(folder)),
          {:ok, assets} <- assets(folder) do
       {:ok, %{templates: templates, assets: assets}}
     end
@@ -54,7 +54,7 @@ defmodule Agendum.Extras.Publish do
   # (`templates/gym/index.html` is `gym/index`; R74e); one that is a link,
   # too big or unreadable stops publishing, saying so, rather than
   # Agendum's being used unseen
-  defp templates(folder) do
+  defp templates(folder, own_style?) do
     dir = Path.join(folder, "templates")
 
     lists =
@@ -71,7 +71,7 @@ defmodule Agendum.Extras.Publish do
       case template(Path.join(dir, name)) do
         # still word for word an older Agendum's: Agendum's own is used
         {:ok, text} ->
-          if Site.legacy_template?("templates/" <> name, text),
+          if not own_style? and Site.legacy_template?("templates/" <> name, text),
             do: {:cont, {:ok, acc}},
             else: {:cont, {:ok, Map.put(acc, template_name(name), text)}}
 
@@ -177,21 +177,41 @@ defmodule Agendum.Extras.Publish do
           into: %{},
           do: {path, content}
 
-    missing = for {path, _} <- Site.default_templates(), replaced?(folder, path), do: path
+    own = own_style?(folder)
+    missing = for {path, _} <- Site.default_templates(), replaced?(folder, path, own), do: path
 
     {:ok, %{existing: existing, published: published, templates_missing: missing}}
   end
 
   # a template Agendum writes: missing, or still word for word an older
-  # Agendum's own (read only where there was one, as `templates/1` reads:
-  # not through a link, nor a big file)
-  defp replaced?(folder, path) do
+  # Agendum's own (read only where there was one, as `templates/2` reads:
+  # not through a link, nor a big file), unless the folder's stylesheet is
+  # the person's own, which the old one was made for
+  defp replaced?(folder, path, own_style?) do
     full = Path.join(folder, path)
 
     case File.lstat(full) do
       {:error, :enoent} -> true
-      {:ok, _} -> Site.had_legacy?(path) and legacy_copy?(path, full)
+      {:ok, _} -> not own_style? and Site.had_legacy?(path) and legacy_copy?(path, full)
       {:error, _} -> false
+    end
+  end
+
+  # Domain: whether the folder's `style.css` is the person's own (not one
+  # Agendum wrote); read as a template is, so a link or a huge file is not
+  # read, and counts as theirs
+  defp own_style?(folder) do
+    path = Path.join(folder, Site.stylesheet())
+
+    case File.lstat(path) do
+      {:error, :enoent} ->
+        false
+
+      _ ->
+        case template(path) do
+          {:ok, text} -> Site.own_stylesheet?(text)
+          {:error, _} -> true
+        end
     end
   end
 
@@ -215,7 +235,8 @@ defmodule Agendum.Extras.Publish do
   """
   @spec write_templates(String.t(), [Site.file()]) :: :ok | {:error, String.t()}
   def write_templates(folder, templates) do
-    missing = Enum.filter(templates, &replaced?(folder, elem(&1, 0)))
+    own = own_style?(folder)
+    missing = Enum.filter(templates, &replaced?(folder, elem(&1, 0), own))
 
     with :ok <- each(folders(Enum.map(missing, &elem(&1, 0))), &mkdir(Path.join(folder, &1))) do
       each(missing, fn {path, text} -> put(folder, path, text) end)

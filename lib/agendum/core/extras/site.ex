@@ -13,11 +13,12 @@ defmodule Agendum.Core.Extras.Site do
     * `posts/<zettel id>.html`: a page per post, its address its Zettel
       id, which never changes (R73)
     * `rss.xml` (RSS 2.0) and `feed.json` (JSON Feed 1.1)
-    * `style.css`: The Proportional Web by Oskar Wickström (MIT), dark
-      when the reader's system is; written when the folder has none, or
-      still Agendum's old one, so the person's own stays
-    * `fonts/`: its fonts, Alegreya, Alegreya SC and Courier Prime, with
-      their licence (`OFL.txt`), so no reader's browser asks Google for them
+    * `style.css`: "Wood & Amber" (0.93), light or dark as the reader's
+      system or the menu's button says; written when the folder has none,
+      or still one of Agendum's old ones, so the person's own stays
+    * `fonts/`: its fonts, Alegreya, Alegreya SC and Inconsolata (and
+      Courier Prime, Agendum's before), with their licence (`OFL.txt`), so
+      no reader's browser asks Google for them
 
   For the fediverse without a server, the pages carry microformats
   (`h-feed`, `h-entry`, `h-card`) and `rel="me"` links, which micro.blog
@@ -39,15 +40,20 @@ defmodule Agendum.Core.Extras.Site do
   # one of them changes. The core stays pure: `File.read!/1` runs in the
   # compiler, never when the program does.
   @assets Path.join(__DIR__, "site_assets")
+  # Courier Prime is no longer Agendum's (Inconsolata is, since 0.93), but
+  # stays a file of the site: a stylesheet of the person's own may name it
   @fonts ~w(alegreya-latin-wght-normal.woff2 alegreya-latin-wght-italic.woff2
             alegreya-sc-latin-400-normal.woff2 alegreya-sc-latin-500-normal.woff2
+            inconsolata-latin-400-normal.woff2 inconsolata-latin-700-normal.woff2
             courier-prime-latin-400-normal.woff2 OFL.txt)
-  for file <- ["style.css", "legacy-style.css" | @fonts],
+  for file <- ["style.css", "legacy-style.css", "style-0.92.css" | @fonts],
       do: @external_resource(Path.join(@assets, file))
 
   @default_stylesheet File.read!(Path.join(@assets, "style.css"))
-  # the stylesheet Agendum wrote before 0.69: replaced while still exactly it
+  # the stylesheets an older Agendum wrote: replaced while still exactly one
+  # of them (the monospace one before 0.69, The Proportional Web to 0.92)
   @legacy_stylesheet File.read!(Path.join(@assets, "legacy-style.css"))
+  @legacy_stylesheets [@legacy_stylesheet, File.read!(Path.join(@assets, "style-0.92.css"))]
   @font_files for file <- @fonts, do: {"fonts/" <> file, File.read!(Path.join(@assets, file))}
 
   # a list's own files, in its folder (R74e), kept free of posts' pages
@@ -66,7 +72,8 @@ defmodule Agendum.Core.Extras.Site do
   @template_names ~w(layout index post page menu archive 404 rss.xml)
   for name <-
         @template_names ++
-          ~w(menu-0.81 index-0.81 index-0.87 index-0.89 post-0.87 post-0.89 archive-0.90),
+          ~w(menu-0.81 menu-0.92 index-0.81 index-0.87 index-0.89 index-0.92 post-0.87 post-0.89
+             post-0.92 layout-0.92 archive-0.90),
       do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
   @default_templates Map.new(@template_names, fn name ->
@@ -76,14 +83,19 @@ defmodule Agendum.Core.Extras.Site do
   # templates an older Agendum wrote: one still word for word as it was is
   # Agendum's, not the person's, so a newer one replaces it (as `style.css`)
   @legacy_templates %{
-    "templates/menu.html" => [File.read!(Path.join(@assets, "templates/menu-0.81.html"))],
+    "templates/menu.html" =>
+      for(v <- ~w(0.81 0.92), do: File.read!(Path.join(@assets, "templates/menu-#{v}.html"))),
     "templates/index.html" =>
       for(
-        v <- ~w(0.81 0.87 0.89),
+        v <- ~w(0.81 0.87 0.89 0.92),
         do: File.read!(Path.join(@assets, "templates/index-#{v}.html"))
       ),
     "templates/post.html" =>
-      for(v <- ~w(0.87 0.89), do: File.read!(Path.join(@assets, "templates/post-#{v}.html"))),
+      for(
+        v <- ~w(0.87 0.89 0.92),
+        do: File.read!(Path.join(@assets, "templates/post-#{v}.html"))
+      ),
+    "templates/layout.html" => [File.read!(Path.join(@assets, "templates/layout-0.92.html"))],
     "templates/archive.html" => [File.read!(Path.join(@assets, "templates/archive-0.90.html"))]
   }
 
@@ -104,6 +116,15 @@ defmodule Agendum.Core.Extras.Site do
   """
   @spec legacy_template?(String.t(), String.t()) :: boolean
   def legacy_template?(path, text), do: text in Map.get(@legacy_templates, path, [])
+
+  @doc """
+  Whether a site folder's `style.css` (its text) is the person's own: not
+  Agendum's, nor one an older Agendum wrote. Their templates are then kept
+  as they are, old copies of Agendum's too, so the set stays one that fits
+  their stylesheet (code review 2026-11-03).
+  """
+  @spec own_stylesheet?(String.t()) :: boolean
+  def own_stylesheet?(text), do: text != @default_stylesheet and text not in @legacy_stylesheets
 
   @doc "Whether an older Agendum ever wrote another version of the template at `path`."
   @spec had_legacy?(String.t()) :: boolean
@@ -247,7 +268,8 @@ defmodule Agendum.Core.Extras.Site do
       pages: pages,
       lists: lists,
       item_pages: item_pages,
-      taken: taken
+      taken: taken,
+      logo: logo(assets)
     }
 
     # the menu's pages and the lists, made once: each page drawn marks its
@@ -424,7 +446,7 @@ defmodule Agendum.Core.Extras.Site do
       site
       |> site_context()
       |> Map.merge(menu(site, context))
-      |> Map.put("lists", site.list_links)
+      |> Map.put("lists", current_lists(site, context))
       |> Map.put("has_lists", site.list_links != [])
       |> Map.merge(context)
 
@@ -553,7 +575,8 @@ defmodule Agendum.Core.Extras.Site do
   last published with the paths in `published`: files that are new, that
   differ, and that Agendum wrote before but would not now (a post taken
   away). The stylesheet is changed only while it is still the one
-  Agendum wrote before (`legacy_stylesheet/0`), so the person's own stays.
+  Agendum wrote before (`legacy_stylesheet/0`, and 0.92's), so the
+  person's own stays.
   """
   @spec changes([file], %{optional(String.t()) => String.t()}, [String.t()]) :: changes
   def changes(files, existing, published) do
@@ -564,7 +587,7 @@ defmodule Agendum.Core.Extras.Site do
       changed:
         for(
           {path, content} <- files,
-          path != @stylesheet or existing[path] == @legacy_stylesheet,
+          path != @stylesheet or existing[path] in @legacy_stylesheets,
           Map.has_key?(existing, path),
           existing[path] != content,
           do: path
@@ -596,10 +619,21 @@ defmodule Agendum.Core.Extras.Site do
         "language" => blog.language,
         "home" => home(site),
         "base_url" => blog.base_url,
-        "me" => String.split(blog.me)
+        "me" => String.split(blog.me),
+        "logo" => site.logo
       }
     }
   end
+
+  # The site's logo (0.93; the owner, 2026-11-03): `assets/logo.svg`, `.png`,
+  # `.webp` or `.jpg`, the first the folder has, shown by Agendum's layout
+  # beside the site's name; nil without one
+  @logos ~w(assets/logo.svg assets/logo.png assets/logo.webp assets/logo.jpg)
+  defp logo(assets), do: Enum.find(@logos, &List.keymember?(assets, &1, 0))
+
+  # the lists for the menu, the one whose index is being drawn marked current
+  defp current_lists(site, context),
+    do: for(l <- site.list_links, do: Map.put(l, "current", l["url"] == context["path"]))
 
   # the pages for the menu, on every page: each with its address from the
   # site's root and whether it is the page being drawn

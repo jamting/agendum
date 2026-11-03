@@ -71,8 +71,8 @@ defmodule Agendum.Core.Extras.SiteTagsTest do
     files = Core.site(ctx.db, @today)
 
     assert page_of(ctx.db, files, ctx.lists) =~
-             ~s(<p class="tags">Tags: <a href="../tags/elixir.html" rel="tag">Elixir</a>) <>
-               ~s( · <a href="../tags/agenda.html" rel="tag">Agenda</a></p>)
+             ~s(<dt>Tags</dt><dd class="tags"><a href="../tags/elixir.html" rel="tag">Elixir</a>) <>
+               ~s( · <a href="../tags/agenda.html" rel="tag">Agenda</a></dd>)
 
     assert page_of(ctx.db, files, ctx.genserver) =~
              ~s(<a href="../tags/elixir.html" rel="tag">Elixir</a>)
