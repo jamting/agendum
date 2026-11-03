@@ -24,6 +24,7 @@
     <li><a href="#dependencies">Things that wait for other things</a></li>
     <li><a href="#automatic">Letting Agendum do the filing</a></li>
     <li><a href="#files">Files, printing and looks</a></li>
+    <li><a href="#publish">A website from your file</a></li>
     <li><a href="#macros">Macros: doing it again</a></li>
     <li><a href="#keys">Keyboard reference</a></li>
     <li><a href="#later">Still to come</a></li>
@@ -43,7 +44,7 @@
   <p>The user guide. Wol's Agendum (Agendum for short) is a personal information
      manager in the spirit of Lotus Agenda (1988), for people with a great many small
      things to remember. Follow a Very Small Animal as he plans a birthday party.</p>
-  <p class="written-for">Written for Agendum 0.77</p>
+  <p class="written-for">Written for Agendum 0.92</p>
 </header>
 
 <!-- ===================================================================== -->
@@ -226,6 +227,13 @@ if you changed the note it first asks “Discard changes?”: <em>No</em> keeps 
 <em>Yes</em> puts the note back as it was. <kbd>F10</kbd> opens the note's own menu:
 <strong>Import</strong> a text file at the cursor, <strong>Export</strong> the note to one,
 or <strong>Clear</strong> it.</p>
+
+<p>While you write, <kbd>CTRL-Z</kbd> undoes a word at a time (“Buy milk today” goes
+back as “today”, then “milk”, then “Buy”) and <kbd>CTRL-Y</kbd> redoes it. A run of
+<kbd>BACKSPACE</kbd>s, a paste or a date is one step, and so is what a note command did
+to the file: <kbd>CTRL-Z</kbd> after <kbd>ALT-F7</kbd> puts the text back and removes
+the item it made. Once the note is closed, <kbd>CTRL-Z</kbd> in the view puts the
+whole note back as it was when you opened it.</p>
 
 <p>A long line in a note wraps onto as many rows as it needs, so you always see all of
 it (only on the screen: no line break goes into the text). <kbd>↑</kbd> <kbd>↓</kbd> move
@@ -791,8 +799,8 @@ files, so far), and any item Agendum files differently from Agenda.</p>
 Agenda finds it as it was. With the extras on, you get calendars from the web (below), the
 <em>While you were away</em> box for alarms, ► before the view you are in and
 <kbd>F5</kbd> for recently used views in the view manager, longer key bar labels on a wide
-screen, and three that are still young: Zettel ids and links between items, a small
-blog published from the file, and a news reader for RSS feeds. Their commands are
+screen, Zettel ids and links between items, a news reader for RSS feeds, help with
+Markdown in notes, and a <a href="#publish">website published from the file</a>. Their commands are
 together in a menu of their own, <strong>Extras</strong> (<kbd>F10</kbd> <kbd>E</kbd>),
 between Utilities and Quit: Calendars, Feeds, Publish, Open link and Zettel. Turning the
 extras off again hides them, and that menu, but nothing in the file is lost.</p>
@@ -842,20 +850,12 @@ days (<kbd>F6</kbd> changes how long), unless you kept it by giving it a note, a
 category of your own or a Zettel id. <kbd>F4</kbd> dismisses one, and <kbd>CTRL-V</kbd>
 (<strong>Extras ▸ Open link</strong>) opens its page in your browser.</p>
 
-<h3>A small blog</h3>
-<p><strong>Extras ▸ Publish</strong> makes a website from the items in a
-category (<em>Posts</em> at first): the item's text is the title, its note the post,
-written in Markdown. The box holds the blog's settings, which folder it goes to and how
-it is uploaded (rsync or SFTP, or not at all); <kbd>F8</kbd> and <kbd>ALT-F8</kbd> put a
-setting, or all of them, back as a new blog has them. <kbd>ENTER</kbd> first shows what
-would change, and <kbd>ENTER</kbd> again writes it. The pages are plain, quick and
-typeset in the same fonts as this guide, with RSS and JSON feeds for readers.</p>
-
 <h3>Looks</h3>
 <p>Agendum looks as Agenda 2.0 did on a colour screen: grey, with blue and cyan. Other
 themes are in <strong>Utilities ▸ Customize</strong>: <em>Mono</em>, for plain terminals,
 which uses only bold, dim, underline and reverse; <em>Borland</em>, yellow on blue as
-the old DOS programming tools were; and the colours of some well-liked terminal schemes,
+the old DOS programming tools were; <em>Amber</em>, amber on near-black as the
+monitors of the 1980s; and the colours of some well-liked terminal schemes,
 <em>Modus Operandi</em> (light), <em>Modus Vivendi</em> (dark), <em>Alabaster</em>,
 <em>Zenburn</em> and <em>Ayu</em>. For one session:</p>
 <pre class="shell">agendum --theme zenburn party.agendum
@@ -897,8 +897,117 @@ and finds that a week with nothing in it is simply not shown, which suits him.</
 </section>
 
 <!-- ===================================================================== -->
+<section id="publish">
+<h2>13. A website from your file</h2>
+<p class="in-which">In Which Piglet Tells the Whole Forest at Once, and Nobody Gets Lost</p>
+
+<p>With the <a href="#extras">extras</a> on, <strong>Extras ▸ Publish</strong> makes a
+small website from your file: a blog of posts, a few pages, and any of your categories
+as a list, with feeds for news readers. The pages are plain and quick, written into a
+folder, and uploaded if you like.</p>
+
+<div class="story">Not everyone in the Forest drops by Piglet's house, so he puts the
+party on the web: a post saying it is on Thursday, a page about where he lives, and a
+list of who brings what.</div>
+
+<h3>Writing posts</h3>
+<p>A post is an item in the <em>Posts</em> category: its text is the title, its note
+the post, written in Markdown (<code>**strong**</code>, <code>*emphasis*</code>,
+<code># headings</code>, lists, <code>[links](https://…)</code>, task boxes
+<code>- [ ]</code>). Its date is the When date, or else the day you typed it.</p>
+<ul>
+  <li>A note that starts with <code># A longer title</code> gives the post that title,
+      while the item keeps its short text.</li>
+  <li>A post with a When still to come waits for its day: the first time you publish on
+      or after it, it goes out. Posts also in a <em>Drafts</em> category wait until you
+      take them out of it.</li>
+  <li>A picture goes in the site folder's <code>assets/</code>, and into the note as
+      <code>![Owl by the tree](assets/owl.jpg)</code>. A missing one stops publishing
+      and says which.</li>
+  <li>A post you changed since it went out says “Updated” on its page.</li>
+</ul>
+
+<p>Markdown is easier to write in a note with the extras on. <kbd>ENTER</kbd> at the end
+of a list item starts the next one (<code>- </code>, <code>2. </code>,
+<code>- [ ] </code>), and on an empty one leaves the list. <kbd>CTRL-T</kbd> ticks or
+unticks a task box, or gives a list item one. Headings, list markers and task boxes are
+coloured on every line but the one you are typing in; the text stays as you typed
+it.</p>
+
+<h3>Publish, Site and Upload</h3>
+<table>
+  <tr><th>Extras ▸ Publish ▸</th><th>What it does</th></tr>
+  <tr><td><strong>Publish</strong></td><td>Shows what will change: files added (+), changed (~) and removed (−). <kbd>ENTER</kbd> writes and uploads them, <kbd>ESC</kbd> writes nothing. The very first time, it opens Site first.</td></tr>
+  <tr><td><strong>Site</strong></td><td>The blog's settings, kept in the file: the Posts, Drafts and Pages categories, title, description, author, language, base address, links to your other profiles, the posts' address and how many of the newest posts to show</td></tr>
+  <tr><td><strong>Lists</strong></td><td>Your categories published as lists (below)</td></tr>
+  <tr><td><strong>Upload</strong></td><td>The folder the site is written to (<code>site</code> beside the file at first), and how it is uploaded: not at all, rsync or SFTP. Kept in your own preferences, not in the file, so a file you share never carries your server's address.</td></tr>
+</table>
+
+<p>A post's address is <code>posts/{zettel}.html</code> at first, from its Zettel id;
+<code>{year}/{month}/{day}-{slug}.html</code> in <strong>Site ▸ Address</strong> gives
+addresses such as <code>2026/10/08-eeyores-birthday.html</code> instead. A post keeps the
+address it first went out at, whatever you change later, so no link to it breaks.</p>
+
+<p>The index and its RSS and JSON feeds show the newest 20 posts (<strong>Newest
+posts</strong>; 0 for all). Once there are more, an <em>archive</em> lists every post
+by month, and the index links to it. Every post keeps its own page.</p>
+
+<p>Items in the <strong>Pages</strong> category become pages of their own (“About”
+becomes <code>about.html</code>), not in the list of posts or the feeds, with a menu of
+them on every page. The site also gets a <code>404.html</code>, which most servers show
+for an address that leads nowhere: it links home and lists the newest posts.</p>
+
+<aside class="tip">A friend who follows a wrong link, round and round like a Woozle
+hunt, lands on the 404 page and finds his way home from it.</aside>
+
+<h3>Lists</h3>
+<p><strong>Publish ▸ Lists</strong> publishes any of your own categories.
+<kbd>INS</kbd> (or <kbd>CTRL-N</kbd>) adds one, its category first; <kbd>DEL</kbd> (or
+<kbd>CTRL-D</kbd>) removes it after asking, the category staying. <kbd>ENTER</kbd> opens a
+list's box, where you switch on what it gets:</p>
+<ul>
+  <li><strong>Index page</strong>: a page of its items, in a folder of its own (all a
+      new list has).</li>
+  <li><strong>Feeds</strong>: its own RSS and JSON Feed, so a reader can follow just
+      that.</li>
+  <li><strong>Item pages</strong>: a page for each of its items.</li>
+  <li><strong>Notes</strong>: whether the items' notes go out.</li>
+  <li><strong>Tag pages</strong>: a page for each child of the category, listing its
+      items by month. Make a <em>Tags</em> family (Cake, Presents …) a list with this
+      on, and each post's page shows its tags, linked.</li>
+</ul>
+<p>Only what you name leaves the file. <strong>Fields</strong> names the families whose
+values a list shows, such as <code>People</code>; nothing else of an item is published.
+<strong>Newest</strong> gives the list its own number of newest items.</p>
+
+<div class="story">Piglet's <em>To bring</em> list has an index page and one field,
+<em>People</em>, so the web shows who brings what, and nothing of the note where he
+wondered whether Pooh would eat the honey on the way.</div>
+
+<h3>Changing the look</h3>
+<p>When you publish, Agendum writes <code>templates/</code> into the site's folder:
+<code>layout.html</code>, <code>index.html</code>, <code>post.html</code>,
+<code>page.html</code>, <code>archive.html</code>, <code>404.html</code>,
+<code>menu.html</code> and <code>rss.xml</code>. Change them, and your pages change.
+They use <code>{{title}}</code> for a value and <code>{{#posts}}…{{/posts}}</code> to
+repeat; nothing in them can run code. Agendum never overwrites one that is there (delete
+it to get Agendum's back), and a mistake stops publishing, saying where:
+“templates/post.html line 12: {{#post}} is not closed”. A list can have its own, in a
+folder of <code>templates/</code> named as its own. Images, fonts and stylesheets go in
+<code>assets/</code>, and go out with the pages.</p>
+
+<p>Before anything goes out, every feed is read back as a news reader would read it; a
+broken one stops publishing and says which.</p>
+
+<h3>Without opening Agendum</h3>
+<pre class="shell">agendum --publish party.agendum             # publish, with your Upload settings
+agendum --publish party.agendum --preview   # only say what would change</pre>
+<p>For a file with a password, or a server that asks for one, publish in Agendum.</p>
+</section>
+
+<!-- ===================================================================== -->
 <section id="macros">
-<h2>13. Macros: doing it again</h2>
+<h2>14. Macros: doing it again</h2>
 <p class="in-which">In Which Six Friends Are Asked in Six Key Presses, and Not on F4</p>
 
 <p>A macro remembers keystrokes and plays them back. <kbd>ALT-F3</kbd> opens the
@@ -929,7 +1038,7 @@ attaches it to <kbd>F4</kbd> … no, Owl points out, <kbd>F4</kbd> is Done … t
 
 <!-- ===================================================================== -->
 <section id="keys">
-<h2>14. Keyboard reference</h2>
+<h2>15. Keyboard reference</h2>
 <p class="in-which">In Which Every Key Is Listed, with Another for a Mac</p>
 
 <p>The function keys are needed, as in Agenda: on a Mac, hold <kbd>fn</kbd> with them
@@ -1003,6 +1112,8 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
   <tr><td><kbd>INS</kbd>; <kbd>TAB</kbd></td><td>Insert or type over; spaces to the next tab stop</td><td><kbd>CTRL-N</kbd></td></tr>
   <tr><td><kbd>ALT-F9</kbd> / <kbd>ALT-F8</kbd></td><td>Move text onto the item's text / type the marked items in (asks whether to discard them)</td><td></td></tr>
   <tr><td><kbd>ALT-D</kbd> / <kbd>ALT-T</kbd> / <kbd>ALT-C</kbd></td><td>Type today's date / the time / a date from the calendar</td><td><kbd>⌥d</kbd> / <kbd>⌥t</kbd> / <kbd>⌥c</kbd></td></tr>
+  <tr><td><kbd>CTRL-Z</kbd> / <kbd>CTRL-Y</kbd></td><td>Undo a word (or a step) / redo it</td><td></td></tr>
+  <tr><td><kbd>CTRL-T</kbd></td><td>Tick or untick a task box <code>- [ ]</code> (with the extras on)</td><td></td></tr>
   <tr><td><kbd>F10</kbd></td><td>The note's menu: Import, Export, Clear, Return, Quit</td><td></td></tr>
   <tr><td><kbd>F5</kbd>; <kbd>ESC</kbd></td><td>Save and go back to the view; go back, asking “Discard changes?” if it changed</td><td></td></tr>
 </table>
@@ -1023,6 +1134,12 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
 </table>
 
 <table>
+  <tr><th>Key</th><th>In Publish ▸ Lists (with the extras on)</th></tr>
+  <tr><td><kbd>ENTER</kbd> or <kbd>F6</kbd></td><td>The highlighted list's settings</td></tr>
+  <tr><td><kbd>INS</kbd>; <kbd>DEL</kbd></td><td>Add one of your categories as a list; remove a list, after asking (Mac: <kbd>CTRL-N</kbd>, <kbd>CTRL-D</kbd>)</td></tr>
+</table>
+
+<table>
   <tr><th>Key</th><th>In a box</th></tr>
   <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd>, <kbd>TAB</kbd>; <kbd>HOME</kbd> / <kbd>END</kbd></td><td>Move between settings; the first / last (fn-← / fn-→ on a Mac)</td></tr>
   <tr><td><kbd>SPACE</kbd>; a letter</td><td>Change or open a setting; pick the choice starting with it</td></tr>
@@ -1034,7 +1151,7 @@ letters, with Option set to work as the Meta key in your terminal. <kbd>F1</kbd>
 
 <!-- ===================================================================== -->
 <section id="later">
-<h2>15. Still to come</h2>
+<h2>16. Still to come</h2>
 <p class="in-which">In Which Eeyore Gets a Balloon, and a Pot to Put It In</p>
 <p class="soon">Agendum now does what Lotus Agenda 2.0 did, and looks as it looked.
 This guide will grow with what comes after: further off, Agendum in a web browser,
