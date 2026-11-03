@@ -37,7 +37,7 @@ defmodule Agendum.Extras.Publish do
 
   @doc """
   What the site is made from in `folder` (R74): its templates
-  (`templates/*.html`, by name) and its assets (every file under
+  (`templates/*.html` by name, `*.xml` by whole name) and its assets (every file under
   `assets/`, by path, hidden files and links left out). A folder without
   them has none; assets over #{div(@assets_limit, 1_000_000)} MB together are refused.
   """
@@ -49,13 +49,14 @@ defmodule Agendum.Extras.Publish do
     end
   end
 
-  # each `templates/*.html`; one that is a link, too big or unreadable
-  # stops publishing, saying so, rather than Agendum's being used unseen
+  # each `templates/*.html` (by its name, `post`) and `*.xml` (by its whole
+  # name, `rss.xml`); one that is a link, too big or unreadable stops
+  # publishing, saying so, rather than Agendum's being used unseen
   defp templates(folder) do
     dir = Path.join(folder, "templates")
 
     list(dir)
-    |> Enum.filter(&(Path.extname(&1) == ".html"))
+    |> Enum.filter(&(Path.extname(&1) in [".html", ".xml"]))
     |> Enum.sort()
     |> Enum.reduce_while({:ok, %{}}, fn name, {:ok, acc} ->
       case template(Path.join(dir, name)) do
@@ -63,13 +64,16 @@ defmodule Agendum.Extras.Publish do
         {:ok, text} ->
           if Site.legacy_template?("templates/" <> name, text),
             do: {:cont, {:ok, acc}},
-            else: {:cont, {:ok, Map.put(acc, Path.rootname(name), text)}}
+            else: {:cont, {:ok, Map.put(acc, template_name(name), text)}}
 
         {:error, why} ->
           {:halt, {:error, "templates/#{name} #{why}"}}
       end
     end)
   end
+
+  defp template_name(file),
+    do: if(Path.extname(file) == ".html", do: Path.rootname(file), else: file)
 
   defp template(path) do
     case File.lstat(path) do

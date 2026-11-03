@@ -72,8 +72,12 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   def site_error({:missing_asset, path, title}),
     do: "#{path}, an image in #{title}, is not in the site folder's assets/"
 
+  def site_error({:bad_feed, path}),
+    do: "#{path} does not read back as a feed: look at its template"
+
   def site_error({:template, name, line, why}) do
-    where = if line, do: "templates/#{name}.html line #{line}", else: "templates/#{name}.html"
+    file = "templates/" <> Agendum.Core.Extras.Template.file(name)
+    where = if line, do: "#{file} line #{line}", else: file
     "#{where}: #{template_mistake(why)}"
   end
 
@@ -81,7 +85,10 @@ defmodule Agendum.TUI.Extras.Publish.Messages do
   defp template_mistake({:not_closed, n}), do: "{{##{n}}} is not closed"
   defp template_mistake({:closes_nothing, n}), do: "{{/#{n}}} closes nothing"
   defp template_mistake({:closes, n, other}), do: "{{/#{n}}} closes {{##{other}}}"
-  defp template_mistake({:no_partial, n}), do: "{{> #{n}}}: there is no templates/#{n}.html"
+
+  defp template_mistake({:no_partial, n}),
+    do: "{{> #{n}}}: there is no templates/#{Agendum.Core.Extras.Template.file(n)}"
+
   defp template_mistake({:includes_itself, n}), do: "{{> #{n}}} includes itself"
 
   defp template_mistake(:too_big),

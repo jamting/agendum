@@ -7,7 +7,9 @@ defmodule Agendum.Core.Extras.Template do
   else is only text (Elixir's EEx was ruled out: its templates run code).
   Pure.
 
-    * `{{name}}` a value, escaped for HTML (inside an attribute too)
+    * `{{name}}` a value, escaped for HTML (inside an attribute too); in a
+      template whose name ends in `.xml` (`rss.xml`), for XML, `'` as
+      `&apos;` too
     * `{{{name}}}` a value as it is: only the post's body needs it, which
       Agendum's Markdown has made safe already
     * `{{a.b}}` a value inside another; a name not found is empty
@@ -15,7 +17,8 @@ defmodule Agendum.Core.Extras.Template do
       value (the value is then `{{.}}`), never for an empty or false one;
       names not in the item are looked up outside it
     * `{{^name}}…{{/name}}` only when the value is empty or false
-    * `{{> name}}` the template `templates/name.html`
+    * `{{> name}}` the template `templates/name.html` (`{{> rss.xml}}`
+      one by its whole name)
     * `{{! …}}` a comment
 
   `parse/1` refuses a mistake with its line; `render/4` one that only
@@ -45,6 +48,13 @@ defmodule Agendum.Core.Extras.Template do
            | {:var, [String.t()], boolean}
            | {:section, [String.t()], boolean, t}
            | {:partial, String.t()}
+
+  @doc """
+  A template's file in `templates/` by its name: `post` is `post.html`, a
+  name with its own extension (`rss.xml`) is that file.
+  """
+  @spec file(String.t()) :: String.t()
+  def file(name), do: if(Path.extname(name) == "", do: name <> ".html", else: name)
 
   @doc "A template's text parsed, or its first mistake and the line it is on."
   @spec parse(String.t()) :: {:ok, t} | {:error, {pos_integer, mistake}}
@@ -132,12 +142,16 @@ defmodule Agendum.Core.Extras.Template do
   The template filled in from `context` (maps with string keys, lists,
   strings, numbers, booleans), with `partials` (name to parsed template)
   for `{{> name}}`; `name` is the template's own, so including itself is
-  found at once.
+  found at once, and one whose name ends in `.xml` escapes for XML.
   """
   @spec render(t, map, %{optional(String.t()) => t}, String.t() | nil) ::
           {:ok, String.t()} | {:error, render_error}
   def render(tree, context, partials, name \\ nil) do
-    env = %{partials: partials, within: List.wrap(name)}
+    # Domain: the escaping is chosen once, by the template drawn, and its
+    # partials share it: an `.xml` feed including an `.html` part still
+    # escapes as XML
+    xml? = is_binary(name) and String.ends_with?(name, ".xml")
+    env = %{partials: partials, within: List.wrap(name), xml: xml?}
     {out, _budget} = fill(tree, [context], env, @budget)
     {:ok, IO.iodata_to_binary(out)}
   catch
@@ -155,9 +169,9 @@ defmodule Agendum.Core.Extras.Template do
 
   defp fill_node({:text, text}, _stack, _env, budget), do: {text, budget}
 
-  defp fill_node({:var, path, escape?}, stack, _env, budget) do
+  defp fill_node({:var, path, escape?}, stack, env, budget) do
     value = stack |> lookup(path) |> text()
-    {if(escape?, do: esc(value), else: value), budget}
+    {if(escape?, do: esc(value, env.xml), else: value), budget}
   end
 
   defp fill_node({:section, path, false, body}, stack, env, budget) do
@@ -201,5 +215,6 @@ defmodule Agendum.Core.Extras.Template do
   defp text(value) when is_integer(value), do: Integer.to_string(value)
   defp text(_value), do: ""
 
-  defp esc(text), do: Agendum.Core.Extras.Markdown.attribute(text)
+  defp esc(text, false), do: Agendum.Core.Extras.Markdown.attribute(text)
+  defp esc(text, true), do: text |> esc(false) |> String.replace("'", "&apos;")
 end

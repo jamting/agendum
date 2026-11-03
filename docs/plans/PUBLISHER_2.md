@@ -26,7 +26,7 @@ Decided (meeting 2026-11-02-2244, § 6):
 
 Added by the owner after the meeting (2026-11-02, an addendum to § 6): an RSS feed is a special case of a list, so **a list's outputs are templates**:
 
-- **The RSS feed is a template,** `rss.xml`, as the pages are; Agendum ships a default word for word what it writes today (`Agendum.Core.Extras.Site`), so a site that does not change it sees no difference. Other outputs (Atom, an `.ics`, a CSV, `sitemap.xml`) become a template each, with nothing built for them.
+- **The RSS feed is a template,** `rss.xml` (done in v0.88.0, with the read-back and `date_rss`), as the pages are; Agendum ships a default word for word what it writes today (`Agendum.Core.Extras.Site`), so a site that does not change it sees no difference. Other outputs (Atom, an `.ics`, a CSV, `sitemap.xml`) become a template each, with nothing built for them.
 - **The JSON Feed stays built in code:** the templates escape for HTML, which is close to right for XML but wrong for JSON, and the template language gets no JSON escape for this.
 - **Every feed written is read back** with Agendum's own feed reader (`Agendum.Core.Extras.FeedParser`) before publishing; one that does not read stops publishing and says which, as a missing image does (step 2), since a broken feed fails silently in readers.
 - **Dates in RSS's form** (`Mon, 02 Nov 2026 22:44:00 +0000`) are a value of their own for templates, beside `date_iso`.

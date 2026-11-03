@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>{{feed.title}}</title>
+<link>{{feed.home}}</link>
+<description>{{feed.description}}</description>
+<language>{{site.language}}</language>
+<generator>Wol's Agendum</generator>
+<atom:link href="{{feed.self}}" rel="self" type="application/rss+xml"/>
+{{#items}}<item>
+<title>{{title}}</title>
+<link>{{url}}</link>
+<guid isPermaLink="true">{{url}}</guid>
+{{#date_rss}}<pubDate>{{date_rss}}</pubDate>
+{{/date_rss}}<description>{{content_html}}</description>
+</item>
+{{/items}}</channel>
+</rss>

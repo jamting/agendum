@@ -6,6 +6,15 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.88.0 — 2026-11-03
+
+- **The RSS feeds come from a template, `templates/rss.xml`,** as the pages do. Agendum writes its own there the next time you publish, and it gives the same feeds as before; change it to change every RSS feed of the site. `{{date_rss}}` gives a post's date as RSS writes it (`Sat, 03 Oct 2026 00:00:00 +0000`), in the pages' templates too.
+- **Every feed is read back before publishing.** An RSS feed (or JSON Feed) that does not read as a feed, or lists another number of posts than it should, stops publishing and says which: a broken feed fails silently in feed readers.
+
+### Facade
+
+- `Agendum.Core.site/3` can also answer `{:error, {:bad_feed, path}}`; `{:error, {:template, name, …}}` names `rss.xml` by its whole name.
+
 ## 0.87.0 — 2026-11-03
 
 - **Images in posts and pages from your site's `assets/` folder.** Put a picture in the site folder's `assets/` and write `![Owl by the tree](assets/owl.jpg)` in a post's note: every page, and the feeds, get the right address to it. An image whose file is not in `assets/` stops publishing and says which, and in which post. Leave the text in `[ ]` empty for a picture that only decorates.

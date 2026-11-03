@@ -53,21 +53,23 @@ defmodule Agendum.Core.Extras.Site do
   # a feed's own files, in its folder (R74, § 9)
   @feed_files ~w(index.html rss.xml feed.json)
 
-  # the templates a site's pages are drawn from (`Agendum.Core.Extras.Template`),
-  # written into its `templates/` folder when missing, then the person's
-  @template_names ~w(layout index post page menu)
+  # the templates a site's pages and RSS feeds are drawn from
+  # (`Agendum.Core.Extras.Template`), written into its `templates/` folder
+  # when missing, then the person's; an `.html` one is named without its
+  # extension (`post`), any other by its whole name (`rss.xml`)
+  @template_names ~w(layout index post page menu rss.xml)
   for name <- @template_names ++ ["menu-0.81", "index-0.81"],
-      do: @external_resource(Path.join([@assets, "templates", name <> ".html"]))
+      do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
   @default_templates Map.new(@template_names, fn name ->
-                       {name, File.read!(Path.join([@assets, "templates", name <> ".html"]))}
+                       {name, File.read!(Path.join(@assets, "templates/" <> Template.file(name)))}
                      end)
 
   # templates an older Agendum wrote: one still word for word as it was is
   # Agendum's, not the person's, so a newer one replaces it (as `style.css`)
   @legacy_templates %{
-    "templates/menu.html" => [File.read!(Path.join([@assets, "templates", "menu-0.81.html"]))],
-    "templates/index.html" => [File.read!(Path.join([@assets, "templates", "index-0.81.html"]))]
+    "templates/menu.html" => [File.read!(Path.join(@assets, "templates/menu-0.81.html"))],
+    "templates/index.html" => [File.read!(Path.join(@assets, "templates/index-0.81.html"))]
   }
 
   @doc "The stylesheet's path: written only when the folder has none."
@@ -98,7 +100,7 @@ defmodule Agendum.Core.Extras.Site do
   """
   @spec default_templates() :: [file]
   def default_templates,
-    do: for({name, text} <- @default_templates, do: {"templates/#{name}.html", text})
+    do: for({name, text} <- @default_templates, do: {"templates/" <> Template.file(name), text})
 
   @doc """
   Every file of the site on `today`: the posts due then (a When still to
@@ -106,19 +108,22 @@ defmodule Agendum.Core.Extras.Site do
   each one first, R73), its pages drawn from the folder's
   templates (Agendum's own where one is missing) and its assets copied as
   they are; or why not: a template's mistake, with where it is, an
-  asset's name that cannot be on the web, or an image in a post or a page
-  naming an asset the folder does not have (R74c).
+  asset's name that cannot be on the web, an image in a post or a page
+  naming an asset the folder does not have (R74c), or a feed that does
+  not read back (R74e).
   """
   @typedoc """
   Why the site could not be made: a template's mistake (its name, the
   line or nil, and what, `Agendum.Core.Extras.Template`), an asset's
-  name that cannot be on the web, or an asset an image names that is not
-  there (its path, and the title of the post or page it is in).
+  name that cannot be on the web, an asset an image names that is not
+  there (its path, and the title of the post or page it is in), or a feed
+  that does not read back as the feed it should be (its path; R74e).
   """
   @type error ::
           {:template, String.t(), pos_integer | nil, Template.mistake() | Template.render_error()}
           | {:asset_name, String.t()}
           | {:missing_asset, String.t(), String.t()}
+          | {:bad_feed, String.t()}
 
   @spec build(Database.t(), Date.t(), inputs) :: {:ok, [file]} | {:error, error}
   def build(db, today, inputs), do: build(db, today, inputs, true)
@@ -215,45 +220,86 @@ defmodule Agendum.Core.Extras.Site do
     site = Map.put(site, :menu, for(item <- pages, do: menu_entry(site, item)))
     draw = &draw(site, templates, &1, &2)
 
+    rss = &rss(site, templates, &1)
+    main = main_feed(site)
+
     with :ok <- images_there(site, assets, check_images?),
          {:ok, index} <- draw.("index", index(site)),
-         {:ok, feed_files} <- feed_files(site, draw),
+         {:ok, main_rss} <- rss.(main),
+         {:ok, feed_files} <- feed_files(site, draw, rss),
          {:ok, post_files} <-
            each_page(site.posts, "post", &own_page(site, &1, "post"), site, draw),
          {:ok, page_files} <-
            each_page(site.pages, "page", &own_page(site, &1, "item"), site, draw) do
       pages = post_files ++ page_files ++ feed_files
-      main = main_feed(site)
 
-      {:ok,
-       [
-         {"index.html", index},
-         {"rss.xml", rss(site, main)},
-         {"feed.json", json_feed(site, main)},
-         {@stylesheet, default_stylesheet()}
-       ] ++ pages ++ @font_files ++ assets}
+      files =
+        [
+          {"index.html", index},
+          {"rss.xml", main_rss},
+          {"feed.json", json_feed(site, main)},
+          {@stylesheet, default_stylesheet()}
+        ] ++ pages
+
+      with :ok <- feeds_read_back(files, [main | Enum.map(site.feeds, &own_feed(site, &1))]),
+           do: {:ok, files ++ @font_files ++ assets}
+    end
+  end
+
+  # Every feed written is read back by Agendum's own feed reader
+  # (`Agendum.Core.Extras.FeedParser`), as a reader would: an RSS template
+  # that gives no feed, or one with another number of entries than posts,
+  # stops publishing, since a broken feed fails silently in readers (the
+  # owner, after meeting 2026-11-02-2244, § 6). The JSON Feed, made in
+  # code, is checked to be JSON with its items, too.
+  defp feeds_read_back(files, metas) do
+    files = Map.new(files)
+
+    Enum.find_value(metas, :ok, fn meta ->
+      count = length(meta.posts)
+      rss = meta.folder <> "rss.xml"
+      json = meta.folder <> "feed.json"
+
+      cond do
+        not rss_reads?(files[rss], count) -> {:error, {:bad_feed, rss}}
+        not json_reads?(files[json], count) -> {:error, {:bad_feed, json}}
+        true -> nil
+      end
+    end)
+  end
+
+  defp rss_reads?(text, count) do
+    case Agendum.Core.Extras.FeedParser.parse(text) do
+      {:ok, %{entries: entries}} -> length(entries) == count
+      {:error, _} -> false
+    end
+  end
+
+  defp json_reads?(text, count) do
+    case JSON.decode(text) do
+      {:ok, %{"items" => items}} when is_list(items) -> length(items) == count
+      _ -> false
     end
   end
 
   # each feed's index page, from the index template, and its own RSS and
   # JSON Feed, in its folder (R74, § 9)
-  defp feed_files(site, draw) do
+  defp feed_files(site, draw, rss) do
     site.feeds
     |> Enum.reduce_while({:ok, []}, fn feed, {:ok, files} ->
-      case draw.("index", feed_index(site, feed)) do
-        {:ok, index} ->
-          meta = own_feed(site, feed)
+      meta = own_feed(site, feed)
 
-          three = [
-            {feed.slug <> "/index.html", index},
-            {feed.slug <> "/rss.xml", rss(site, meta)},
-            {feed.slug <> "/feed.json", json_feed(site, meta)}
-          ]
+      with {:ok, index} <- draw.("index", feed_index(site, feed)),
+           {:ok, feed_rss} <- rss.(meta) do
+        three = [
+          {feed.slug <> "/index.html", index},
+          {feed.slug <> "/rss.xml", feed_rss},
+          {feed.slug <> "/feed.json", json_feed(site, meta)}
+        ]
 
-          {:cont, {:ok, [three | files]}}
-
-        error ->
-          {:halt, error}
+        {:cont, {:ok, [three | files]}}
+      else
+        error -> {:halt, error}
       end
     end)
     |> then(fn
@@ -507,6 +553,7 @@ defmodule Agendum.Core.Extras.Site do
       "title_html" => site |> title_html(item, root) |> place_assets(root),
       "date" => shown(site, date),
       "date_iso" => date && Date.to_iso8601(date),
+      "date_rss" => date && rss_date(date),
       "updated" => shown(site, modified),
       "updated_iso" => modified && Date.to_iso8601(modified),
       "permalink" => permalink(site, item),
@@ -605,54 +652,49 @@ defmodule Agendum.Core.Extras.Site do
     }
   end
 
-  defp rss(site, meta) do
-    blog = site.blog
-
+  # An RSS feed, drawn from the `rss.xml` template (R74e; the owner, after
+  # meeting 2026-11-02-2244, § 6): Agendum's own gives what it wrote
+  # before, word for word. Not put in the layout: the feed is the whole
+  # file. Its values are whole addresses, its posts' bodies HTML, which
+  # `{{content_html}}` escapes into the XML as RSS has it.
+  defp rss(site, templates, meta) do
     items =
-      Enum.map_join(meta.posts, "", fn item ->
-        url = absolute(site, post_path(site.db, item))
+      Enum.map(meta.posts, fn item ->
+        date = Blog.date(item)
 
-        """
-        <item>
-        <title>#{xml(title_text(site, item))}</title>
-        <link>#{xml(url)}</link>
-        <guid isPermaLink="true">#{xml(url)}</guid>
-        #{pub_date(item)}<description>#{xml(content_html(site, item))}</description>
-        </item>
-        """
+        %{
+          "title" => title_text(site, item),
+          "url" => absolute(site, post_path(site.db, item)),
+          "date_rss" => date && rss_date(date),
+          "date_iso" => date && Date.to_iso8601(date),
+          "zettel" => Zettels.zettel(item),
+          "content_html" => content_html(site, item)
+        }
       end)
 
-    """
-    <?xml version="1.0" encoding="UTF-8"?>
-    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-    <title>#{xml(meta.title)}</title>
-    <link>#{xml(meta.home)}</link>
-    <description>#{xml(meta.description)}</description>
-    <language>#{xml(blog.language)}</language>
-    <generator>Wol's Agendum</generator>
-    <atom:link href="#{xml(absolute(site, meta.folder <> "rss.xml"))}" rel="self" type="application/rss+xml"/>
-    #{items}</channel>
-    </rss>
-    """
+    context =
+      site
+      |> site_context()
+      |> Map.merge(%{
+        "feed" => %{
+          "title" => meta.title,
+          "description" => meta.description,
+          "home" => meta.home,
+          "self" => absolute(site, meta.folder <> "rss.xml")
+        },
+        "items" => items
+      })
+
+    render(templates, "rss.xml", context)
   end
 
   # RSS dates are RFC 822 ("Sat, 17 Oct 2026 00:00:00 +0000"); a post has
   # a day, not a moment, so it is midnight
-  defp pub_date(item) do
-    case Blog.date(item) do
-      nil ->
-        ""
-
-      date ->
-        day = Enum.at(~w(Mon Tue Wed Thu Fri Sat Sun), Date.day_of_week(date) - 1)
-
-        month =
-          Enum.at(~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec), date.month - 1)
-
-        dd = String.pad_leading("#{date.day}", 2, "0")
-        "<pubDate>#{day}, #{dd} #{month} #{date.year} 00:00:00 +0000</pubDate>\n"
-    end
+  defp rss_date(date) do
+    day = Enum.at(~w(Mon Tue Wed Thu Fri Sat Sun), Date.day_of_week(date) - 1)
+    month = Enum.at(~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec), date.month - 1)
+    dd = String.pad_leading("#{date.day}", 2, "0")
+    "#{day}, #{dd} #{month} #{date.year} 00:00:00 +0000"
   end
 
   defp json_feed(site, meta) do
@@ -741,13 +783,6 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   defp attr(text), do: Markdown.attribute(text)
-
-  defp xml(text) do
-    text
-    |> Markdown.escape()
-    |> String.replace("\"", "&quot;")
-    |> String.replace("'", "&apos;")
-  end
 
   # --- the stylesheet ------------------------------------------------------------------
 

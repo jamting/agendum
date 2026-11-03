@@ -81,6 +81,18 @@ defmodule Agendum.Extras.SiteTemplatesTest do
                Publish.inputs(dir)
     end
 
+    test "templates/rss.xml is read by its whole name, and written where missing", %{
+      tmp_dir: dir
+    } do
+      File.mkdir_p!(Path.join(dir, "templates"))
+      File.write!(Path.join(dir, "templates/rss.xml"), "<rss/>")
+      assert {:ok, %{templates: %{"rss.xml" => "<rss/>"}}} = Publish.inputs(dir)
+
+      File.rm!(Path.join(dir, "templates/rss.xml"))
+      {:ok, scan} = Publish.scan(dir, [])
+      assert "templates/rss.xml" in scan.templates_missing
+    end
+
     test "a folder without them has none", %{tmp_dir: dir} do
       assert Publish.inputs(dir) == {:ok, %{templates: %{}, assets: []}}
     end
