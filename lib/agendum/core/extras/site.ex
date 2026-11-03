@@ -57,12 +57,13 @@ defmodule Agendum.Core.Extras.Site do
   # next free name instead (code review 2026-11-03)
   @list_files ~w(index.html rss.xml feed.json)
   @archive "archive.html"
+  @not_found "404.html"
 
   # the templates a site's pages and RSS feeds are drawn from
   # (`Agendum.Core.Extras.Template`), written into its `templates/` folder
   # when missing, then the person's; an `.html` one is named without its
   # extension (`post`), any other by its whole name (`rss.xml`)
-  @template_names ~w(layout index post page menu archive rss.xml)
+  @template_names ~w(layout index post page menu archive 404 rss.xml)
   for name <- @template_names ++ ~w(menu-0.81 index-0.81 index-0.87 index-0.89 post-0.87),
       do: @external_resource(Path.join(@assets, "templates/" <> Template.file(name)))
 
@@ -259,6 +260,7 @@ defmodule Agendum.Core.Extras.Site do
     with :ok <- images_there(site, assets, check_images?),
          {:ok, index} <- draw.("index", index(site)),
          {:ok, archive} <- main_archive(site, draw),
+         {:ok, not_found} <- not_found(site, draw),
          {:ok, main_rss} <- rss.(main),
          {:ok, list_files} <- list_files(site, templates, draw, rss),
          {:ok, post_files} <-
@@ -274,7 +276,7 @@ defmodule Agendum.Core.Extras.Site do
           {"rss.xml", main_rss},
           {"feed.json", json_feed(site, main)},
           {@stylesheet, default_stylesheet()}
-        ] ++ archive ++ pages
+        ] ++ archive ++ not_found ++ pages
 
       metas = for list <- site.lists, list.feeds, do: own_feed(site, list)
 
@@ -443,7 +445,7 @@ defmodule Agendum.Core.Extras.Site do
   """
   @spec own() :: {[String.t()], [String.t()]}
   def own do
-    files = ["index.html", "rss.xml", "feed.json", @archive, @stylesheet]
+    files = ["index.html", "rss.xml", "feed.json", @archive, @not_found, @stylesheet]
     fonts = @font_files |> Enum.map(&(&1 |> elem(0) |> Path.dirname())) |> Enum.uniq()
     # the person's templates and assets are never a post's page
     {files, fonts ++ ["templates", "assets"]}
@@ -658,6 +660,41 @@ defmodule Agendum.Core.Extras.Site do
   end
 
   # --- the newest N, and the archive (R74, R74e; PUBLISHER_2 step 4) -----------
+
+  # The 404 page (R74d; PUBLISHER_2 step 5, the owner's choices of
+  # 2026-11-03): a server shows it at whatever address was asked for, so
+  # `root` is the Base address, whole (without one, the site's top folder
+  # is all it can serve). A page published at `404.html` before keeps it,
+  # and then there is none: a server looks for that one name only.
+  defp not_found(site, draw) do
+    if MapSet.member?(site.taken, @not_found) do
+      {:ok, []}
+    else
+      newest =
+        site.posts
+        |> Enum.take(5)
+        |> Enum.with_index()
+        |> Enum.map(fn {item, i} ->
+          %{
+            "title" => title_text(site, item),
+            "url" => post_path(site.db, item),
+            "first" => i == 0
+          }
+        end)
+
+      context = %{
+        "root" => base(site),
+        "path" => @not_found,
+        "page" => %{"title" => "Not here · #{site.blog.title}", "index" => false},
+        "newest" => newest,
+        "has_newest" => newest != [],
+        "has_archive" => archive?(site.posts, site.blog.newest),
+        "archive_url" => archive_path(site, "")
+      }
+
+      with {:ok, page} <- draw.("404", context), do: {:ok, [{@not_found, page}]}
+    end
+  end
 
   # Where an archive goes, from the site's root: `archive.html` in its
   # folder, else `archive-2.html` … when a page published before archives

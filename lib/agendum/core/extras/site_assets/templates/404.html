@@ -1,0 +1,14 @@
+{{! The page a server shows for an address that leads nowhere: GitHub
+    Pages and most servers use 404.html. It is shown at any address, so
+    its links start with root, the site's Base address. newest: the five
+    newest posts, each with title and url (from root); archive_url, when
+    there is an archive. }}
+<main>
+<h1>This page is not here</h1>
+<p>Perhaps it moved, or never was.</p>
+<p class="back"><a href="{{root}}index.html">← {{site.title}}</a>{{#has_archive}} · <a href="{{root}}{{archive_url}}">All posts</a>{{/has_archive}}</p>
+{{#newest}}{{#first}}<h2>Newest</h2>
+<ul>
+{{/first}}<li><a href="{{root}}{{url}}">{{title}}</a></li>
+{{/newest}}{{#has_newest}}</ul>
+{{/has_newest}}</main>

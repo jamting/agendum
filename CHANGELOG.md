@@ -6,6 +6,14 @@ Changes to `Agendum.Core`'s public functions (the facade), which any code built 
 
 ## Unreleased
 
+## 0.91.0 — 2026-11-03
+
+- **A 404 page.** The site gets `404.html`, which GitHub Pages and most servers show for an address that leads nowhere: "This page is not here", a link home (and to the archive), and the five newest posts. Its links start with your Base address, so it works at any address. `templates/404.html` draws it; Agendum writes its own for you to change. GitHub Pages uses only the `404.html` at the top of a Pages site, so a blog in a folder of a bigger site (such as a devlog) has one that is never shown.
+
+### Facade
+
+- No changes.
+
 ## 0.90.0 — 2026-11-03
 
 - **The newest posts, and an archive.** The blog's index and feeds now show the newest 20 posts (**Newest posts** in Extras ▸ Publish ▸ Site; 0 for all). Once there are more, `archive.html` lists every post's title and date by month ("november 2026" for a Swedish blog), and the index ends with "All posts". Every post keeps its page and its address.

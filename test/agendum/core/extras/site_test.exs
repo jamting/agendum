@@ -69,14 +69,17 @@ defmodule Agendum.Core.Extras.SiteTest do
       %{db: db, files: Core.site(db, ~D[2026-11-02])}
     end
 
-    test "its files: index, feeds, stylesheet, fonts and a page per post", %{files: files} do
+    test "its files: index, feeds, stylesheet, 404 page, fonts and a page per post", %{
+      files: files
+    } do
       fonts =
         ~w(fonts/alegreya-latin-wght-normal.woff2 fonts/alegreya-latin-wght-italic.woff2
            fonts/alegreya-sc-latin-400-normal.woff2 fonts/alegreya-sc-latin-500-normal.woff2
            fonts/courier-prime-latin-400-normal.woff2 fonts/OFL.txt)
 
       assert Enum.map(files, &elem(&1, 0)) ==
-               ~w(index.html rss.xml feed.json style.css posts/bonalaku.html posts/pigavono.html) ++
+               ~w(index.html rss.xml feed.json style.css 404.html posts/bonalaku.html
+                  posts/pigavono.html) ++
                  fonts
     end
 

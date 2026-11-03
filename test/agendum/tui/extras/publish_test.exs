@@ -312,7 +312,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
     test "shows what will be added before anything is written", %{state: state} do
       assert screen(state) =~ "Publish: what will change"
-      assert screen(state) =~ "2 posts · 12 added, 0 changed, 0 removed"
+      assert screen(state) =~ "2 posts · 13 added, 0 changed, 0 removed"
       assert screen(state) =~ "+ posts/bonalaku.html"
       assert screen(state) =~ "Written to site; not uploaded."
     end
@@ -326,7 +326,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
 
       state = Agendum.TUI.Extras.Publish.Results.published(state, changes, :ok)
       assert State.mode(state) == nil
-      assert screen(state) =~ "Published: 12 added, 0 changed, 0 removed"
+      assert screen(state) =~ "Published: 13 added, 0 changed, 0 removed"
       # the file has no Base address, so the feeds' links are not whole
       assert screen(state) =~ "The feeds need a Base address"
     end
@@ -444,7 +444,7 @@ defmodule Agendum.TUI.Extras.PublishTest do
       state = Agendum.TUI.Extras.Publish.Results.published(state, changes, :ok)
 
       refute Enum.any?(state.modes, &match?(%{type: :publish_preview}, &1))
-      assert screen(state) =~ "Published: 12 added"
+      assert screen(state) =~ "Published: 13 added"
       assert State.mode(press(state, :esc)) == nil
     end
 
